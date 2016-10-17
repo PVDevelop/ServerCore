@@ -15,7 +15,9 @@ using PVDevelop.UCoach.Timing;
 using PVDevelop.UCoach.Mongo;
 using PVDevelop.UCoach.Configuration;
 using StructureMap;
-using StructureMap.AutoMocking;
+using StructureMap.TypeRules;
+using System.Linq;
+using System.Reflection;
 
 namespace PVDevelop.UCoach.Authentication
 {
@@ -27,7 +29,7 @@ namespace PVDevelop.UCoach.Authentication
 		public Startup()
 		{
 			_container = new Container();
-			_configurationRoot = 
+			_configurationRoot =
 				new ConfigurationBuilder().
 				SetBasePath(Directory.GetCurrentDirectory()).
 				AddJsonFile("config.json").
@@ -50,6 +52,7 @@ namespace PVDevelop.UCoach.Authentication
 				SetupUserService(x);
 				SetupMongo(x);
 				SetupInitializers(x);
+				SetupValidators(x);
 
 				x.Populate(services);
 			});
@@ -64,7 +67,13 @@ namespace PVDevelop.UCoach.Authentication
 			app.UseMvc();
 			app.UseExceptionHandler();
 
-			appLifetime.ApplicationStarted.Register(StartInitializers);
+			appLifetime.ApplicationStarted.Register(OnStarted);
+		}
+
+		private void OnStarted()
+		{
+			StartInitializers();
+			StartValidators();
 		}
 
 		private void SetupUserService(ConfigurationExpression x)
@@ -72,7 +81,7 @@ namespace PVDevelop.UCoach.Authentication
 			x.For<IKeyGeneratorService>().Use<KeyGeneratorService>();
 			x.For<IUtcTimeProvider>().Use<UtcTimeProvider>();
 			x.For<IUserRepository>().Use<MongoUserRepository>();
-			x.For<IConfirmationRepository>().Use<InMemoryConfirmationRepository>().Singleton();
+			x.For<IConfirmationRepository>().Use<MongoConfirmationRepository>();
 			x.For<IConfirmationProducer>().Use<FakeConfirmationProducer>();
 			x.For<IConfigurationRoot>().Add(_configurationRoot);
 		}
@@ -80,13 +89,20 @@ namespace PVDevelop.UCoach.Authentication
 		private void SetupMongo(ConfigurationExpression x)
 		{
 			x.For<IMongoRepository<MongoUser>>().Use<MongoRepository<MongoUser>>();
-			x.For<IMongoCollectionVersionValidator>().Use<MongoCollectionVersionValidatorByClassAttribute>();
+			x.For<IMongoRepository<MongoConfirmation>>().Use<MongoRepository<MongoConfirmation>>();
 			x.For<IConnectionStringProvider>().Use<ConnectionStringFromConfigurationRootProvider>().Ctor<string>().Is("Mongo");
 		}
 
 		private void SetupInitializers(ConfigurationExpression x)
 		{
-			x.For<IInitializer>().Use<MongoUserCollectionInitializer>();
+			x.For<IInitializer>().Use<MongoUserRepository>();
+			x.For<IInitializer>().Use<MongoConfirmationRepository>();
+		}
+
+		private void SetupValidators(ConfigurationExpression x)
+		{
+			x.For<IValidator>().Use<MongoUserRepository>();
+			x.For<IValidator>().Use<MongoConfirmationRepository>();
 		}
 
 		private void StartInitializers()
@@ -94,6 +110,14 @@ namespace PVDevelop.UCoach.Authentication
 			foreach (var initializer in _container.GetAllInstances<IInitializer>())
 			{
 				initializer.Initialize();
+			}
+		}
+
+		private void StartValidators()
+		{
+			foreach (var validator in _container.GetAllInstances<IValidator>())
+			{
+				validator.Validate();
 			}
 		}
 	}

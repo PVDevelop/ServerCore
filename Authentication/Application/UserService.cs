@@ -48,7 +48,6 @@ namespace PVDevelop.UCoach.Authentication.Application
 				email,
 				password,
 				_utcTimeProvider.UtcNow);
-
 			_userRepository.Insert(user);
 
 			//_logger.Debug("Создаю ключ подтверждения для пользователя '{0}'.", email);
@@ -56,12 +55,11 @@ namespace PVDevelop.UCoach.Authentication.Application
 				userId: user.Id,
 				key: _keyGeneratorService.GenerateUserId(),
 				creationTime: _utcTimeProvider.UtcNow);
-			_confirmationRepository.Replace(confirmation);
+			_confirmationRepository.Insert(confirmation);
 
 			//_logger.Debug("Отправление ключа пользователю");
 
 			var url = Format(url4Confirmation, confirmation.Key);
-
 			_confirmationProducer.Produce(email, url);
 
 			//_logger.Info("Пользователь {0} создан.", email);

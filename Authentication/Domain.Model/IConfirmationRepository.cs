@@ -2,10 +2,6 @@
 {
 	public interface IConfirmationRepository
 	{
-		void Replace(Confirmation confirmation);
-
-		Confirmation FindByConfirmation(string key);
-
-		Confirmation FindByConfirmationByUserId(string userId);
+		void Insert(Confirmation confirmation);
 	}
 }
