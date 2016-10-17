@@ -1,6 +1,9 @@
 ﻿using System;
+using System.IO;
+using System.Threading;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PVDevelop.UCoach.Authentication.Application;
@@ -12,11 +15,25 @@ using PVDevelop.UCoach.Timing;
 using PVDevelop.UCoach.Mongo;
 using PVDevelop.UCoach.Configuration;
 using StructureMap;
+using StructureMap.AutoMocking;
 
 namespace PVDevelop.UCoach.Authentication
 {
 	public class Startup
 	{
+		private readonly IConfigurationRoot _configurationRoot;
+		private readonly IContainer _container;
+
+		public Startup()
+		{
+			_container = new Container();
+			_configurationRoot = 
+				new ConfigurationBuilder().
+				SetBasePath(Directory.GetCurrentDirectory()).
+				AddJsonFile("config.json").
+				Build();
+		}
+
 		public Startup(ILoggerFactory loggerFactory)
 		{
 			loggerFactory.AddConsole();
@@ -26,27 +43,28 @@ namespace PVDevelop.UCoach.Authentication
 		{
 			services.AddMvc();
 
-			var container = new Container();
-			container.Configure(x =>
+			_container.Configure(x =>
 			{
 				x.For<IUserService>().Use<UserService>();
 
 				SetupUserService(x);
 				SetupMongo(x);
-				SetupConfiguration(x);
+				SetupInitializers(x);
 
 				x.Populate(services);
 			});
 
-			container.AssertConfigurationIsValid();
+			_container.AssertConfigurationIsValid();
 
-			return container.GetInstance<IServiceProvider>();
+			return _container.GetInstance<IServiceProvider>();
 		}
 
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
 		{
 			app.UseMvc();
 			app.UseExceptionHandler();
+
+			appLifetime.ApplicationStarted.Register(StartInitializers);
 		}
 
 		private void SetupUserService(ConfigurationExpression x)
@@ -56,17 +74,27 @@ namespace PVDevelop.UCoach.Authentication
 			x.For<IUserRepository>().Use<MongoUserRepository>();
 			x.For<IConfirmationRepository>().Use<InMemoryConfirmationRepository>().Singleton();
 			x.For<IConfirmationProducer>().Use<FakeConfirmationProducer>();
+			x.For<IConfigurationRoot>().Add(_configurationRoot);
 		}
 
 		private void SetupMongo(ConfigurationExpression x)
 		{
 			x.For<IMongoRepository<MongoUser>>().Use<MongoRepository<MongoUser>>();
 			x.For<IMongoCollectionVersionValidator>().Use<MongoCollectionVersionValidatorByClassAttribute>();
+			x.For<IConnectionStringProvider>().Use<ConnectionStringFromConfigurationRootProvider>().Ctor<string>().Is("Mongo");
 		}
 
-		private void SetupConfiguration(ConfigurationExpression x)
+		private void SetupInitializers(ConfigurationExpression x)
 		{
-			x.For<IConnectionStringProvider>().Use<FakeConnectionStringProvider>();
+			x.For<IInitializer>().Use<MongoUserCollectionInitializer>();
+		}
+
+		private void StartInitializers()
+		{
+			foreach (var initializer in _container.GetAllInstances<IInitializer>())
+			{
+				initializer.Initialize();
+			}
 		}
 	}
 }

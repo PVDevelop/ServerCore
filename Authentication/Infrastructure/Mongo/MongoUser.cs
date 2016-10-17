@@ -20,7 +20,7 @@ namespace PVDevelop.UCoach.Authentication.Infrastructure.Mongo
 		/// <summary>
 		/// Почтовый адерс пользователя. Уникален в БД.
 		/// </summary>
-		[MongoIndexName("login")]
+		[MongoIndexName("email")]
 		public string Email { get; set; }
 
 		/// <summary>
