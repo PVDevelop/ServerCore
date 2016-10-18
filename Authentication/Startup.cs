@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using PVDevelop.UCoach.Authentication.Application;
 using PVDevelop.UCoach.Authentication.Domain.Model;
 using PVDevelop.UCoach.Authentication.Infrastructure;
-using PVDevelop.UCoach.Authentication.Infrastructure.Fake;
+using PVDevelop.UCoach.Authentication.Infrastructure.Email;
 using PVDevelop.UCoach.Authentication.Infrastructure.Mongo;
 using StructureMap;
 using PVDevelop.UCoach.Timing;
@@ -23,13 +23,14 @@ namespace PVDevelop.UCoach.Authentication
 		private readonly IConfigurationRoot _configurationRoot;
 		private readonly IContainer _container;
 
-		public Startup()
+		public Startup(IHostingEnvironment env)
 		{
 			_container = new Container();
 			_configurationRoot =
 				new ConfigurationBuilder().
 				SetBasePath(Directory.GetCurrentDirectory()).
 				AddJsonFile("config.json").
+				AddJsonFile($"config.{env.EnvironmentName}.json", optional: true).
 				Build();
 		}
 
@@ -40,6 +41,8 @@ namespace PVDevelop.UCoach.Authentication
 
 		public IServiceProvider ConfigureServices(IServiceCollection services)
 		{
+			services.AddOptions();
+			services.Configure<EmailProducerSettings>(_configurationRoot.GetSection("EmailConfirmationProducer"));
 			services.AddMvc();
 
 			_container.Configure(x =>
@@ -79,7 +82,7 @@ namespace PVDevelop.UCoach.Authentication
 			x.For<IUtcTimeProvider>().Use<UtcTimeProvider>();
 			x.For<IUserRepository>().Use<MongoUserRepository>();
 			x.For<IConfirmationRepository>().Use<MongoConfirmationRepository>();
-			x.For<IConfirmationProducer>().Use<FakeConfirmationProducer>();
+			x.For<IConfirmationProducer>().Use<EmailConfirmationProducer>();
 			x.For<IConfigurationRoot>().Add(_configurationRoot);
 		}
 
