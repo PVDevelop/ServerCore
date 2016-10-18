@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PVDevelop.UCoach.Authentication.Adapter.WebApi
+namespace PVDevelop.UCoach.Authentication.Infrastructure.WebApi
 {
 	public class CreateUserDto
 	{

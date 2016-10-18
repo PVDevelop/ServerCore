@@ -1,4 +1,6 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
+using NLog;
 using PVDevelop.UCoach.Authentication.Domain.Model;
 using PVDevelop.UCoach.Authentication.Infrastructure;
 using PVDevelop.UCoach.Timing;
@@ -13,6 +15,7 @@ namespace PVDevelop.UCoach.Authentication.Application
 		private readonly IUserRepository _userRepository;
 		private readonly IConfirmationRepository _confirmationRepository;
 		private readonly IConfirmationProducer _confirmationProducer;
+		private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
 		public UserService(
 			IKeyGeneratorService keyGeneratorService,
@@ -41,7 +44,7 @@ namespace PVDevelop.UCoach.Authentication.Application
 				throw new ArgumentException("Not set", nameof(url4Confirmation));
 			}
 
-			//_logger.Debug("Создаю пользователя '{0}'.", email);
+			_logger.Debug($"Создаю пользователя '{email}'.");
 
 			var user = new User(
 				_keyGeneratorService.GenerateUserId(),
@@ -50,19 +53,19 @@ namespace PVDevelop.UCoach.Authentication.Application
 				_utcTimeProvider.UtcNow);
 			_userRepository.Insert(user);
 
-			//_logger.Debug("Создаю ключ подтверждения для пользователя '{0}'.", email);
+			_logger.Debug($"Создаю ключ подтверждения для пользователя '{email}'.");
 			var confirmation = new Confirmation(
 				userId: user.Id,
 				key: _keyGeneratorService.GenerateUserId(),
 				creationTime: _utcTimeProvider.UtcNow);
 			_confirmationRepository.Insert(confirmation);
 
-			//_logger.Debug("Отправление ключа пользователю");
+			_logger.Debug("Отправление ключа пользователю");
 
 			var url = Format(url4Confirmation, confirmation.Key);
 			_confirmationProducer.Produce(email, url);
 
-			//_logger.Info("Пользователь {0} создан.", email);
+			_logger.Info($"Пользователь '{email}' создан.");
 		}
 	}
 }

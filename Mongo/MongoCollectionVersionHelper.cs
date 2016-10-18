@@ -1,18 +1,21 @@
 ﻿using System;
 using MongoDB.Driver;
 using PVDevelop.UCoach.Configuration;
+using PVDevelop.UCoach.Logging;
 
 namespace PVDevelop.UCoach.Mongo
 {
 	public static class MongoCollectionVersionHelper
 	{
-		public static void ValidateByClassAttribute<TCollection>(IConnectionStringProvider connectionStringProvider)
+		public static void ValidateByClassAttribute<TCollection>(
+			IConnectionStringProvider connectionStringProvider,
+			ILogger logger)
 		{
 			if (connectionStringProvider == null) throw new ArgumentNullException(nameof(connectionStringProvider));
 
 			var referencedCollectionName = MongoHelper.GetCollectionName<TCollection>();
 
-			//_logger.Debug("Проверяю метаданные коллекции {0}.", referencedCollectionName);
+			logger.Debug($"Проверяю метаданные коллекции {referencedCollectionName}.");
 
 			var collection = MongoHelper.GetCollection<CollectionVersion>(connectionStringProvider);
 			var collectionVersion = collection.Find(cv => cv.TargetCollectionName == referencedCollectionName).SingleOrDefault();
@@ -20,25 +23,21 @@ namespace PVDevelop.UCoach.Mongo
 			var requiredVersion = MongoHelper.GetDataVersion<TCollection>();
 			if (collectionVersion == null)
 			{
-				//_logger.Error("Метаданные коллекции {0} не заданы.", referencedCollectionName);
+				logger.Error($"Метаданные коллекции {referencedCollectionName} не заданы.");
 				throw new MongoCollectionNotInitializedException(0, requiredVersion);
 			}
 			if (collectionVersion.TargetVersion != requiredVersion)
 			{
-				//_logger.Error(
-					//"Версия коллекции {0} неверна. Ожидалась - {1}, текущая - {2}.",
-					//referencedCollectionName,
-					//requiredVersion,
-					//collectionVersion.TargetVersion);
+				logger.Error($"Версия коллекции {referencedCollectionName} неверна. Ожидалась - {requiredVersion}, текущая - {collectionVersion.TargetVersion}.");
 				throw new MongoCollectionNotInitializedException(collectionVersion.TargetVersion, requiredVersion);
 			}
 		}
 
-		public static void InitializeCollectionVersion<TCollection>(IConnectionStringProvider connectionStringProvider)
+		public static void InitializeCollectionVersion<TCollection>(
+			IConnectionStringProvider connectionStringProvider,
+			ILogger logger)
 		{
-			//_logger.Debug(
-			//    "Инициализирую метаданные пользователей. Параметры подключения: {0}.",
-			//    MongoHelper.SettingsToString(_connectionStirngProvider));
+			logger.Debug($"Инициализирую метаданные пользователей. Параметры подключения: {MongoHelper.SettingsToString(connectionStringProvider)}.");
 
 			var collection = MongoHelper.GetCollection<CollectionVersion>(connectionStringProvider);
 			var collectionVersion = new CollectionVersion(MongoHelper.GetCollectionName<TCollection>())
@@ -56,7 +55,7 @@ namespace PVDevelop.UCoach.Mongo
 				collection.ReplaceOne(cv => cv.TargetCollectionName == collectionVersion.TargetCollectionName, collectionVersion, options);
 			}
 
-			//_logger.Debug("Инициализация метаданных пользователей прошла успешно.");
+			logger.Debug("Инициализация метаданных пользователей прошла успешно.");
 		}
 	}
 }

@@ -2,10 +2,8 @@
 	"version": "1.0.0-*",
 
 	"dependencies": {
-		"Configuration": "1.0.0-*",
-		"Logging": "1.0.0-*",
-		"MongoDB.Driver": "2.3.0",
-		"NETStandard.Library": "1.6.0"
+		"NETStandard.Library": "1.6.0",
+		"NLog.Extensions.Logging": "1.0.0-*"
 	},
 
 	"frameworks": {

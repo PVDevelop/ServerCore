@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Threading;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -11,13 +10,11 @@ using PVDevelop.UCoach.Authentication.Domain.Model;
 using PVDevelop.UCoach.Authentication.Infrastructure;
 using PVDevelop.UCoach.Authentication.Infrastructure.Fake;
 using PVDevelop.UCoach.Authentication.Infrastructure.Mongo;
+using StructureMap;
 using PVDevelop.UCoach.Timing;
 using PVDevelop.UCoach.Mongo;
 using PVDevelop.UCoach.Configuration;
-using StructureMap;
-using StructureMap.TypeRules;
-using System.Linq;
-using System.Reflection;
+using PVDevelop.UCoach.Logging;
 
 namespace PVDevelop.UCoach.Authentication
 {
@@ -38,7 +35,7 @@ namespace PVDevelop.UCoach.Authentication
 
 		public Startup(ILoggerFactory loggerFactory)
 		{
-			loggerFactory.AddConsole();
+			LoggerHelper.UseLogger(loggerFactory);
 		}
 
 		public IServiceProvider ConfigureServices(IServiceCollection services)

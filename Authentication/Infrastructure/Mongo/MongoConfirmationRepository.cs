@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using PVDevelop.UCoach.Authentication.Domain.Model;
 using PVDevelop.UCoach.Mongo;
 using PVDevelop.UCoach.Configuration;
+using PVDevelop.UCoach.Logging;
 
 namespace PVDevelop.UCoach.Authentication.Infrastructure.Mongo
 {
@@ -13,6 +14,7 @@ namespace PVDevelop.UCoach.Authentication.Infrastructure.Mongo
 	{
 		private readonly IMongoRepository<MongoConfirmation> _repository;
 		private readonly IConnectionStringProvider _connectionStringProvider;
+		private readonly ILogger _logger = LoggerHelper.GetLogger<MongoConfirmationRepository>();
 
 		public MongoConfirmationRepository(
 			IMongoRepository<MongoConfirmation> repository,
@@ -28,7 +30,9 @@ namespace PVDevelop.UCoach.Authentication.Infrastructure.Mongo
 
 		public void Validate()
 		{
-			MongoCollectionVersionHelper.ValidateByClassAttribute<MongoConfirmation>(_connectionStringProvider);
+			MongoCollectionVersionHelper.ValidateByClassAttribute<MongoConfirmation>(
+				_connectionStringProvider,
+				_logger);
 		}
 
 		#endregion
@@ -43,33 +47,46 @@ namespace PVDevelop.UCoach.Authentication.Infrastructure.Mongo
 
 		private void InitializeIndices()
 		{
-			//_logger.Debug(
-			//	"Инициализирую коллекцию ключей подтверждения. Параметры подключения: {0}.",
-			//	MongoHelper.SettingsToString(_settings));
+			_logger.Debug(
+				$"Инициализирую коллекцию ключей подтверждения. Параметры подключения: {MongoHelper.SettingsToString(_connectionStringProvider)}.");
 
 			var collection = MongoHelper.GetCollection<MongoConfirmation>(_connectionStringProvider);
+			EnsureUserIdIndex(collection);
+			EnsureKeyIndex(collection);
 
-			var index = Builders<MongoConfirmation>.IndexKeys.Ascending(u => u.Key);
-			var options = new CreateIndexOptions()
+			_logger.Debug("Инициализация коллекции ключей подтверждения прошла успешно.");
+		}
+
+		private static void EnsureUserIdIndex(IMongoCollection<MongoConfirmation> collection)
+		{
+			var userIdIndex = Builders<MongoConfirmation>.IndexKeys.Ascending(u => u.UserId);
+			var userIdIndexOptions = new CreateIndexOptions
 			{
 				Name = MongoHelper.GetIndexName<MongoConfirmation>(nameof(MongoConfirmation.UserId)),
 				Unique = true
 			};
+			collection.Indexes.CreateOne(userIdIndex, userIdIndexOptions);
+		}
 
-			collection.Indexes.CreateOne(index, options);
-
-			//_logger.Debug("Инициализация коллекции ключей подтверждения прошла успешно.");
+		private static void EnsureKeyIndex(IMongoCollection<MongoConfirmation> collection)
+		{
+			var keyIndex = Builders<MongoConfirmation>.IndexKeys.Ascending(u => u.Key);
+			var keyIndexOptions = new CreateIndexOptions
+			{
+				Name = MongoHelper.GetIndexName<MongoConfirmation>(nameof(MongoConfirmation.Key)),
+				Unique = true
+			};
+			collection.Indexes.CreateOne(keyIndex, keyIndexOptions);
 		}
 
 		private void InitializeCollectionVersion()
 		{
-			//_logger.Debug(
-			//    "Инициализирую метаданные пользователей. Параметры подключения: {0}.",
-			//    MongoHelper.SettingsToString(_connectionStirngProvider));
+			_logger.Debug(
+				$"Инициализирую метаданные пользователей. Параметры подключения: {MongoHelper.SettingsToString(_connectionStringProvider)}");
 
-			MongoCollectionVersionHelper.InitializeCollectionVersion<MongoConfirmation>(_connectionStringProvider);
+			MongoCollectionVersionHelper.InitializeCollectionVersion<MongoConfirmation>(_connectionStringProvider, _logger);
 
-			//_logger.Debug("Инициализация метаданных пользователей прошла успешно.");
+			_logger.Debug("Инициализация метаданных пользователей прошла успешно.");
 		}
 
 		#endregion

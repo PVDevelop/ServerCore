@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using PVDevelop.UCoach.Authentication.Domain.Model;
 using PVDevelop.UCoach.Mongo;
 using PVDevelop.UCoach.Configuration;
+using PVDevelop.UCoach.Logging;
 
 namespace PVDevelop.UCoach.Authentication.Infrastructure.Mongo
 {
@@ -10,6 +11,7 @@ namespace PVDevelop.UCoach.Authentication.Infrastructure.Mongo
 	{
 		private readonly IMongoRepository<MongoUser> _repository;
 		private readonly IConnectionStringProvider _connectionStringProvider;
+		private readonly ILogger _logger = LoggerHelper.GetLogger<MongoUserRepository>();
 
 		public MongoUserRepository(
 			IMongoRepository<MongoUser> repository,
@@ -26,7 +28,7 @@ namespace PVDevelop.UCoach.Authentication.Infrastructure.Mongo
 
 		public void Validate()
 		{
-			MongoCollectionVersionHelper.ValidateByClassAttribute<MongoUser>(_connectionStringProvider);
+			MongoCollectionVersionHelper.ValidateByClassAttribute<MongoUser>(_connectionStringProvider, _logger);
 		}
 
 		#endregion
@@ -41,9 +43,7 @@ namespace PVDevelop.UCoach.Authentication.Infrastructure.Mongo
 
 		private void InitializeInidices()
 		{
-			//_logger.Debug(
-			//    "Инициализирую коллекцию пользователей. Параметры подключения: {0}.",
-			//    MongoHelper.SettingsToString(_connectionStirngProvider));
+			_logger.Debug($"Инициализирую коллекцию пользователей. Параметры подключения: {MongoHelper.SettingsToString(_connectionStringProvider)}.");
 
 			var collection = MongoHelper.GetCollection<MongoUser>(_connectionStringProvider);
 
@@ -56,18 +56,16 @@ namespace PVDevelop.UCoach.Authentication.Infrastructure.Mongo
 
 			collection.Indexes.CreateOne(index, options);
 
-			//_logger.Debug("Инициализация коллекции пользователей прошла успешно.");
+			_logger.Debug("Инициализация коллекции пользователей прошла успешно.");
 		}
 
 		private void IniitializeCollectionVersion()
 		{
-			//_logger.Debug(
-			//    "Инициализирую метаданные пользователей. Параметры подключения: {0}.",
-			//    MongoHelper.SettingsToString(_connectionStirngProvider));
+			_logger.Debug($"Инициализирую метаданные пользователей. Параметры подключения: {MongoHelper.SettingsToString(_connectionStringProvider)}.");
 
-			MongoCollectionVersionHelper.InitializeCollectionVersion<MongoUser>(_connectionStringProvider);
+			MongoCollectionVersionHelper.InitializeCollectionVersion<MongoUser>(_connectionStringProvider, _logger);
 
-			//_logger.Debug("Инициализация метаданных пользователей прошла успешно.");
+			_logger.Debug("Инициализация метаданных пользователей прошла успешно.");
 		}
 
 		#endregion

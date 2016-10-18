@@ -1,8 +1,9 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
+using NLog;
 using PVDevelop.UCoach.Authentication.Application;
 
-namespace PVDevelop.UCoach.Authentication.Adapter.WebApi
+namespace PVDevelop.UCoach.Authentication.Infrastructure.WebApi
 {
 	[Route("api/[controller]")]
 	public class UsersController : Controller
