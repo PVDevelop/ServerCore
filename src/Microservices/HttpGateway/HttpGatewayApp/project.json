@@ -12,13 +12,14 @@
 		"Microsoft.Extensions.Configuration.FileExtensions": "1.0.0",
 		"Microsoft.AspNetCore.Mvc": "1.0.1",
 		"StructureMap.Microsoft.DependencyInjection": "1.2.0",
-					"Microsoft.Extensions.Configuration.Json": "1.0.0",
-					"Microsoft.AspNetCore.Diagnostics": "1.0.0",
-        "Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
-        "AuthenticationContrancts": "1.0.0-*",
-        "Configuration": "1.0.0-*",
-        "Logging": "1.0.0-*",
-        "Rest": "1.0.0-*"	},
+		"Microsoft.Extensions.Configuration.Json": "1.0.0",
+		"Microsoft.AspNetCore.Diagnostics": "1.0.0",
+		"Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
+		"AuthenticationContrancts": "1.0.0-*",
+		"Configuration": "1.0.0-*",
+		"Logging": "1.0.0-*",
+		"Rest": "1.0.0-*"
+	},
 
 	"frameworks": {
 		"netcoreapp1.0": {

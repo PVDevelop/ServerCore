@@ -6,17 +6,14 @@ namespace PVDevelop.UCoach.AuthenticationContrancts.Rest
 	{
 		public string Email { get; }
 		public string Password { get; }
-		public string ConfirmationUrl { get; }
 
-		public CreateUserDto(string email, string password, string confirmationUrl)
+		public CreateUserDto(string email, string password)
 		{
 			if (string.IsNullOrWhiteSpace(email)) throw new ArgumentException("Not set", nameof(email));
 			if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Not set", nameof(password));
-			if (string.IsNullOrWhiteSpace(confirmationUrl)) throw new ArgumentException("Not set", nameof(confirmationUrl));
 
 			Email = email;
 			Password = password;
-			ConfirmationUrl = confirmationUrl;
 		}
 	}
 }

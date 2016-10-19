@@ -1,7 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Net.Http;
-using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
@@ -16,26 +15,18 @@ namespace PVDevelop.UCoach.Rest
 			_uri = uri;
 		}
 
-		public async Task PostAsync(string resource, object @object)
+		public async Task PostJsonAsync(string resource, object @object)
 		{
-			var bytes = GetBytes(@object);
-			var byteArrayContent = new ByteArrayContent(bytes);
-			var client = new HttpClient()
+			using (var client = new HttpClient())
 			{
-				BaseAddress = new Uri(_uri)
-			};
-			client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-			var response = await client.PostAsync(resource, byteArrayContent);
-			response.EnsureSuccessStatusCode();
-		}
+				client.BaseAddress = new Uri(_uri);
+				if (string.IsNullOrWhiteSpace(resource)) throw new ArgumentException("Not set", nameof(resource));
+				if (@object == null) throw new ArgumentNullException(nameof(@object));
 
-		private byte[] GetBytes(object @object)
-		{
-			using (var memoryStream = new MemoryStream())
-			using (var streamWriter = new StreamWriter(memoryStream))
-			{
-				new JsonSerializer().Serialize(streamWriter, @object);
-				return memoryStream.ToArray();
+				var jsonString = JsonConvert.SerializeObject(@object);
+				var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+				var response = await client.PostAsync(resource, content);
+				response.EnsureSuccessStatusCode();
 			}
 		}
 	}

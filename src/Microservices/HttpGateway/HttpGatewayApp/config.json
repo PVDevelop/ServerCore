@@ -1,6 +1,6 @@
 ﻿{
 	"ConnectionStrings": {
 		"Host": "http://localhost:8000",
-		"Authentication": "http://localhost:8000"
+		"AuthenticationUrl": "http://localhost:8001"
 	}
 }

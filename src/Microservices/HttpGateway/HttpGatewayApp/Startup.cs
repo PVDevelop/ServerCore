@@ -5,14 +5,16 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using PVDevelop.UCoach.Logging;
 using StructureMap;
+using PVDevelop.UCoach.Logging;
+using PVDevelop.UCoach.Rest;
 
 namespace PVDevelop.UCoach.HttpGatewayApp
 {
 	public class Startup
 	{
 		private readonly IContainer _container;
+		private readonly IConfigurationRoot _configuration;
 
 		public Startup(IHostingEnvironment env, ILoggerFactory loggerFactory)
 		{
@@ -20,7 +22,7 @@ namespace PVDevelop.UCoach.HttpGatewayApp
 
 			LoggerHelper.UseLogger(loggerFactory);
 
-			new ConfigurationBuilder().
+			_configuration = new ConfigurationBuilder().
 				SetBasePath(Directory.GetCurrentDirectory()).
 				AddJsonFile("config.json").
 				AddJsonFile($"config.{env.EnvironmentName}.json", optional: true).
@@ -34,6 +36,7 @@ namespace PVDevelop.UCoach.HttpGatewayApp
 			_container.Configure(x =>
 			{
 				x.Populate(services);
+				x.For<IConfigurationRoot>().Add(_configuration);
 			});
 
 			_container.AssertConfigurationIsValid();

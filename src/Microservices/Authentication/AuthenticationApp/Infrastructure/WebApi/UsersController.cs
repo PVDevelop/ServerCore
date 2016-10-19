@@ -23,8 +23,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.WebApi
 
 			_userService.CreateUser(
 				email: createUserDto.Email, 
-				password: createUserDto.Password,
-				url4Confirmation: createUserDto.ConfirmationUrl);
+				password: createUserDto.Password);
 		}
 	}
 }
