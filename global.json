@@ -1,5 +1,5 @@
-﻿{
-  "projects": [ "src" ],
+{
+    "projects": [ "src", "src/Shared", "src/Microservices/Authentication" ],
   "sdk": {
     "version": "1.0.0-preview2-003121"
   }

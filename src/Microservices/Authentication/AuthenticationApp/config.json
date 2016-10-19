@@ -1,0 +1,17 @@
+﻿{
+	"ConnectionStrings": {
+		"Mongo": "mongodb://localhost/authentication",
+		"Host": "http://localhost:8001"
+	},
+	"EmailConfirmationProducer": {
+		"enableSsl": "true",
+		"senderAddress": "PVDevelop@yandex.ru",
+		"smtpHost": "smtp.yandex.ru",
+		"smtpPort": "25",
+		"password": "tkvXp7IvXlUEo9N7EBU7",
+		"userName": "PVDevelop@yandex.ru"
+	}
+}
+
+
+
