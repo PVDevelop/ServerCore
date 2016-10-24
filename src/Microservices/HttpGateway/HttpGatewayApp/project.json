@@ -18,7 +18,8 @@
 		"AuthenticationContrancts": "1.0.0-*",
 		"Configuration": "1.0.0-*",
 		"Logging": "1.0.0-*",
-		"Rest": "1.0.0-*"
+        "Rest": "1.0.0-*",
+        "Microservice": "1.0.0-*"
 	},
 
 	"frameworks": {

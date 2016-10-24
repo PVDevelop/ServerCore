@@ -10,9 +10,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.WebApi
 		public IServiceProvider ConfigureServices(IServiceCollection services)
 		{
 			services.AddMvc();
-
 			AuthenticationMicroservice.Instance.Container.Populate(services);
-
 			return AuthenticationMicroservice.Instance.Container.GetInstance<IServiceProvider>();
 		}
 

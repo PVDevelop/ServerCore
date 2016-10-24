@@ -4,17 +4,21 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using PVDevelop.UCoach.Rest;
 using PVDevelop.UCoach.AuthenticationContrancts.Rest;
+using PVDevelop.UCoach.Configuration;
 
 namespace PVDevelop.UCoach.HttpGatewayApp.Infrastructure.WebApi
 {
 	[Route("api/[controller]")]
 	public class UsersController : Controller
 	{
-		private readonly IConfigurationRoot _configurationRoot;
+		private readonly IConnectionStringProvider _authenticationEndpointConnectionStringProvider;
 
-		public UsersController(IConfigurationRoot configurationRoot)
+		public UsersController(IConnectionStringProvider authenticationEndpointConnectionStringProvider)
 		{
-			_configurationRoot = configurationRoot;
+			if (authenticationEndpointConnectionStringProvider == null)
+				throw new ArgumentNullException(nameof(authenticationEndpointConnectionStringProvider));
+
+			_authenticationEndpointConnectionStringProvider = authenticationEndpointConnectionStringProvider;
 		}
 
 		[HttpPost]
@@ -26,7 +30,7 @@ namespace PVDevelop.UCoach.HttpGatewayApp.Infrastructure.WebApi
 
 		private RestClient GetAuthenticationUrl()
 		{
-			var url = _configurationRoot.GetConnectionString("AuthenticationUrl");
+			var url = _authenticationEndpointConnectionStringProvider.ConnectionString;
 
 			if (string.IsNullOrWhiteSpace(url))
 			{

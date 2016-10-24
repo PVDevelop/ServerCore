@@ -38,6 +38,8 @@ namespace PVDevelop.UCoach.Microservice
 				_logger.Info("ConsoleApplication is stopped");
 			};
 
+			_logger.Info($"Running microservice {_microservice.GetType().Name}...");
+
 			_microservice.Start(_cancellationTokenSource.Token);
 
 			return this;

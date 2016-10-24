@@ -19,8 +19,6 @@ namespace PVDevelop.UCoach.AuthenticationApp
 {
 	public class AuthenticationMicroservice : IMicroservice
 	{
-		private CancellationToken _cancellationToken;
-
 		internal static readonly AuthenticationMicroservice Instance = new AuthenticationMicroservice();
 
 		public IContainer Container { get; private set; }
@@ -31,14 +29,12 @@ namespace PVDevelop.UCoach.AuthenticationApp
 
 		public void Start(CancellationToken cancellationToken)
 		{
-			_cancellationToken = cancellationToken;
-
 			SetupConfigurationRoot();
 			SetupContainer();
 
 			StartInitializers();
 			StartValidators();
-			StartWebApi();
+			StartWebHost(cancellationToken);
 		}
 
 		private void SetupConfigurationRoot()
@@ -54,8 +50,6 @@ namespace PVDevelop.UCoach.AuthenticationApp
 		{
 			Container = new Container(x =>
 			{
-				x.For<IUserService>().Use<UserService>();
-
 				SetupUserService(x);
 				SetupMongo(x);
 				SetupInitializers(x);
@@ -68,6 +62,7 @@ namespace PVDevelop.UCoach.AuthenticationApp
 
 		private void SetupUserService(ConfigurationExpression x)
 		{
+			x.For<IUserService>().Use<UserService>();
 			x.For<IKeyGeneratorService>().Use<KeyGeneratorService>();
 			x.For<IUtcTimeProvider>().Use<UtcTimeProvider>();
 			x.For<IUserRepository>().Use<MongoUserRepository>();
@@ -80,7 +75,11 @@ namespace PVDevelop.UCoach.AuthenticationApp
 		{
 			x.For<IMongoRepository<MongoUser>>().Use<MongoRepository<MongoUser>>();
 			x.For<IMongoRepository<MongoConfirmation>>().Use<MongoRepository<MongoConfirmation>>();
-			x.For<IConnectionStringProvider>().Use<ConnectionStringFromConfigurationRootProvider>().Ctor<string>().Is("Mongo");
+			x.
+				For<IConnectionStringProvider>().
+				Use<ConnectionStringFromConfigurationRootProvider>().
+				Ctor<string>().
+				Is("Mongo");
 		}
 
 		private void SetupInitializers(ConfigurationExpression x)
@@ -120,7 +119,7 @@ namespace PVDevelop.UCoach.AuthenticationApp
 			}
 		}
 
-		private void StartWebApi()
+		private void StartWebHost(CancellationToken cancellationToken)
 		{
 			var hostAddress = ConfigurationRoot.GetConnectionString("Host");
 			new WebHostBuilder().
@@ -128,7 +127,7 @@ namespace PVDevelop.UCoach.AuthenticationApp
 				UseKestrel().
 				UseStartup<Startup>().
 				Build().
-				Run(_cancellationToken);
+				Run(cancellationToken);
 		}
 
 		public void Dispose()
