@@ -1,49 +1,58 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System;
+using System.IO;
+using System.Threading;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using PVDevelop.UCoach.AuthenticationApp.Application;
 using PVDevelop.UCoach.AuthenticationApp.Domain.Model;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Email;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo;
-using PVDevelop.UCoach.Timing;
-using PVDevelop.UCoach.Logging;
-using StructureMap;
-using System.IO;
-using System;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using PVDevelop.UCoach.Configuration;
+using PVDevelop.UCoach.AuthenticationApp.Infrastructure.WebApi;
 using PVDevelop.UCoach.Mongo;
+using PVDevelop.UCoach.Configuration;
+using PVDevelop.UCoach.Microservice;
+using PVDevelop.UCoach.Timing;
+using StructureMap;
 
 namespace PVDevelop.UCoach.AuthenticationApp
 {
-	public class Startup
+	public class AuthenticationMicroservice : IMicroservice
 	{
-		private readonly IConfigurationRoot _configurationRoot;
-		private readonly IContainer _container;
+		private CancellationToken _cancellationToken;
 
-		public Startup(IHostingEnvironment env, ILoggerFactory loggerFactory)
+		internal static readonly AuthenticationMicroservice Instance = new AuthenticationMicroservice();
+
+		public IContainer Container { get; private set; }
+		public IConfigurationRoot ConfigurationRoot { get; private set; }
+
+		private AuthenticationMicroservice()
+		{ }
+
+		public void Start(CancellationToken cancellationToken)
 		{
-			_container = new Container();
+			_cancellationToken = cancellationToken;
 
-			LoggerHelper.UseLogger(loggerFactory);
+			SetupConfigurationRoot();
+			SetupContainer();
 
-			_configurationRoot =
+			StartInitializers();
+			StartValidators();
+			StartWebApi();
+		}
+
+		private void SetupConfigurationRoot()
+		{
+			ConfigurationRoot =
 				new ConfigurationBuilder().
 				SetBasePath(Directory.GetCurrentDirectory()).
 				AddJsonFile("config.json").
-				AddJsonFile($"config.{env.EnvironmentName}.json", optional: true).
 				Build();
 		}
 
-		public IServiceProvider ConfigureServices(IServiceCollection services)
+		private void SetupContainer()
 		{
-			services.AddOptions();
-			services.Configure<EmailProducerSettings>(_configurationRoot.GetSection("EmailConfirmationProducer"));
-			services.AddMvc();
-
-			_container.Configure(x =>
+			Container = new Container(x =>
 			{
 				x.For<IUserService>().Use<UserService>();
 
@@ -51,27 +60,10 @@ namespace PVDevelop.UCoach.AuthenticationApp
 				SetupMongo(x);
 				SetupInitializers(x);
 				SetupValidators(x);
-
-				x.Populate(services);
+				SetupConfigurations(x);
 			});
 
-			_container.AssertConfigurationIsValid();
-
-			return _container.GetInstance<IServiceProvider>();
-		}
-
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
-		{
-			app.UseMvc();
-			app.UseExceptionHandler();
-
-			appLifetime.ApplicationStarted.Register(OnStarted);
-		}
-
-		private void OnStarted()
-		{
-			StartInitializers();
-			StartValidators();
+			Container.AssertConfigurationIsValid();
 		}
 
 		private void SetupUserService(ConfigurationExpression x)
@@ -81,7 +73,7 @@ namespace PVDevelop.UCoach.AuthenticationApp
 			x.For<IUserRepository>().Use<MongoUserRepository>();
 			x.For<IConfirmationRepository>().Use<MongoConfirmationRepository>();
 			x.For<IConfirmationProducer>().Use<EmailConfirmationProducer>();
-			x.For<IConfigurationRoot>().Add(_configurationRoot);
+			x.For<IConfigurationRoot>().Add(ConfigurationRoot);
 		}
 
 		private void SetupMongo(ConfigurationExpression x)
@@ -103,9 +95,18 @@ namespace PVDevelop.UCoach.AuthenticationApp
 			x.For<IValidator>().Use<MongoConfirmationRepository>();
 		}
 
+		private void SetupConfigurations(ConfigurationExpression x)
+		{
+			x.
+				For<IConfigurationSectionProvider<EmailProducerSettings>>().
+				Use<ConfigurationRootConfigurationSectionProvider<EmailProducerSettings>>().
+				Ctor<string>().
+				Is("EmailConfirmationProducer");
+		}
+
 		private void StartInitializers()
 		{
-			foreach (var initializer in _container.GetAllInstances<IInitializer>())
+			foreach (var initializer in AuthenticationMicroservice.Instance.Container.GetAllInstances<IInitializer>())
 			{
 				initializer.Initialize();
 			}
@@ -113,9 +114,29 @@ namespace PVDevelop.UCoach.AuthenticationApp
 
 		private void StartValidators()
 		{
-			foreach (var validator in _container.GetAllInstances<IValidator>())
+			foreach (var validator in AuthenticationMicroservice.Instance.Container.GetAllInstances<IValidator>())
 			{
 				validator.Validate();
+			}
+		}
+
+		private void StartWebApi()
+		{
+			var hostAddress = ConfigurationRoot.GetConnectionString("Host");
+			new WebHostBuilder().
+				UseUrls(hostAddress).
+				UseKestrel().
+				UseStartup<Startup>().
+				Build().
+				Run(_cancellationToken);
+		}
+
+		public void Dispose()
+		{
+			if (Container != null)
+			{
+				Container.Dispose();
+				Container = null;
 			}
 		}
 	}

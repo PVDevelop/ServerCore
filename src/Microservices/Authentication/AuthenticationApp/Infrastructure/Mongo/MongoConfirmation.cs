@@ -23,6 +23,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 		/// <summary>
 		/// Ключ подтверждения создания пользователя
 		/// </summary>
+		[MongoIndexName("key")]
 		public string Key { get; set; }
 
 		/// <summary>

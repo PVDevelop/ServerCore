@@ -5,12 +5,12 @@
 		"ConfirmationUrl": "http://localhost:8000/confirmations/{0}"
 	},
 	"EmailConfirmationProducer": {
-		"enableSsl": "true",
-		"senderAddress": "PVDevelop@yandex.ru",
-		"smtpHost": "smtp.yandex.ru",
-		"smtpPort": "25",
-		"password": "tkvXp7IvXlUEo9N7EBU7",
-		"userName": "PVDevelop@yandex.ru"
+		"EnableSsl": "true",
+		"SenderAddress": "PVDevelop@yandex.ru",
+		"SmtpHost": "smtp.yandex.ru",
+		"SmtpPort": "25",
+		"Password": "tkvXp7IvXlUEo9N7EBU7",
+		"UserName": "PVDevelop@yandex.ru"
 	}
 }
 

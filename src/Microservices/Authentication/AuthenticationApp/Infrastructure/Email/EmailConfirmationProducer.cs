@@ -1,43 +1,43 @@
 ﻿using System;
 using MailKit.Net.Smtp;
 using MailKit.Security;
-using Microsoft.Extensions.Options;
 using MimeKit;
+using PVDevelop.UCoach.Configuration;
 
 namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Email
 {
 	public class EmailConfirmationProducer : IConfirmationProducer
 	{
-		private readonly IOptions<EmailProducerSettings> _settings;
+		private readonly IConfigurationSectionProvider<EmailProducerSettings> _configurationSectionProvider;
 
 		public EmailConfirmationProducer(
-			IOptions<EmailProducerSettings> settings)
+			IConfigurationSectionProvider<EmailProducerSettings> configurationSectionProvider)
 		{
-			if (settings == null) throw new ArgumentNullException(nameof(settings));
+			if (configurationSectionProvider == null) throw new ArgumentNullException(nameof(configurationSectionProvider));
 
-			_settings = settings;
+			_configurationSectionProvider = configurationSectionProvider;
 		}
 
 		public void Produce(string address, string url)
 		{
 			using (var client = new SmtpClient())
 			{
-				var emailSettings = _settings.Value;
+				var emailSettings = _configurationSectionProvider.GetSection();
 
 				client.Connect(
-					host: emailSettings.SmtpHost, 
+					host: emailSettings.SmtpHost,
 					port: emailSettings.SmtpPort,
-					options:emailSettings.EnableSsl ? SecureSocketOptions.StartTlsWhenAvailable: SecureSocketOptions.None);
+					options: emailSettings.EnableSsl ? SecureSocketOptions.StartTlsWhenAvailable : SecureSocketOptions.None);
 				client.Authenticate(emailSettings.UserName, emailSettings.Password);
 
 				var message = new MimeMessage();
 				message.From.Add(new MailboxAddress("Some Application", emailSettings.SenderAddress));
 				message.To.Add(new MailboxAddress("Someone", address));
 				message.Subject = "Confirmation";
-				message.Body = new TextPart("plain")
-				{
-					Text = $"Confirm user creation: {url}"
-				};
+
+				var bodyBuilder = new BodyBuilder { HtmlBody = string.Format(Resources.Confirmation, url) };
+
+				message.Body = bodyBuilder.ToMessageBody();
 				client.Send(message);
 
 				client.Disconnect(true);
