@@ -5,7 +5,7 @@ export default class Home extends React.Component{
 	render() {
 		return(
 			<nav>
-				<Link to="/logon">Logon</Link>
+				<Link to="register">Создать пользователя</Link>
 			</nav>
 		);
 	}

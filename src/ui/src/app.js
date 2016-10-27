@@ -1,14 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import {Route, Router, Link, browserHistory} from "react-router";
-import Bar from "./bar";
 import Home from "./home";
-import LogonForm from "./logon";
+import RegisterFrom from "./register";
 
 ReactDOM.render(
 	<Router history={browserHistory}>
-		<Route path='/' component={Bar} />
-		<Route path="logon" component ={LogonForm} />
+		<Route path='/' component={Home} />
+		<Route path='register' component={RegisterFrom}/>
 	</Router>,
 	document.getElementById('example')
 );

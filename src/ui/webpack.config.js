@@ -3,7 +3,7 @@ var path = require('path');
 module.exports = {
 	entry: './src/app.js',
 	output: {
-		path: path.resolve(__dirname, "../server/Microservices/HttpGateway/HttpGatewayApp/wwwroot"),
+		path: path.resolve(__dirname, "../server/Microservices/HttpGateway/HttpGatewayApp/wwwroot/js"),
 		filename: 'app.js'
 	},
 	module: {
