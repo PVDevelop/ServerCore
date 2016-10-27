@@ -1,8 +1,6 @@
 ﻿using System;
-using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using StructureMap;
@@ -22,6 +20,8 @@ namespace PVDevelop.UCoach.HttpGatewayApp.Infrastructure.WebApi
 		{
 			app.UseMvc();
 			app.UseExceptionHandler();
+			app.UseDefaultFiles();
+			app.UseStaticFiles();
 		}
 	}
 }

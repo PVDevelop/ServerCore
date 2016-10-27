@@ -59,6 +59,7 @@ namespace PVDevelop.UCoach.HttpGatewayApp
 			new WebHostBuilder().
 				UseUrls(hostAddress).
 				UseKestrel().
+				UseContentRoot(Directory.GetCurrentDirectory()).
 				UseStartup<Startup>().
 				Build().
 				Run();
