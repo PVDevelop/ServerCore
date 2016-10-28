@@ -20,7 +20,8 @@ namespace PVDevelop.UCoach.HttpGatewayApp.Infrastructure.WebApi
 		{
 			app.UseMvc();
 			app.UseExceptionHandler();
-			app.UseDefaultFiles();
+			app.UseStaticFiles();
+			app.UseMiddleware<IndexSelectorMiddleware>();
 			app.UseStaticFiles();
 		}
 	}
