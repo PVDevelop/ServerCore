@@ -9,5 +9,5 @@ ReactDOM.render(
 		<Route path='/' component={Home} />
 		<Route path='register' component={RegisterFrom}/>
 	</Router>,
-	document.getElementById('example')
+	document.getElementById('main')
 );
