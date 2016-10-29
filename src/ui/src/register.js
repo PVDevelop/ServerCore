@@ -1,4 +1,5 @@
 import React from 'react';
+import { browserHistory } from 'react-router'
 
 export default class RegisterForm extends React.Component
 {
@@ -49,7 +50,17 @@ export default class RegisterForm extends React.Component
 		var url = "http://localhost:8000/api/users";
 
 		fetch(url, options)
-			.then(response => alert(response.status))
+			.then(response => 
+				{
+					if(response.status == 200)
+					{
+						browserHistory.push('/confirm_sent');
+					}
+					else
+					{
+						alert(response.status);
+					}
+				})
 			.catch(err => alert(err));
 	}
 
