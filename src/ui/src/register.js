@@ -1,36 +1,46 @@
-import React from 'react';
-import { browserHistory } from 'react-router'
+import React from "react";
+import { browserHistory } from "react-router";
 
-export default class RegisterForm extends React.Component
-{
-	constructor(props) 
-	{
+import Form from 'react-bootstrap/lib/Form';
+import FormControl from 'react-bootstrap/lib/FormControl';
+import FormGroup from 'react-bootstrap/lib/FormGroup';
+import ControlLabel from 'react-bootstrap/lib/ControlLabel';
+import Button from 'react-bootstrap/lib/Button';
+import Panel from 'react-bootstrap/lib/Panel';
+
+import RegistrationOk from "./registration_ok";
+
+export default class RegisterForm extends React.Component {
+	constructor(props) {
 		super(props);
-		this.state = 
-		{
-			email: '',
-			password: ''
-		};
+		this.state =
+			{
+				email: '',
+				password: '',
+				showOk: false
+			};
 
 		this.onEmailChange = this.onEmailChange.bind(this);
 		this.onPasswordChange = this.onPasswordChange.bind(this);
-		this.onButtonClicked = this.onButtonClicked.bind(this);
+		this.onRegisterButtonClicked = this.onRegisterButtonClicked.bind(this);
+		this.onRegistrationOk = this.onRegistrationOk.bind(this);
 	}
 
-	onEmailChange(event)
-	{
-		this.setState({email: event.target.value});
+	onEmailChange(event) {
+		this.setState({ email: event.target.value });
 	}
 
-	onPasswordChange(event)
-	{
-		this.setState({password: event.target.value});
+	onPasswordChange(event) {
+		this.setState({ password: event.target.value });
 	}
-	
-	onButtonClicked(e)
-	{
+
+	onRegistrationOk() {
+		this.setState({ showOk: true });
+	}
+
+	onRegisterButtonClicked(e) {
 		e.preventDefault();
-		
+
 		var data = {
 			email: this.state.email,
 			password: this.state.password
@@ -38,7 +48,7 @@ export default class RegisterForm extends React.Component
 
 		var json = JSON.stringify(data);
 
-		var options =  {
+		var options = {
 			method: "post",
 			headers: {
 				"Accept": "application/json",
@@ -46,44 +56,47 @@ export default class RegisterForm extends React.Component
 			},
 			body: json
 		};
-		
+
 		var url = "http://localhost:8000/api/users";
 
 		fetch(url, options)
-			.then(response => 
-				{
-					if(response.status == 200)
-					{
-						browserHistory.push('/confirm_sent');
-					}
-					else
-					{
-						alert(response.status);
-					}
-				})
+			.then(response => {
+				if (response.status == 200) {
+					this.onRegistrationOk();
+				}
+				else {
+					alert(response.status);
+				}
+			})
 			.catch(err => alert(err));
 	}
 
-	render()
-	{
-		return(
-			<form>
-				<div>
-					<h2>Создание нового пользователя</h2>
-				</div>
+	render() {
+		return (
+			<Panel header="Создание нового пользователя">
+				<Form>
+					<FormGroup>
+						<ControlLabel>E-mail</ControlLabel>
+						<FormControl
+							type="email"
+							placeholder="Введите почтовый адрес"
+							value={this.state.email}
+							onChange={this.onEmailChange} />
 
-				<div>
-					<label>E-mail</label>
-					<input type="text" onChange={this.onEmailChange}/ >
+						<ControlLabel>Password</ControlLabel>
+						<FormControl
+							type="password"
+							placeholder="Введите пароль"
+							value={this.state.password}
+							onChange={this.onPasswordChange} />
 
-					<label>Password</label>
-					<input type="password" onChange={this.onPasswordChange}/ >
-				</div>
-
-				<div>
-					<button onClick = {this.onButtonClicked}>Создать</button>
-				</div>
-			</form>
+						<Button
+							type="submit"
+							onClick={this.onRegisterButtonClicked}>Создать</Button>
+					</FormGroup>
+					{this.state.showOk ? <RegistrationOk /> : null}
+				</Form>
+			</Panel>
 		);
 	}
 }
