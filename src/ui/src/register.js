@@ -7,6 +7,7 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import Button from 'react-bootstrap/lib/Button';
 import Panel from 'react-bootstrap/lib/Panel';
+import Col from 'react-bootstrap/lib/Col';
 
 import RegistrationOk from "./registration_ok";
 
@@ -73,27 +74,38 @@ export default class RegisterForm extends React.Component {
 
 	render() {
 		return (
-			<Panel header="Создание нового пользователя">
+			<Panel header="Создание нового пользователя" span6>
 				<Form>
 					<FormGroup>
-						<ControlLabel>E-mail</ControlLabel>
-						<FormControl
-							type="email"
-							placeholder="Введите почтовый адрес"
-							value={this.state.email}
-							onChange={this.onEmailChange} />
-
-						<ControlLabel>Password</ControlLabel>
-						<FormControl
-							type="password"
-							placeholder="Введите пароль"
-							value={this.state.password}
-							onChange={this.onPasswordChange} />
-
-						<Button
-							type="submit"
-							onClick={this.onRegisterButtonClicked}>Создать</Button>
+						<Col sm={2} componentClass={ControlLabel}>Email</Col>
+						<Col sm={10}>
+							<FormControl
+								type="email"
+								placeholder="Введите почтовый адрес"
+								value={this.state.email}
+								onChange={this.onEmailChange} />
+						</Col>
 					</FormGroup>
+
+					<FormGroup>
+						<Col sm={2} componentClass={ControlLabel}>Пароль</Col>
+						<Col sm={10}>
+							<FormControl
+								type="password"
+								placeholder="Введите пароль"
+								value={this.state.password}
+								onChange={this.onPasswordChange} />
+						</Col>
+					</FormGroup>
+
+					<FormGroup>
+						<Col smOffset={2} sm={10}>
+							<Button
+								type="submit"
+								onClick={this.onRegisterButtonClicked}>Создать</Button>
+						</Col>
+					</FormGroup>
+
 					{this.state.showOk ? <RegistrationOk /> : null}
 				</Form>
 			</Panel>
