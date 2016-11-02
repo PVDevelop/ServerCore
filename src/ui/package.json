@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "copy": "ncp index.html ../server/Microservices/HttpGateway/HttpGatewayApp/wwwroot/index.html",
     "clean": "rimraf ../server/Microservices/HttpGateway/HttpGatewayApp/wwwroot/*",
+    "copy": "ncp index.html ../server/Microservices/HttpGateway/HttpGatewayApp/wwwroot/index.html",
     "bundle": "webpack",
     "start": "node my_srv",
     "build": "npm run clean && npm run copy && npm run bundle"

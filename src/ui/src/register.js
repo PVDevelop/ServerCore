@@ -74,7 +74,7 @@ export default class RegisterForm extends React.Component {
 
 	render() {
 		return (
-			<Panel header="Создание нового пользователя" span6>
+			<Panel header="Создание нового пользователя">
 				<Form>
 					<FormGroup>
 						<Col sm={2} componentClass={ControlLabel}>Email</Col>
