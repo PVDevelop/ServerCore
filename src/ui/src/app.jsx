@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import {Route, Router, Link, browserHistory} from "react-router";
-import Home from "./home";
-import RegisterFrom from "./register";
-import Confirm from "./confirmation";
-import NotFound from "./not_found";
+import Home from "./components/home.jsx";
+import RegisterFrom from "./components/register";
+import Confirm from "./components/confirmation";
+import NotFound from "./components/not_found";
 
 ReactDOM.render(
 	<Router history={browserHistory}>

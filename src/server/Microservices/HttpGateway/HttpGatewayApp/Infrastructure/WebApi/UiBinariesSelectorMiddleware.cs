@@ -1,15 +1,13 @@
-﻿using System;
-using System.Diagnostics.Tracing;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
 namespace PVDevelop.UCoach.HttpGatewayApp.Infrastructure.WebApi
 {
-	public class IndexSelectorMiddleware
+	public class UiBinariesSelectorMiddleware
 	{
 		private readonly RequestDelegate _next;
 
-		public IndexSelectorMiddleware(RequestDelegate next)
+		public UiBinariesSelectorMiddleware(RequestDelegate next)
 		{
 			_next = next;
 		}

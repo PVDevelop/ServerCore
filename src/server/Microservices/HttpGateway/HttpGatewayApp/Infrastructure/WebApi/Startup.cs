@@ -20,32 +20,11 @@ namespace PVDevelop.UCoach.HttpGatewayApp.Infrastructure.WebApi
 
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
 		{
-			app.UseMiddleware<TestMiddleware>("start");
 			app.UseMvc();
-			app.UseMiddleware<TestMiddleware>("mvc");
 			app.UseExceptionHandler();
-			app.UseMiddleware<TestMiddleware>("exception");
-			app.UseStaticFiles();
-			app.UseMiddleware<TestMiddleware>("static");
-			app.UseMiddleware<IndexSelectorMiddleware>();
+			app.UseStaticFiles(new StaticFileOptions() {});
+			app.UseMiddleware<UiBinariesSelectorMiddleware>();
 			app.UseStaticFiles();
 		}
 	}
-
-	class TestMiddleware
-	{
-		private readonly string _name;
-		private readonly RequestDelegate _next;
-
-		public TestMiddleware(string name, RequestDelegate next)
-		{
-			_name = name;
-			_next = next;
-		}
-
-		public async Task Invoke(HttpContext context)
-		{
-			await _next.Invoke(context);
-		}
-}
 }
