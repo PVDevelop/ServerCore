@@ -22,7 +22,7 @@ namespace PVDevelop.UCoach.HttpGatewayApp.Infrastructure.WebApi
 		{
 			app.UseMvc();
 			app.UseExceptionHandler();
-			app.UseStaticFiles(new StaticFileOptions() {});
+			app.UseStaticFiles();
 			app.UseMiddleware<UiBinariesSelectorMiddleware>();
 			app.UseStaticFiles();
 		}
