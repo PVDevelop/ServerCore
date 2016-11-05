@@ -5,7 +5,9 @@ import Home from "./components/home";
 import RegisterFrom from "./components/register";
 import Confirm from "./components/confirmation";
 import NotFound from "./components/not_found";
-import "bootstrap/dist/css/bootstrap.css";
+
+global.jQuery = require('jquery');
+require('bootstrap');
 
 ReactDOM.render(
 	<Router history={browserHistory}>
