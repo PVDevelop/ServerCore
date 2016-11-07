@@ -18,7 +18,7 @@ export default class RegistrationOk extends React.Component{
 
 	render() {
 		return(
-			<Modal.Dialog>
+			<Modal show={true}>
 				<Modal.Header>
 					<Modal.Title>Пользователь успешно создан.</Modal.Title>
 				</Modal.Header>
@@ -33,7 +33,7 @@ export default class RegistrationOk extends React.Component{
 					OK
 				</Button>
 				</Modal.Footer>
-			</Modal.Dialog>
+			</Modal>
 		);
 	}
 }

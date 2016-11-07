@@ -10,21 +10,26 @@ import Panel from "react-bootstrap/lib/Panel";
 import Col from "react-bootstrap/lib/Col";
 
 import RegistrationOk from "./registration_ok";
+import RegistrationFailure from "./registration_failure";
+
+const registration_state_ok = "ok";
+const registration_state_failure = "failure";
+const registration_state_registering = "registering";
 
 export default class RegisterForm extends React.Component {
+
 	constructor(props) {
 		super(props);
 		this.state =
 			{
 				email: "",
 				password: "",
-				showOk: false
+				registration_state: ""
 			};
 
 		this.onEmailChange = this.onEmailChange.bind(this);
 		this.onPasswordChange = this.onPasswordChange.bind(this);
 		this.onRegisterButtonClicked = this.onRegisterButtonClicked.bind(this);
-		this.onRegistrationOk = this.onRegistrationOk.bind(this);
 	}
 
 	onEmailChange(event) {
@@ -35,12 +40,10 @@ export default class RegisterForm extends React.Component {
 		this.setState({ password: event.target.value });
 	}
 
-	onRegistrationOk() {
-		this.setState({ showOk: true });
-	}
-
 	onRegisterButtonClicked(e) {
 		e.preventDefault();
+
+		this.setState({ registration_state: registration_state_registering });
 
 		var data = {
 			email: this.state.email,
@@ -63,13 +66,15 @@ export default class RegisterForm extends React.Component {
 		fetch(url, options)
 			.then(response => {
 				if (response.status == 200) {
-					this.onRegistrationOk();
+					this.setState({ registration_state: registration_state_ok });
 				}
 				else {
-					alert(response.status);
+					this.setState({ registration_state: registration_state_failure });
 				}
 			})
-			.catch(err => alert(err));
+			.catch(err => {
+				this.setState({ registration_state: registration_state_failure });
+			});
 	}
 
 	render() {
@@ -102,11 +107,13 @@ export default class RegisterForm extends React.Component {
 						<Col smOffset={2} sm={10}>
 							<Button
 								type="submit"
+								disabled={this.state.registration_state === registration_state_registering}
 								onClick={this.onRegisterButtonClicked}>Создать</Button>
 						</Col>
 					</FormGroup>
 
-					{this.state.showOk ? <RegistrationOk /> : null}
+					{this.state.registration_state === registration_state_ok ? <RegistrationOk /> : null}
+					{this.state.registration_state === registration_state_failure ? <RegistrationFailure /> : null}
 				</Form>
 			</Panel>
 		);
