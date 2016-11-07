@@ -49,7 +49,6 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 			_logger.Debug($"Создаю пользователя '{email}'.");
 
 			var user = new User(
-				_keyGeneratorService.GenerateUserId(),
 				email,
 				password,
 				_utcTimeProvider.UtcNow);
@@ -58,7 +57,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 			_logger.Debug($"Создаю ключ подтверждения для пользователя '{email}'.");
 			var confirmation = new Confirmation(
 				userId: user.Id,
-				key: _keyGeneratorService.GenerateUserId(),
+				key: _keyGeneratorService.GenerateConfirmationKey(),
 				creationTime: _utcTimeProvider.UtcNow);
 			_confirmationRepository.Insert(confirmation);
 
@@ -68,6 +67,36 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 			_confirmationProducer.Produce(email, url);
 
 			_logger.Info($"Пользователь '{email}' создан.");
+		}
+
+		public void ConfirmUserRegistration(string confirmationKey)
+		{
+			if (string.IsNullOrWhiteSpace(confirmationKey)) throw new ArgumentException("Not set", nameof(confirmationKey));
+
+			_logger.Debug($"Подтверждение регистрации пользователя с ключом '{confirmationKey}'.");
+
+			var confirmation = _confirmationRepository.FindByConfirmationKey(confirmationKey);
+			if (confirmation == null)
+			{
+				throw new ConfirmationNotFoundException(confirmationKey);
+			}
+
+			confirmation.Confirm();
+
+			_logger.Debug($"Сохраняю подтверждение '{confirmation.Key}'.");
+			_confirmationRepository.Update(confirmation);
+
+			var user = _userRepository.GetById(confirmation.UserId);
+			if (user == null)
+			{
+				// todo: здесь надо откатить подтверждение.
+				throw new UserNotFoundException(confirmation.UserId);
+			}
+
+			user.Confirm();
+
+			_logger.Debug($"Сохраняю пользователя '{user.Email}'");
+			_userRepository.Update(user);
 		}
 
 		private static string GetConfirmationUrl(IConfigurationRoot configuration)

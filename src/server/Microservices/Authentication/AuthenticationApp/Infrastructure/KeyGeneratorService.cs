@@ -8,15 +8,5 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure
 		{
 			return Guid.NewGuid().ToString();
 		}
-
-		public string GenerateTokenKey()
-		{
-			return Guid.NewGuid().ToString();
-		}
-
-		public string GenerateUserId()
-		{
-			return Guid.NewGuid().ToString();
-		}
 	}
 }

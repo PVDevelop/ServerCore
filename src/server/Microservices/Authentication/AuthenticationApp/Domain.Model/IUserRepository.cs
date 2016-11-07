@@ -3,8 +3,18 @@
 	public interface IUserRepository
 	{
 		/// <summary>
-		/// Добавление нового пользователя в БД
+		/// Находит пользователя по его Id. Если не найден, возвращает null.
+		/// </summary>
+		User GetById(string userId);
+
+		/// <summary>
+		/// Добавление нового пользователя.
 		/// </summary>
 		void Insert(User user);
+
+		/// <summary>
+		/// Обновление имеющегося пользователя.
+		/// </summary>
+		void Update(User user);
 	}
 }

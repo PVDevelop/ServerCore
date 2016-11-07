@@ -13,8 +13,14 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 		/// </summary>
 		public const int VERSION = 1;
 
+		/// <summary>
+		/// Идентификатор пользователя.
+		/// </summary>
 		public string Id { get; set; }
 
+		/// <summary>
+		/// Версия формата документа.
+		/// </summary>
 		public int Version { get; private set; }
 
 		/// <summary>
@@ -29,11 +35,14 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 		public string Password { get; set; }
 
 		/// <summary>
-		/// Время создания пользователя
+		/// Состояние пользователя.
+		/// </summary>
+		public UserState State { get; set; }
+
+		/// <summary>
+		/// Время создания пользователя.
 		/// </summary>
 		public DateTime CreationTime { get; set; }
-
-		public ConfirmationStatus Status { get; set; }
 
 		public MongoUser()
 		{

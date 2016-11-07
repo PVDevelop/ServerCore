@@ -4,34 +4,34 @@ using System.Text.RegularExpressions;
 namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 {
 	/// <summary>
-	/// Доменная модель - пользователь
+	/// Доменная модель - пользователь.
 	/// </summary>
 	public class User
 	{
 		/// <summary>
-		/// Уникальный идентификатор
+		/// Уникальный идентификатор.
 		/// </summary>
 		public string Id { get; }
 
 		/// <summary>
-		/// Уникальный почтовый адрес
+		/// Уникальный почтовый адрес.
 		/// </summary>
 		public string Email { get; }
 
 		/// <summary>
-		/// Кодированный пароль пользователя
+		/// Кодированный пароль пользователя.
 		/// </summary>
 		public string Password { get; private set; }
 
 		/// <summary>
-		/// Время создания
+		/// Состояние пользователя.
 		/// </summary>
-		public DateTime CreationTime { get; }
+		public UserState State { get; private set; }
 
 		/// <summary>
-		/// Статус подтверждения пользователя
+		/// Время создания.
 		/// </summary>
-		public ConfirmationStatus ConfirmationStatus { get; private set; }
+		public DateTime CreationTime { get; }
 
 		/// <summary>
 		/// Конструктор используется только при восстановлении из хранилища
@@ -40,32 +40,29 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 			string id,
 			string email,
 			string password,
-			DateTime creationTime,
-			ConfirmationStatus confirmationStatus)
+			UserState state,
+			DateTime creationTime)
 		{
 			Id = id;
 			Email = email;
 			Password = password;
+			State = state;
 			CreationTime = creationTime;
-			ConfirmationStatus = confirmationStatus;
 		}
 
 		public User(
-			string id,
 			string email,
 			string password,
 			DateTime creationTime)
 		{
-			if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("Not set", nameof(id));
-
 			ValidateEmail(email);
 			ValidatePassword(email, password);
 
-			Id = id;
+			Id = Guid.NewGuid().ToString();
 			Email = email;
 			EncryptAndSetPassword(password);
 			CreationTime = creationTime;
-			ConfirmationStatus = ConfirmationStatus.Unconfirmed;
+			State = UserState.New;
 		}
 
 		private void EncryptAndSetPassword(string plainPassword)
@@ -75,7 +72,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 			Password = password;
 		}
 
-		private void ValidateEmail(string email)
+		private static void ValidateEmail(string email)
 		{
 			if (string.IsNullOrWhiteSpace(email)) throw new ArgumentException("Not set", nameof(email));
 
@@ -85,7 +82,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 			}
 		}
 
-		public void ValidatePassword(string email, string password)
+		private static void ValidatePassword(string email, string password)
 		{
 			if (string.IsNullOrWhiteSpace(email)) throw new ArgumentException("Not set", nameof(email));
 			if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Not set", password);
@@ -97,10 +94,10 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		}
 
 		/// <summary>
-		/// Проверка пароля.
+		/// Проверка некодированного пароля.
 		/// </summary>
 		/// <param name="plainPassword">Незакодированный пароль</param>
-		public void CheckPassword(string plainPassword)
+		public void CheckPlainPassword(string plainPassword)
 		{
 			if (!BCrypt.Net.BCrypt.Verify(plainPassword, Password))
 			{
@@ -109,11 +106,11 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		}
 
 		/// <summary>
-		/// Установка статуса подтверждение
+		/// Перевод пользователя в состояние "Подтвержден".
 		/// </summary>
 		public void Confirm()
 		{
-			ConfirmationStatus = ConfirmationStatus.Confirmed;
+			State = UserState.Confirmed;
 		}
 	}
 }

@@ -25,17 +25,10 @@ namespace PVDevelop.UCoach.Mongo
 			return coll.Find(predicate).Any();
 		}
 
-		public bool TryFind(Expression<Func<T, bool>> predicate, out T item)
-		{
-			var coll = GetCollection();
-			item = coll.Find(predicate).SingleOrDefault();
-			return item != null;
-		}
-
 		public T Find(Expression<Func<T, bool>> predicate)
 		{
 			var coll = GetCollection();
-			return coll.Find(predicate).Single();
+			return coll.Find(predicate).SingleOrDefault();
 		}
 
 		public void Insert(T document)

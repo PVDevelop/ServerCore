@@ -4,37 +4,32 @@ using System.Linq.Expressions;
 namespace PVDevelop.UCoach.Mongo
 {
 	/// <summary>
-	/// Продоставляет доступ к БД MongoDB
+	/// Продоставляет доступ к БД MongoDB.
 	/// </summary>
 	public interface IMongoRepository<T>
 	{
 		/// <summary>
-		/// Возвращает true, если объект существует, иначе - false
+		/// Возвращает true, если объект существует, иначе - false.
 		/// </summary>
 		bool Contains(Expression<Func<T, bool>> predicate);
 
 		/// <summary>
-		/// Вставляет документ в коллекцию
+		/// Вставляет новый документ в коллекцию.
 		/// </summary>
 		void Insert(T document);
 
 		/// <summary>
-		/// Удаляет документ из коллекции
+		/// Удаляет документ из коллекции.
 		/// </summary>
 		void Remove(Expression<Func<T, bool>> predicate);
 
 		/// <summary>
-		/// Находит единственный объект по предикату
+		/// Находит документ по предикату. Если не найден, возвращает null.
 		/// </summary>
 		T Find(Expression<Func<T, bool>> predicate);
 
 		/// <summary>
-		/// Пытается найти объект по предикату
-		/// </summary>
-		bool TryFind(Expression<Func<T, bool>> predicate, out T item);
-
-		/// <summary>
-		/// Замещает имеющийся документ новым
+		/// Замещает имеющийся документ новым.
 		/// </summary>
 		void ReplaceOne(Expression<Func<T, bool>> predicate, T document);
 	}

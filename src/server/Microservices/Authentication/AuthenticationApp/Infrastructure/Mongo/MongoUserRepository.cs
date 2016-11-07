@@ -72,6 +72,14 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 
 		#region IUserRepository
 
+		public User GetById(string userId)
+		{
+			if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("Not set", nameof(userId));
+
+			var mongoUser = _repository.Find(u => u.Id == userId);
+			return mongoUser == null ? null : MapToDomainUser(mongoUser);
+		}
+
 		public void Insert(User user)
 		{
 			if (user == null)
@@ -83,16 +91,34 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 			_repository.Insert(mongoUser);
 		}
 
+		public void Update(User user)
+		{
+			if (user == null) throw new ArgumentNullException(nameof(user));
+
+			var mongoUser = MapToMongoUser(user);
+			_repository.ReplaceOne(u => u.Id == mongoUser.Id, mongoUser);
+		}
+
 		private static MongoUser MapToMongoUser(User user)
 		{
-			return new MongoUser()
+			return new MongoUser
 			{
 				Id = user.Id,
 				Email = user.Email,
 				Password = user.Password,
 				CreationTime = user.CreationTime,
-				Status = user.ConfirmationStatus
+				State = user.State
 			};
+		}
+
+		private static User MapToDomainUser(MongoUser user)
+		{
+			return new User(
+				id: user.Id,
+				email: user.Email,
+				password: user.Password,
+				state: user.State,
+				creationTime: user.CreationTime);
 		}
 
 		#endregion
