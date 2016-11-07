@@ -1,13 +1,13 @@
 import React from "react";
 import { browserHistory } from "react-router";
 
-import Form from 'react-bootstrap/lib/Form';
-import FormControl from 'react-bootstrap/lib/FormControl';
-import FormGroup from 'react-bootstrap/lib/FormGroup';
-import ControlLabel from 'react-bootstrap/lib/ControlLabel';
-import Button from 'react-bootstrap/lib/Button';
-import Panel from 'react-bootstrap/lib/Panel';
-import Col from 'react-bootstrap/lib/Col';
+import Form from "react-bootstrap/lib/Form";
+import FormControl from "react-bootstrap/lib/FormControl";
+import FormGroup from "react-bootstrap/lib/FormGroup";
+import ControlLabel from "react-bootstrap/lib/ControlLabel";
+import Button from "react-bootstrap/lib/Button";
+import Panel from "react-bootstrap/lib/Panel";
+import Col from "react-bootstrap/lib/Col";
 
 import RegistrationOk from "./registration_ok";
 
@@ -16,8 +16,8 @@ export default class RegisterForm extends React.Component {
 		super(props);
 		this.state =
 			{
-				email: '',
-				password: '',
+				email: "",
+				password: "",
 				showOk: false
 			};
 

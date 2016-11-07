@@ -5,15 +5,14 @@ import Home from "./components/home";
 import RegisterFrom from "./components/register";
 import Confirm from "./components/confirmation";
 import NotFound from "./components/not_found";
-import "bootstrap/dist/css/bootstrap.css";
 
 ReactDOM.render(
 	<Router history={browserHistory}>
-		<Route path='/' component={Home}/>
-		<Route path='/register' component={RegisterFrom}/>
-		<Route path='/confirmations/:confirmation_id' component={Confirm}/>
+		<Route path="/" component={Home}/>
+		<Route path="/register" component={RegisterFrom}/>
+		<Route path="/confirmations/:confirmation_id" component={Confirm}/>
 
-		<Route path='*' component={NotFound}/>
+		<Route path="*" component={NotFound}/>
 	</Router>,
-	document.getElementById('main')
+	document.getElementById("main")
 );
