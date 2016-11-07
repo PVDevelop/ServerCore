@@ -241,9 +241,6 @@ ModelManifest.xml
 # FAKE - F# Make
 .fake/
 
-# VS Code
-**/.vscode/**
-
 # WWWRoot
 **/wwwroot/**
 

@@ -12,36 +12,36 @@ gulp.task("clean_debug", () => gulp.src(debug_build_path).pipe(clean({ force: tr
 
 // копируем в папку с дебажными бинарями необходимые файлы
 gulp.task("copy_debug", ["clean_debug"], () => {
-	var copiedFiles = ["./src/Index.html", "./src/theme/**"];
-	gulp
-		.src(copiedFiles)
-		.pipe(gulp.dest(debug_build_path));
+    var copiedFiles = ["./src/Index.html", "./src/theme/**"];
+    gulp
+        .src(copiedFiles)
+        .pipe(gulp.dest(debug_build_path));
 });
 
 gulp.task("default", ["copy_debug"], () => {
-	gulp
-		.src("./src/app.jsx")
-		.pipe(gulp_webpack({
-			devtool: "source-map",
-			watch: true,
-			output: {
-				filename: "app.js"
-			},
-			module: {
-				loaders: [
-					{
-						test: /\.jsx?$/,
-						loader: 'babel-loader',
-						exclude: /node_modules/,
-						query: {
-							presets: ['es2015', 'react']
-						}
-					}]
-			},
-			resolve:
-			{
-				extensions: ['', '.js', '.jsx']
-			}
-		}))
-		.pipe(gulp.dest(debug_build_path));
+    gulp
+        .src("./src/app.jsx")
+        .pipe(gulp_webpack({
+            devtool: "source-map",
+            watch: true,
+            output: {
+                filename: "app.js"
+            },
+            module: {
+                loaders: [
+                    {
+                        test: /\.jsx?$/,
+                        loader: 'babel-loader',
+                        exclude: /node_modules/,
+                        query: {
+                            presets: ['es2015', 'react']
+                        }
+                    }]
+            },
+            resolve:
+            {
+                extensions: ['', '.js', '.jsx']
+            }
+        }))
+        .pipe(gulp.dest(debug_build_path));
 });
