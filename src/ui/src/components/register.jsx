@@ -61,7 +61,7 @@ export default class RegisterForm extends React.Component {
 			body: json
 		};
 
-		var url = "http://localhost:8000/api/users";
+		var url = "/api/users";
 
 		fetch(url, options)
 			.then(response => {
