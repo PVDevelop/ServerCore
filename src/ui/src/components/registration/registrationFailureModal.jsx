@@ -4,32 +4,36 @@ import Form from 'react-bootstrap/lib/Form';
 import Button from 'react-bootstrap/lib/Button';
 import Modal from 'react-bootstrap/lib/Modal';
 
-export default class RegistrationOk extends React.Component {
+export default class RegistrationFailureModal extends React.Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            showModal: true
+        };
         this.onOkButtonClicked = this.onOkButtonClicked.bind(this);
     }
 
     onOkButtonClicked(e) {
-        browserHistory.push('/');
+        this.setState({ showModal: false });
     }
 
     render() {
         return (
-            <Modal show={true}>
+            <Modal show={this.state.showModal}>
                 <Modal.Header>
-                    <Modal.Title>Пользователь успешно создан.</Modal.Title>
+                    <Modal.Title>Пользователь не был зарегистрирован.</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <h4></h4>
-                    <p>Подтверждение о регистрации отправлено на указанный почтовый адрес.</p>
+                    <p>При регистрации пользователя произошла ошибка. Убедитесь в корректности введенных данных и повторите попытку снова.</p>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
                         bsStyle="primary"
                         onClick={this.onOkButtonClicked}>
                         OK
-                </Button>
+                    </Button>
                 </Modal.Footer>
             </Modal>
         );

@@ -3,7 +3,7 @@ var gutil = require("gulp-util");
 var clean = require("gulp-clean");
 var watch = require("gulp-watch");
 var gulp_webpack = require("gulp-webpack");
-var path = require('path');
+var path = require("path");
 
 const debug_build_path = "../server/Microservices/HttpGateway/HttpGatewayApp/wwwroot";
 
@@ -31,16 +31,16 @@ gulp.task("default", ["copy_debug"], () => {
                 loaders: [
                     {
                         test: /\.jsx?$/,
-                        loader: 'babel-loader',
+                        loader: "babel-loader",
                         exclude: /node_modules/,
                         query: {
-                            presets: ['es2015', 'react']
+                            presets: ["es2015", "react", "stage-0", "stage-2"]
                         }
                     }]
             },
             resolve:
             {
-                extensions: ['', '.js', '.jsx']
+                extensions: ["", ".js", ".jsx"]
             }
         }))
         .pipe(gulp.dest(debug_build_path));
