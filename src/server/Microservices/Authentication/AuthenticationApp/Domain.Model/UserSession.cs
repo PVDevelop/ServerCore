@@ -51,9 +51,9 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		public AccessToken GenerateToken()
 		{
 			var salt = BCrypt.Net.BCrypt.GenerateSalt();
-			var password = BCrypt.Net.BCrypt.HashPassword(Id, salt);
+			var token = BCrypt.Net.BCrypt.HashPassword(Id, salt);
 
-			return new AccessToken(password, Expiration);
+			return new AccessToken(token, Expiration);
 		}
 
 		/// <summary>
@@ -66,7 +66,14 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 			if (accessToken == null) throw new ArgumentNullException(nameof(accessToken));
 			if (utcTimeProvider == null) throw new ArgumentNullException(nameof(utcTimeProvider));
 
-			if (utcTimeProvider.UtcNow > accessToken.Expiration)
+			var utcNow = utcTimeProvider.UtcNow;
+
+			if (utcNow > Expiration)
+			{
+				return false;
+			}
+
+			if (utcNow > accessToken.Expiration)
 			{
 				return false;
 			}

@@ -61,6 +61,22 @@ namespace PVDevelop.UCoach.AuthenticationApp.Tests.Domain.Model
 			Assert.IsFalse(userSession.Validate(token, timeProvider));
 		}
 
+		[Test]
+		public void Validate_ExpiredSession_ReturnsFalse()
+		{
+			var timeProvider = new UtcTimeProviderStub(DateTime.UtcNow);
+
+			var userSession = new UserSession(new UserSessionGeneratorStub("some_id"), timeProvider);
+
+			var salt = BCrypt.Net.BCrypt.GenerateSalt();
+			var token = BCrypt.Net.BCrypt.HashPassword(userSession.Id, salt);
+			var accessToken = new AccessToken(token, timeProvider.UtcNow.AddDays(1000000));
+
+			timeProvider.UtcNow += UserSession.TokenExpirationPeriod + TimeSpan.FromSeconds(1);
+
+			Assert.IsFalse(userSession.Validate(accessToken, timeProvider));
+		}
+
 		internal class UtcTimeProviderStub : IUtcTimeProvider
 		{
 			public DateTime UtcNow { get; set; }
