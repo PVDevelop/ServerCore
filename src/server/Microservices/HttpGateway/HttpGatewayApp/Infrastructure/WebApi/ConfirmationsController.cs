@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using PVDevelop.UCoach.AuthenticationContrancts.Rest;
 using PVDevelop.UCoach.Configuration;
 using PVDevelop.UCoach.Rest;
@@ -10,6 +13,8 @@ namespace PVDevelop.UCoach.HttpGatewayApp.Infrastructure.WebApi
 	[Route("api/[controller]")]
 	public class ConfirmationsController : Controller
 	{
+		private const string ACCESS_TOKEN_COOKIE_NAME = "access_token";
+
 		private readonly IConnectionStringProvider _authenticationEndpointConnectionStringProvider;
 
 		public ConfirmationsController(
@@ -22,10 +27,25 @@ namespace PVDevelop.UCoach.HttpGatewayApp.Infrastructure.WebApi
 		}
 
 		[HttpPost]
-		public async Task CreateUser([FromBody] ConfirmUserRegistrationDto confirmUserRegistrationDto)
+		public async Task ConfirmUserAsync([FromBody] ConfirmUserRegistrationDto confirmUserRegistrationDto)
 		{
 			if (confirmUserRegistrationDto == null) throw new ArgumentNullException(nameof(confirmUserRegistrationDto));
-			await GetAuthenticationUrl().PostJsonAsync("api/confirmations", confirmUserRegistrationDto);
+			var tokenDto = await GetAuthenticationUrl().PostJsonWithResultAsync<TokenDto>("api/confirmations", confirmUserRegistrationDto);
+
+			if(string.IsNullOrWhiteSpace(tokenDto.Token))
+			{
+				throw new InvalidOperationException("Returned token is not specified");
+			}
+
+			var convertedToken = TokenConverter.ConvertToString(tokenDto);
+
+			var options = new CookieOptions
+			{
+				Path = "/",
+				Expires = tokenDto.Expiration
+			};
+
+			Response.Cookies.Append(ACCESS_TOKEN_COOKIE_NAME, convertedToken, options);
 		}
 
 		private RestClient GetAuthenticationUrl()

@@ -1,4 +1,6 @@
-﻿namespace PVDevelop.UCoach.AuthenticationApp.Application
+﻿using PVDevelop.UCoach.AuthenticationApp.Domain.Model;
+
+namespace PVDevelop.UCoach.AuthenticationApp.Application
 {
 	public interface IUserService
 	{
@@ -13,6 +15,7 @@
 		/// Подтвердить регистрацию пользователя
 		/// </summary>
 		/// <param name="confirmationKey">Клю подтверждения</param>
-		void ConfirmUserRegistration(string confirmationKey);
+		/// <returns>Токен авторизации</returns>
+		UserToken ConfirmUserRegistration(string confirmationKey);
 	}
 }

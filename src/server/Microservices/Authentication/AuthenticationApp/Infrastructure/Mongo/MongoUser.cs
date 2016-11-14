@@ -44,6 +44,11 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 		/// </summary>
 		public DateTime CreationTime { get; set; }
 
+		/// <summary>
+		/// Токен авторизации.
+		/// </summary>
+		public MongoUserToken Token { get; set; }
+
 		public MongoUser()
 		{
 			Version = VERSION;

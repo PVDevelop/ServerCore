@@ -9,7 +9,8 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 {
 	public class UserService : IUserService
 	{
-		private readonly IKeyGeneratorService _keyGeneratorService;
+		private readonly IConfirmationKeyGenerator _confirmationKeyGenerator;
+		private readonly ITokenGenerator _tokenGenerator;
 		private readonly IUtcTimeProvider _utcTimeProvider;
 		private readonly IUserRepository _userRepository;
 		private readonly IConfirmationRepository _confirmationRepository;
@@ -18,21 +19,24 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 		private readonly string _confirmationUrl;
 
 		public UserService(
-			IKeyGeneratorService keyGeneratorService,
+			IConfirmationKeyGenerator confirmationKeyGenerator,
+			ITokenGenerator tokenGenerator,
 			IUtcTimeProvider utcTimeProvider,
 			IUserRepository userRepository,
 			IConfirmationRepository confirmationRepository,
 			IConfirmationProducer confirmationProducer,
 			IConfigurationRoot configuration)
 		{
-			if (keyGeneratorService == null) throw new ArgumentNullException(nameof(keyGeneratorService));
+			if (confirmationKeyGenerator == null) throw new ArgumentNullException(nameof(confirmationKeyGenerator));
+			if (tokenGenerator == null) throw new ArgumentNullException(nameof(tokenGenerator));
 			if (utcTimeProvider == null) throw new ArgumentNullException(nameof(utcTimeProvider));
 			if (userRepository == null) throw new ArgumentNullException(nameof(userRepository));
 			if (confirmationRepository == null) throw new ArgumentNullException(nameof(confirmationRepository));
 			if (confirmationProducer == null) throw new ArgumentNullException(nameof(confirmationProducer));
 			if (configuration == null) throw new ArgumentNullException(nameof(configuration));
 
-			_keyGeneratorService = keyGeneratorService;
+			_confirmationKeyGenerator = confirmationKeyGenerator;
+			_tokenGenerator = tokenGenerator;
 			_utcTimeProvider = utcTimeProvider;
 			_userRepository = userRepository;
 			_confirmationRepository = confirmationRepository;
@@ -57,7 +61,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 			_logger.Debug($"Создаю ключ подтверждения для пользователя '{email}'.");
 			var confirmation = new Confirmation(
 				userId: user.Id,
-				key: _keyGeneratorService.GenerateConfirmationKey(),
+				key: _confirmationKeyGenerator.Generate(),
 				creationTime: _utcTimeProvider.UtcNow);
 			_confirmationRepository.Insert(confirmation);
 
@@ -69,7 +73,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 			_logger.Info($"Пользователь '{email}' создан.");
 		}
 
-		public void ConfirmUserRegistration(string confirmationKey)
+		public UserToken ConfirmUserRegistration(string confirmationKey)
 		{
 			if (string.IsNullOrWhiteSpace(confirmationKey)) throw new ArgumentException("Not set", nameof(confirmationKey));
 
@@ -93,10 +97,12 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 				throw new UserNotFoundException(confirmation.UserId);
 			}
 
-			user.Confirm();
+			var userToken =  user.Confirm(_tokenGenerator, _utcTimeProvider);
 
 			_logger.Debug($"Сохраняю пользователя '{user.Email}'");
 			_userRepository.Update(user);
+
+			return userToken;
 		}
 
 		private static string GetConfirmationUrl(IConfigurationRoot configuration)

@@ -2,9 +2,9 @@
 
 namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure
 {
-	public class KeyGeneratorService : IKeyGeneratorService
+	public class ConfirmationKeyGenerator : IConfirmationKeyGenerator
 	{
-		public string GenerateConfirmationKey()
+		public string Generate()
 		{
 			return Guid.NewGuid().ToString();
 		}

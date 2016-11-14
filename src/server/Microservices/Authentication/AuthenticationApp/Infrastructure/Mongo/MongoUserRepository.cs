@@ -101,24 +101,30 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 
 		private static MongoUser MapToMongoUser(User user)
 		{
+			var mongoUserToken = user.Token == null ? null : new MongoUserToken(user.Token.Token, user.Token.Expiration);
+
 			return new MongoUser
 			{
 				Id = user.Id,
 				Email = user.Email,
 				Password = user.Password,
 				CreationTime = user.CreationTime,
-				State = user.State
+				State = user.State,
+				Token = mongoUserToken
 			};
 		}
 
 		private static User MapToDomainUser(MongoUser user)
 		{
+			var token = user.Token == null ? null : new UserToken(user.Token.Token, user.Token.Expiration);
+
 			return new User(
 				id: user.Id,
 				email: user.Email,
 				password: user.Password,
 				state: user.State,
-				creationTime: user.CreationTime);
+				creationTime: user.CreationTime,
+				token: token);
 		}
 
 		#endregion

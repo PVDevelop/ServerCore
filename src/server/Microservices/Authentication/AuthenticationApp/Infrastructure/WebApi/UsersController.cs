@@ -17,7 +17,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.WebApi
 		}
 
 		[HttpPost]
-		public void CreatUser([FromBody] CreateUserDto createUserDto)
+		public void CreatUserAsync([FromBody] CreateUserDto createUserDto)
 		{
 			if (createUserDto == null) throw new ArgumentNullException(nameof(createUserDto));
 

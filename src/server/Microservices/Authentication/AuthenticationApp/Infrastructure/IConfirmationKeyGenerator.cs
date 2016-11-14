@@ -1,10 +1,10 @@
 ﻿namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure
 {
-	public interface IKeyGeneratorService
+	public interface IConfirmationKeyGenerator
 	{
 		/// <summary>
 		/// Генерация ключа подтверждения.
 		/// </summary>
-		string GenerateConfirmationKey();
+		string Generate();
 	}
 }

@@ -22,7 +22,7 @@ namespace PVDevelop.UCoach.HttpGatewayApp.Infrastructure.WebApi
 		}
 
 		[HttpPost]
-		public async Task CreateUser([FromBody] CreateUserDto createUserDto)
+		public async Task CreateUserAsync([FromBody] CreateUserDto createUserDto)
 		{
 			if (createUserDto == null) throw new ArgumentNullException(nameof(createUserDto));
 			await GetAuthenticationUrl().PostJsonAsync("api/users", createUserDto);

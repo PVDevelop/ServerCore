@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using PVDevelop.UCoach.AuthenticationApp.Infrastructure;
+using PVDevelop.UCoach.Timing;
 
 namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 {
@@ -8,6 +10,8 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 	/// </summary>
 	public class User
 	{
+		private static readonly TimeSpan TokenExpiration = TimeSpan.FromDays(1);
+
 		/// <summary>
 		/// Уникальный идентификатор.
 		/// </summary>
@@ -34,6 +38,11 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		public DateTime CreationTime { get; }
 
 		/// <summary>
+		/// Токен подтверждения пользователя.
+		/// </summary>
+		public UserToken Token { get; private set; }
+
+		/// <summary>
 		/// Конструктор используется только при восстановлении из хранилища
 		/// </summary>
 		internal User(
@@ -41,13 +50,15 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 			string email,
 			string password,
 			UserState state,
-			DateTime creationTime)
+			DateTime creationTime,
+			UserToken token)
 		{
 			Id = id;
 			Email = email;
 			Password = password;
 			State = state;
 			CreationTime = creationTime;
+			Token = token;
 		}
 
 		public User(
@@ -108,9 +119,20 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		/// <summary>
 		/// Перевод пользователя в состояние "Подтвержден".
 		/// </summary>
-		public void Confirm()
+		/// <returns>Токен авторизации</returns>
+		public UserToken Confirm(ITokenGenerator tokenGenerator, IUtcTimeProvider utcTimeProvider)
 		{
+			if (tokenGenerator == null) throw new ArgumentNullException(nameof(tokenGenerator));
+			if (utcTimeProvider == null) throw new ArgumentNullException(nameof(utcTimeProvider));
+
+			var token = tokenGenerator.Generate();
+			var expiration = utcTimeProvider.UtcNow + TokenExpiration;
+			var userToken = new UserToken(token, expiration);
+
+			Token = userToken;
 			State = UserState.Confirmed;
+
+			return Token;
 		}
 	}
 }
