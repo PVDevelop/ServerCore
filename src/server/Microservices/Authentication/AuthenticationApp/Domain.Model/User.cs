@@ -10,8 +10,6 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 	/// </summary>
 	public class User
 	{
-		private static readonly TimeSpan TokenExpiration = TimeSpan.FromDays(1);
-
 		/// <summary>
 		/// Уникальный идентификатор.
 		/// </summary>
@@ -38,9 +36,11 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		public DateTime CreationTime { get; }
 
 		/// <summary>
-		/// Токен подтверждения пользователя.
+		/// Сессия аутентификации пользователя.
+		/// Если null, то сессия не начата.
+		/// Сессия начинается при подтверждении пользователя.
 		/// </summary>
-		public UserToken Token { get; private set; }
+		public UserSession Session { get; private set; }
 
 		/// <summary>
 		/// Конструктор используется только при восстановлении из хранилища
@@ -51,14 +51,14 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 			string password,
 			UserState state,
 			DateTime creationTime,
-			UserToken token)
+			UserSession session)
 		{
 			Id = id;
 			Email = email;
 			Password = password;
 			State = state;
 			CreationTime = creationTime;
-			Token = token;
+			Session = session;
 		}
 
 		public User(
@@ -120,19 +120,15 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		/// Перевод пользователя в состояние "Подтвержден".
 		/// </summary>
 		/// <returns>Токен авторизации</returns>
-		public UserToken Confirm(ITokenGenerator tokenGenerator, IUtcTimeProvider utcTimeProvider)
+		public AccessToken Confirm(IUserSessionGenerator userSessionGenerator, IUtcTimeProvider utcTimeProvider)
 		{
-			if (tokenGenerator == null) throw new ArgumentNullException(nameof(tokenGenerator));
+			if (userSessionGenerator == null) throw new ArgumentNullException(nameof(userSessionGenerator));
 			if (utcTimeProvider == null) throw new ArgumentNullException(nameof(utcTimeProvider));
 
-			var token = tokenGenerator.Generate();
-			var expiration = utcTimeProvider.UtcNow + TokenExpiration;
-			var userToken = new UserToken(token, expiration);
-
-			Token = userToken;
+			Session = new UserSession(userSessionGenerator, utcTimeProvider);
 			State = UserState.Confirmed;
 
-			return Token;
+			return Session.GenerateToken();
 		}
 	}
 }

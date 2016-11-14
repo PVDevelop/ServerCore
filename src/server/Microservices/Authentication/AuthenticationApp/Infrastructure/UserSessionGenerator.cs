@@ -2,7 +2,7 @@
 
 namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure
 {
-	public class TokenGenerator : ITokenGenerator
+	public class UserSessionGenerator : IUserSessionGenerator
 	{
 		public string Generate()
 		{

@@ -3,14 +3,14 @@
 namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 {
 	/// <summary>
-	/// Value-object - токен авторизации пользователя.
+	/// Value-object - токен доступа.
 	/// </summary>
-	public class UserToken
+	public class AccessToken
 	{
 		public string Token { get; }
 		public DateTime Expiration { get; }
 
-		public UserToken(string token, DateTime expiration)
+		public AccessToken(string token, DateTime expiration)
 		{
 			if (string.IsNullOrWhiteSpace(token)) throw new ArgumentException("Not set", nameof(token));
 			if (expiration == default(DateTime)) throw new ArgumentException("Not set", nameof(expiration));

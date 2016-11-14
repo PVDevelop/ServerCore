@@ -10,7 +10,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 	public class UserService : IUserService
 	{
 		private readonly IConfirmationKeyGenerator _confirmationKeyGenerator;
-		private readonly ITokenGenerator _tokenGenerator;
+		private readonly IUserSessionGenerator _tokenGenerator;
 		private readonly IUtcTimeProvider _utcTimeProvider;
 		private readonly IUserRepository _userRepository;
 		private readonly IConfirmationRepository _confirmationRepository;
@@ -20,7 +20,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 
 		public UserService(
 			IConfirmationKeyGenerator confirmationKeyGenerator,
-			ITokenGenerator tokenGenerator,
+			IUserSessionGenerator tokenGenerator,
 			IUtcTimeProvider utcTimeProvider,
 			IUserRepository userRepository,
 			IConfirmationRepository confirmationRepository,
@@ -73,7 +73,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 			_logger.Info($"Пользователь '{email}' создан.");
 		}
 
-		public UserToken ConfirmUserRegistration(string confirmationKey)
+		public AccessToken ConfirmUserRegistration(string confirmationKey)
 		{
 			if (string.IsNullOrWhiteSpace(confirmationKey)) throw new ArgumentException("Not set", nameof(confirmationKey));
 

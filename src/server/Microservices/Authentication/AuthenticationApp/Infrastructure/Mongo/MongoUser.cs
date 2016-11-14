@@ -47,7 +47,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 		/// <summary>
 		/// Токен авторизации.
 		/// </summary>
-		public MongoUserToken Token { get; set; }
+		public MongoUserSession Session { get; set; }
 
 		public MongoUser()
 		{

@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Authentication")]
+[assembly: AssemblyProduct("AuthenticationApp.Tests")]
 [assembly: AssemblyTrademark("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
@@ -16,6 +16,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("35274730-6de4-418f-95fa-6d0897e39034")]
-
-[assembly: InternalsVisibleTo("AuthenticationApp.Tests")]
+[assembly: Guid("8e7ff465-2f14-4d70-bb1b-8a276025e32b")]

@@ -16,6 +16,6 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 		/// </summary>
 		/// <param name="confirmationKey">Клю подтверждения</param>
 		/// <returns>Токен авторизации</returns>
-		UserToken ConfirmUserRegistration(string confirmationKey);
+		AccessToken ConfirmUserRegistration(string confirmationKey);
 	}
 }

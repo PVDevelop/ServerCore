@@ -101,7 +101,10 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 
 		private static MongoUser MapToMongoUser(User user)
 		{
-			var mongoUserToken = user.Token == null ? null : new MongoUserToken(user.Token.Token, user.Token.Expiration);
+			var mongoUserSession = 
+				user.Session == null ? 
+				null : 
+				new MongoUserSession(user.Session.Id, user.Session.Expiration);
 
 			return new MongoUser
 			{
@@ -110,13 +113,16 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 				Password = user.Password,
 				CreationTime = user.CreationTime,
 				State = user.State,
-				Token = mongoUserToken
+				Session = mongoUserSession
 			};
 		}
 
 		private static User MapToDomainUser(MongoUser user)
 		{
-			var token = user.Token == null ? null : new UserToken(user.Token.Token, user.Token.Expiration);
+			var session = 
+				user.Session == null ? 
+				null : 
+				new UserSession(user.Session.Id, user.Session.Expiration);
 
 			return new User(
 				id: user.Id,
@@ -124,7 +130,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 				password: user.Password,
 				state: user.State,
 				creationTime: user.CreationTime,
-				token: token);
+				session: session);
 		}
 
 		#endregion

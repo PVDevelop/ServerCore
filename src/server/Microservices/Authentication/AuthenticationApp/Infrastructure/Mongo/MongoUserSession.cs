@@ -2,17 +2,17 @@
 
 namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 {
-	public class MongoUserToken
+	public class MongoUserSession
 	{
-		public string Token { get; set; }
+		public string Id { get; set; }
 
 		public DateTime Expiration { get; set; }
 
-		public MongoUserToken() { }
+		public MongoUserSession() { }
 
-		public MongoUserToken(string token, DateTime expiration)
+		public MongoUserSession(string id, DateTime expiration)
 		{
-			Token = token;
+			Id = id;
 			Expiration = expiration;
 		}
 	}

@@ -64,7 +64,7 @@ namespace PVDevelop.UCoach.AuthenticationApp
 		{
 			x.For<IUserService>().Use<UserService>();
 			x.For<IConfirmationKeyGenerator>().Use<ConfirmationKeyGenerator>();
-			x.For<ITokenGenerator>().Use<TokenGenerator>();
+			x.For<IUserSessionGenerator>().Use<UserSessionGenerator>();
 			x.For<IUtcTimeProvider>().Use<UtcTimeProvider>();
 			x.For<IUserRepository>().Use<MongoUserRepository>();
 			x.For<IConfirmationRepository>().Use<MongoConfirmationRepository>();
