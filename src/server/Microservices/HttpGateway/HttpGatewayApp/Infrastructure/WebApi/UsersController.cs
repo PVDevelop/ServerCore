@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using PVDevelop.UCoach.Rest;
@@ -8,9 +9,9 @@ using PVDevelop.UCoach.Configuration;
 
 namespace PVDevelop.UCoach.HttpGatewayApp.Infrastructure.WebApi
 {
-	[Route("api/[controller]")]
 	public class UsersController : Controller
 	{
+		private const string ACCESS_TOKEN_COOKIE_NAME = "access_token";
 		private readonly IConnectionStringProvider _authenticationEndpointConnectionStringProvider;
 
 		public UsersController(IConnectionStringProvider authenticationEndpointConnectionStringProvider)
@@ -21,23 +22,26 @@ namespace PVDevelop.UCoach.HttpGatewayApp.Infrastructure.WebApi
 			_authenticationEndpointConnectionStringProvider = authenticationEndpointConnectionStringProvider;
 		}
 
-		[HttpPost]
+		[HttpPost("api/users")]
 		public async Task CreateUserAsync([FromBody] CreateUserDto createUserDto)
 		{
 			if (createUserDto == null) throw new ArgumentNullException(nameof(createUserDto));
 			await GetAuthenticationUrl().PostJsonAsync("api/users", createUserDto);
 		}
 
-		[HttpGet]
-		public async Task GetCurrentUserAsync()
+		[HttpPost("api/confirmations")]
+		public async Task ConfirmUserAsync([FromBody] ConfirmUserRegistrationDto confirmUserRegistrationDto)
 		{
-			string token;
-			if(!Request.Cookies.TryGetValue(TokenConst.ACCESS_TOKEN_COOKIE_NAME, out token))
-			{
-				throw new InvalidOperationException("Token not set.");
-			}
+			if (confirmUserRegistrationDto == null) throw new ArgumentNullException(nameof(confirmUserRegistrationDto));
+			var tokenDto = await GetAuthenticationUrl().PostJsonWithResultAsync<TokenDto>("api/confirmations", confirmUserRegistrationDto);
 
-			await GetAuthenticationUrl().GetJsonAsync<UserProfileDto>($"api/tokens/{token}");
+			var options = new CookieOptions
+			{
+				Path = "/",
+				Expires = tokenDto.Expiration
+			};
+
+			Response.Cookies.Append(ACCESS_TOKEN_COOKIE_NAME, tokenDto.Token, options);
 		}
 
 		private RestClient GetAuthenticationUrl()
