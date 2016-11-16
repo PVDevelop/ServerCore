@@ -13,17 +13,21 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.WebApi
 		public ConfirmationsController(IUserService userService)
 		{
 			if (userService == null) throw new ArgumentNullException(nameof(userService));
+
 			_userService = userService;
 		}
 
 		[HttpPost]
-		public TokenDto ConfirmUserAsync([FromBody] ConfirmUserRegistrationDto confirmUserRegistrationDto)
+		public TokenDto ConfirmUser([FromBody] ConfirmUserRegistrationDto confirmUserRegistrationDto)
 		{
 			if (confirmUserRegistrationDto == null)
 				throw new ArgumentNullException(nameof(confirmUserRegistrationDto));
 
 			var token = _userService.ConfirmUserRegistration(confirmUserRegistrationDto.ConfirmationKey);
-			return new TokenDto(token.Token, token.Expiration);
+
+			var encodedToken = TokenEncoder.Encode(token);
+
+			return new TokenDto(encodedToken, token.Expiration);
 		}
 	}
 }

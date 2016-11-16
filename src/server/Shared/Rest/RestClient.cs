@@ -43,6 +43,19 @@ namespace PVDevelop.UCoach.Rest
 			}
 		}
 
+		public async Task<TResult> GetJsonAsync<TResult>(string resource)
+		{
+			if (string.IsNullOrWhiteSpace(resource)) throw new ArgumentException("Not set", nameof(resource));
+
+			using (var client = PrepareHttpClient())
+			{
+				var response = await client.GetAsync(resource);
+				response.EnsureSuccessStatusCode();
+
+				return await ReadJsonContentAsync<TResult>(response);
+			}
+		}
+
 		private HttpClient PrepareHttpClient()
 		{
 			var client = new HttpClient { BaseAddress = new Uri(_uri) };

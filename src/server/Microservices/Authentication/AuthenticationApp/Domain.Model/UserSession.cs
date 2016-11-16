@@ -48,12 +48,12 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		/// Генерирует новый токен доступа.
 		/// </summary>
 		/// <returns>Токен доступа.</returns>
-		public AccessToken GenerateToken()
+		public AccessToken GenerateToken(string userId)
 		{
 			var salt = BCrypt.Net.BCrypt.GenerateSalt();
 			var token = BCrypt.Net.BCrypt.HashPassword(Id, salt);
 
-			return new AccessToken(token, Expiration);
+			return new AccessToken(userId, token, Expiration);
 		}
 
 		/// <summary>

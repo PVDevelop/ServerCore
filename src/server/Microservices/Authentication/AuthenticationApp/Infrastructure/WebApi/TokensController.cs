@@ -6,24 +6,27 @@ using PVDevelop.UCoach.AuthenticationContrancts.Rest;
 namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.WebApi
 {
 	[Route("api/[controller]")]
-	public class UsersController : Controller
+	public class TokensController
 	{
 		private readonly IUserService _userService;
 
-		public UsersController(IUserService userService)
+		public TokensController(IUserService userService)
 		{
 			if (userService == null) throw new ArgumentNullException(nameof(userService));
+
 			_userService = userService;
 		}
 
-		[HttpPost]
-		public void CreatUser([FromBody] CreateUserDto createUserDto)
+		[HttpGet("{token}")]
+		public UserProfileDto ValidateToken(string token)
 		{
-			if (createUserDto == null) throw new ArgumentNullException(nameof(createUserDto));
+			if (string.IsNullOrWhiteSpace(token)) throw new ArgumentException("Not set", nameof(token));
 
-			_userService.CreateUser(
-				email: createUserDto.Email, 
-				password: createUserDto.Password);
+			var accessToken = TokenEncoder.Decode(token);
+
+			var email = _userService.ValidateToken(accessToken);
+
+			return new UserProfileDto(email);
 		}
 	}
 }

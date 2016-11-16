@@ -128,7 +128,23 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 			Session = new UserSession(userSessionGenerator, utcTimeProvider);
 			State = UserState.Confirmed;
 
-			return Session.GenerateToken();
+			return Session.GenerateToken(Id);
+		}
+
+		public void ValidateToken(AccessToken token, IUtcTimeProvider utcTimeProvider)
+		{
+			if (token == null) throw new ArgumentNullException(nameof(token));
+			if (utcTimeProvider == null) throw new ArgumentNullException(nameof(utcTimeProvider));
+
+			if(Session == null)
+			{
+				throw new NotAuthorizedException("Session is not started yet.");
+			}
+
+			if(!Session.Validate(token, utcTimeProvider))
+			{
+				throw new NotAuthorizedException("Token is not valid.");
+			}
 		}
 	}
 }

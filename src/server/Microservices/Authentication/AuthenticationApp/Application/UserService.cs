@@ -105,6 +105,21 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 			return userToken;
 		}
 
+		public string ValidateToken(AccessToken token)
+		{
+			if (token == null) throw new ArgumentNullException(nameof(token));
+
+			var user = _userRepository.GetById(token.UserId);
+			if(user == null)
+			{
+				throw new NotAuthorizedException($"User '{token.UserId}' not found.");
+			}
+
+			user.ValidateToken(token, _utcTimeProvider);
+
+			return user.Email;
+		}
+
 		private static string GetConfirmationUrl(IConfigurationRoot configuration)
 		{
 			var confirmationUrl = configuration.GetConnectionString("ConfirmationUrl");

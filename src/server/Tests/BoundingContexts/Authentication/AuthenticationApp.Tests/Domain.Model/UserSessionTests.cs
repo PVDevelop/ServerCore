@@ -15,10 +15,11 @@ namespace PVDevelop.UCoach.AuthenticationApp.Tests.Domain.Model
 			var time = DateTime.UtcNow;
 
 			var userSession = new UserSession(new UserSessionGeneratorStub("some_id"), new UtcTimeProviderStub(time));
-			var accessToken = userSession.GenerateToken();
+			var accessToken = userSession.GenerateToken("user");
 
 			Assert.NotNull(accessToken);
 
+			Assert.AreEqual("user", accessToken.UserId);
 			var expectedExpiration = time + UserSession.TokenExpirationPeriod;
 			Assert.AreEqual(accessToken.Expiration, expectedExpiration);
 			Assert.IsTrue(BCrypt.Net.BCrypt.Verify(userSession.Id, accessToken.Token));
@@ -30,7 +31,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Tests.Domain.Model
 			var timeProvider = new UtcTimeProviderStub(DateTime.UtcNow);
 			var userSession = new UserSession(new UserSessionGeneratorStub("some_id"), timeProvider);
 
-			var token = userSession.GenerateToken();
+			var token = userSession.GenerateToken("user");
 
 			Assert.IsTrue(userSession.Validate(token, timeProvider));
 		}
@@ -43,7 +44,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Tests.Domain.Model
 			var userSession1 = new UserSession(new UserSessionGeneratorStub("some_id_1"), timeProvider);
 			var userSession2 = new UserSession(new UserSessionGeneratorStub("some_id_2"), timeProvider);
 
-			var token = userSession2.GenerateToken();
+			var token = userSession2.GenerateToken("user");
 
 			Assert.IsFalse(userSession1.Validate(token, timeProvider));
 		}
@@ -54,7 +55,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Tests.Domain.Model
 			var timeProvider = new UtcTimeProviderStub(DateTime.UtcNow);
 
 			var userSession = new UserSession(new UserSessionGeneratorStub("some_id"), timeProvider);
-			var token = userSession.GenerateToken();
+			var token = userSession.GenerateToken("user");
 
 			timeProvider.UtcNow += UserSession.TokenExpirationPeriod + TimeSpan.FromSeconds(1);
 
@@ -70,7 +71,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Tests.Domain.Model
 
 			var salt = BCrypt.Net.BCrypt.GenerateSalt();
 			var token = BCrypt.Net.BCrypt.HashPassword(userSession.Id, salt);
-			var accessToken = new AccessToken(token, timeProvider.UtcNow.AddDays(1000000));
+			var accessToken = new AccessToken("user", token, timeProvider.UtcNow.AddDays(1000000));
 
 			timeProvider.UtcNow += UserSession.TokenExpirationPeriod + TimeSpan.FromSeconds(1);
 

@@ -28,6 +28,18 @@ namespace PVDevelop.UCoach.HttpGatewayApp.Infrastructure.WebApi
 			await GetAuthenticationUrl().PostJsonAsync("api/users", createUserDto);
 		}
 
+		[HttpGet]
+		public async Task GetCurrentUserAsync()
+		{
+			string token;
+			if(!Request.Cookies.TryGetValue(TokenConst.ACCESS_TOKEN_COOKIE_NAME, out token))
+			{
+				throw new InvalidOperationException("Token not set.");
+			}
+
+			await GetAuthenticationUrl().GetJsonAsync<UserProfileDto>($"api/tokens/{token}");
+		}
+
 		private RestClient GetAuthenticationUrl()
 		{
 			var url = _authenticationEndpointConnectionStringProvider.ConnectionString;

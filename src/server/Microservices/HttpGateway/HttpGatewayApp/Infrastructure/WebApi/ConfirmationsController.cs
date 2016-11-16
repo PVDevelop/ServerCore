@@ -13,8 +13,6 @@ namespace PVDevelop.UCoach.HttpGatewayApp.Infrastructure.WebApi
 	[Route("api/[controller]")]
 	public class ConfirmationsController : Controller
 	{
-		private const string ACCESS_TOKEN_COOKIE_NAME = "access_token";
-
 		private readonly IConnectionStringProvider _authenticationEndpointConnectionStringProvider;
 
 		public ConfirmationsController(
@@ -32,20 +30,13 @@ namespace PVDevelop.UCoach.HttpGatewayApp.Infrastructure.WebApi
 			if (confirmUserRegistrationDto == null) throw new ArgumentNullException(nameof(confirmUserRegistrationDto));
 			var tokenDto = await GetAuthenticationUrl().PostJsonWithResultAsync<TokenDto>("api/confirmations", confirmUserRegistrationDto);
 
-			if(string.IsNullOrWhiteSpace(tokenDto.Token))
-			{
-				throw new InvalidOperationException("Returned token is not specified");
-			}
-
-			var convertedToken = TokenConverter.ConvertToString(tokenDto);
-
 			var options = new CookieOptions
 			{
 				Path = "/",
 				Expires = tokenDto.Expiration
 			};
 
-			Response.Cookies.Append(ACCESS_TOKEN_COOKIE_NAME, convertedToken, options);
+			Response.Cookies.Append(TokenConst.ACCESS_TOKEN_COOKIE_NAME, tokenDto.Token, options);
 		}
 
 		private RestClient GetAuthenticationUrl()
