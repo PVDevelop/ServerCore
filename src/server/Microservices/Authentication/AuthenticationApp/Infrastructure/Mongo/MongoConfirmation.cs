@@ -5,14 +5,8 @@ using PVDevelop.UCoach.Mongo;
 namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 {
 	[MongoCollection("Confirmations")]
-	[MongoDataVersion(VERSION)]
 	public class MongoConfirmation
 	{
-		/// <summary>
-		/// Текущая версия документа.
-		/// </summary>
-		public const int VERSION = 1;
-
 		/// <summary>
 		/// Идентификатор подтверждения.
 		/// </summary>
@@ -44,10 +38,5 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 		/// Время генерации ключа.
 		/// </summary>
 		public DateTime CreationTime { get; set; }
-
-		public MongoConfirmation()
-		{
-			Version = VERSION;
-		}
 	}
 }

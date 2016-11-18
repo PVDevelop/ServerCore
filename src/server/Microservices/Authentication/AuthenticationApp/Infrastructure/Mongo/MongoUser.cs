@@ -5,14 +5,8 @@ using PVDevelop.UCoach.Mongo;
 namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 {
 	[MongoCollection("Users")]
-	[MongoDataVersion(VERSION)]
 	public class MongoUser
 	{
-		/// <summary>
-		/// Текущая версия документа
-		/// </summary>
-		public const int VERSION = 1;
-
 		/// <summary>
 		/// Идентификатор пользователя.
 		/// </summary>
@@ -48,10 +42,5 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 		/// Токен авторизации.
 		/// </summary>
 		public MongoUserSession Session { get; set; }
-
-		public MongoUser()
-		{
-			Version = VERSION;
-		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
+using PVDevelop.UCoach.AuthenticationApp.Application;
 using PVDevelop.UCoach.AuthenticationApp.Domain.Model;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure;
 using PVDevelop.UCoach.Timing;

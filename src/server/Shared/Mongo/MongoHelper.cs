@@ -28,24 +28,6 @@ namespace PVDevelop.UCoach.Mongo
 			return typeof(T).Name;
 		}
 
-		/// <summary>
-		/// Возвращает версию типа данных T
-		/// </summary>
-		public static int GetDataVersion<T>()
-		{
-			var mongoDataVersionAttr =
-				(MongoDataVersionAttribute)typeof(T).
-				GetTypeInfo().
-				GetCustomAttributes(typeof(MongoDataVersionAttribute), true).
-				SingleOrDefault();
-
-			if (mongoDataVersionAttr == null)
-			{
-				throw new InvalidOperationException("Атрибут с версией документа не найден");
-			}
-			return mongoDataVersionAttr.Version;
-		}
-
 		public static IMongoCollection<T> GetCollection<T>(IConnectionStringProvider settings)
 		{
 			var builder = new MongoUrlBuilder(settings.ConnectionString);

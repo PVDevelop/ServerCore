@@ -1,13 +1,12 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Threading;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using PVDevelop.UCoach.AuthenticationApp.Application;
-using PVDevelop.UCoach.AuthenticationApp.Domain.Model;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Email;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo;
+using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo.Initializer;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure.WebApi;
 using PVDevelop.UCoach.Mongo;
 using PVDevelop.UCoach.Configuration;
@@ -33,7 +32,6 @@ namespace PVDevelop.UCoach.AuthenticationApp
 			SetupContainer();
 
 			StartInitializers();
-			StartValidators();
 			StartWebHost(cancellationToken);
 		}
 
@@ -53,7 +51,6 @@ namespace PVDevelop.UCoach.AuthenticationApp
 				SetupUserService(x);
 				SetupMongo(x);
 				SetupInitializers(x);
-				SetupValidators(x);
 				SetupConfigurations(x);
 			});
 
@@ -85,14 +82,8 @@ namespace PVDevelop.UCoach.AuthenticationApp
 
 		private void SetupInitializers(ConfigurationExpression x)
 		{
-			x.For<IInitializer>().Use<MongoUserRepository>();
-			x.For<IInitializer>().Use<MongoConfirmationRepository>();
-		}
-
-		private void SetupValidators(ConfigurationExpression x)
-		{
-			x.For<IValidator>().Use<MongoUserRepository>();
-			x.For<IValidator>().Use<MongoConfirmationRepository>();
+			x.For<IInitializer>().Use<MongoUserInitializer>();
+			x.For<IInitializer>().Use<MongoConfirmationInitializer>();
 		}
 
 		private void SetupConfigurations(ConfigurationExpression x)
@@ -106,17 +97,9 @@ namespace PVDevelop.UCoach.AuthenticationApp
 
 		private void StartInitializers()
 		{
-			foreach (var initializer in AuthenticationMicroservice.Instance.Container.GetAllInstances<IInitializer>())
+			foreach (var initializer in Instance.Container.GetAllInstances<IInitializer>())
 			{
 				initializer.Initialize();
-			}
-		}
-
-		private void StartValidators()
-		{
-			foreach (var validator in AuthenticationMicroservice.Instance.Container.GetAllInstances<IValidator>())
-			{
-				validator.Validate();
 			}
 		}
 

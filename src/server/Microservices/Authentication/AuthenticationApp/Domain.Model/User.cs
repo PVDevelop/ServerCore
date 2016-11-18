@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using PVDevelop.UCoach.AuthenticationApp.Application;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure;
 using PVDevelop.UCoach.Timing;
 

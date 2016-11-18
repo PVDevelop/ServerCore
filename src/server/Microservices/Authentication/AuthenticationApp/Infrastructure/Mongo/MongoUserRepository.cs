@@ -7,7 +7,7 @@ using PVDevelop.UCoach.Mongo;
 
 namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 {
-	public class MongoUserRepository : IUserRepository, IValidator, IInitializer
+	public class MongoUserRepository : IUserRepository
 	{
 		private readonly IMongoRepository<MongoUser> _repository;
 		private readonly IConnectionStringProvider _connectionStringProvider;
@@ -23,54 +23,6 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 			_repository = repository;
 			_connectionStringProvider = connectionStringProvider;
 		}
-
-		#region IValidator
-
-		public void Validate()
-		{
-			MongoCollectionVersionHelper.ValidateByClassAttribute<MongoUser>(_connectionStringProvider, _logger);
-		}
-
-		#endregion
-
-		#region IInitializer
-
-		public void Initialize()
-		{
-			InitializeInidices();
-			IniitializeCollectionVersion();
-		}
-
-		private void InitializeInidices()
-		{
-			_logger.Debug($"Инициализирую коллекцию пользователей. Параметры подключения: {MongoHelper.SettingsToString(_connectionStringProvider)}.");
-
-			var collection = MongoHelper.GetCollection<MongoUser>(_connectionStringProvider);
-
-			var index = Builders<MongoUser>.IndexKeys.Ascending(u => u.Email);
-			var options = new CreateIndexOptions()
-			{
-				Name = MongoHelper.GetIndexName<MongoUser>(nameof(MongoUser.Email)),
-				Unique = true
-			};
-
-			collection.Indexes.CreateOne(index, options);
-
-			_logger.Debug("Инициализация коллекции пользователей прошла успешно.");
-		}
-
-		private void IniitializeCollectionVersion()
-		{
-			_logger.Debug($"Инициализирую метаданные пользователей. Параметры подключения: {MongoHelper.SettingsToString(_connectionStringProvider)}.");
-
-			MongoCollectionVersionHelper.InitializeCollectionVersion<MongoUser>(_connectionStringProvider, _logger);
-
-			_logger.Debug("Инициализация метаданных пользователей прошла успешно.");
-		}
-
-		#endregion
-
-		#region IUserRepository
 
 		public User GetById(string userId)
 		{
@@ -101,9 +53,9 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 
 		private static MongoUser MapToMongoUser(User user)
 		{
-			var mongoUserSession = 
-				user.Session == null ? 
-				null : 
+			var mongoUserSession =
+				user.Session == null ?
+				null :
 				new MongoUserSession(user.Session.Id, user.Session.Expiration);
 
 			return new MongoUser
@@ -119,9 +71,9 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 
 		private static User MapToDomainUser(MongoUser user)
 		{
-			var session = 
-				user.Session == null ? 
-				null : 
+			var session =
+				user.Session == null ?
+				null :
 				new UserSession(user.Session.Id, user.Session.Expiration);
 
 			return new User(
@@ -132,7 +84,5 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 				creationTime: user.CreationTime,
 				session: session);
 		}
-
-		#endregion
 	}
 }

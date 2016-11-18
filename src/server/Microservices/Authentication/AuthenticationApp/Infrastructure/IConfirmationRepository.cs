@@ -1,4 +1,6 @@
-﻿namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
+﻿using PVDevelop.UCoach.AuthenticationApp.Domain.Model;
+
+namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure
 {
 	public interface IConfirmationRepository
 	{

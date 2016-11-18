@@ -1,4 +1,4 @@
-﻿namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure
+﻿namespace PVDevelop.UCoach.AuthenticationApp.Application
 {
 	public interface IUserSessionGenerator
 	{
