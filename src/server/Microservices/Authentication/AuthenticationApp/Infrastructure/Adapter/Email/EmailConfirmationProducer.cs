@@ -2,9 +2,10 @@
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
+using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Port;
 using PVDevelop.UCoach.Configuration;
 
-namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Email
+namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Email
 {
 	public class EmailConfirmationProducer : IConfirmationProducer
 	{

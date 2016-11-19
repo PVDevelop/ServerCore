@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using StructureMap;
 
-namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.WebApi
+namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi
 {
 	public class Startup
 	{

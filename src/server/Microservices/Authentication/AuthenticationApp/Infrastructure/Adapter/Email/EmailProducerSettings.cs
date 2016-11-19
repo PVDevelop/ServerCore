@@ -1,4 +1,4 @@
-﻿namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Email
+﻿namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Email
 {
 	public class EmailProducerSettings
 	{

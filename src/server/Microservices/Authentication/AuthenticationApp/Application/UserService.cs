@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using PVDevelop.UCoach.AuthenticationApp.Domain.Model;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure;
+using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Port;
 using PVDevelop.UCoach.Logging;
 using PVDevelop.UCoach.Timing;
 
@@ -97,27 +98,12 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 				throw new UserNotFoundException(confirmation.UserId);
 			}
 
-			var userToken =  user.Confirm(_tokenGenerator, _utcTimeProvider);
+			user.Confirm();
 
 			_logger.Debug($"Сохраняю пользователя '{user.Email}'");
 			_userRepository.Update(user);
 
-			return userToken;
-		}
-
-		public string ValidateToken(AccessToken token)
-		{
-			if (token == null) throw new ArgumentNullException(nameof(token));
-
-			var user = _userRepository.GetById(token.UserId);
-			if(user == null)
-			{
-				throw new NotAuthorizedException($"User '{token.UserId}' not found.");
-			}
-
-			user.ValidateToken(token, _utcTimeProvider);
-
-			return user.Email;
+			throw new NotImplementedException();
 		}
 
 		private static string GetConfirmationUrl(IConfigurationRoot configuration)

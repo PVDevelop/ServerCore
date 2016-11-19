@@ -17,12 +17,5 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 		/// <param name="confirmationKey">Клю подтверждения</param>
 		/// <returns>Токен авторизации</returns>
 		AccessToken ConfirmUserRegistration(string confirmationKey);
-
-		/// <summary>
-		/// Валидирует токен и в случае успеха, возвращает поччтовый адрес пользователя.
-		/// </summary>
-		/// <param name="token">Валидируемый токен доступа.</param>
-		/// <returns>Email пользователя.</returns>
-		string ValidateToken(AccessToken token);
 	}
 }

@@ -1,30 +1,22 @@
 ﻿using System;
-using MongoDB.Driver;
-using PVDevelop.UCoach.AuthenticationApp.Domain.Model;
-using PVDevelop.UCoach.Configuration;
-using PVDevelop.UCoach.Logging;
+using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Port;
 using PVDevelop.UCoach.Mongo;
 
-namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
+namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.Confirmation
 {
 	public sealed class MongoConfirmationRepository :
 		IConfirmationRepository
 	{
 		private readonly IMongoRepository<MongoConfirmation> _repository;
-		private readonly IConnectionStringProvider _connectionStringProvider;
-		private readonly ILogger _logger = LoggerHelper.GetLogger<MongoConfirmationRepository>();
 
 		public MongoConfirmationRepository(
-			IMongoRepository<MongoConfirmation> repository,
-			IConnectionStringProvider connectionStringProvider)
+			IMongoRepository<MongoConfirmation> repository)
 		{
-			if (connectionStringProvider == null) throw new ArgumentNullException(nameof(connectionStringProvider));
-
+			if (repository == null) throw new ArgumentNullException(nameof(repository));
 			_repository = repository;
-			_connectionStringProvider = connectionStringProvider;
 		}
 
-		public void Insert(Confirmation confirmation)
+		public void Insert(Domain.Model.Confirmation confirmation)
 		{
 			if (confirmation == null) throw new ArgumentNullException(nameof(confirmation));
 
@@ -32,7 +24,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 			_repository.Insert(mongoConfirmation);
 		}
 
-		public Confirmation FindByConfirmationKey(string key)
+		public Domain.Model.Confirmation FindByConfirmationKey(string key)
 		{
 			if (string.IsNullOrWhiteSpace(key)) throw new ArgumentException("Not set", nameof(key));
 
@@ -40,7 +32,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 			return mongoConfirmation == null ? null : MapToDomainConfirmation(mongoConfirmation);
 		}
 
-		public void Update(Confirmation confirmation)
+		public void Update(Domain.Model.Confirmation confirmation)
 		{
 			if (confirmation == null) throw new ArgumentNullException(nameof(confirmation));
 
@@ -48,7 +40,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 			_repository.ReplaceOne(c => c.Key == mongoConfirmation.Key, mongoConfirmation);
 		}
 
-		private static MongoConfirmation MapToMongoConfirmation(Confirmation confirmation)
+		private static MongoConfirmation MapToMongoConfirmation(Domain.Model.Confirmation confirmation)
 		{
 			return new MongoConfirmation
 			{
@@ -60,9 +52,9 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 			};
 		}
 
-		private static Confirmation MapToDomainConfirmation(MongoConfirmation confirmation)
+		private static Domain.Model.Confirmation MapToDomainConfirmation(MongoConfirmation confirmation)
 		{
-			return new Confirmation(
+			return new Domain.Model.Confirmation(
 				confirmation.Id,
 				confirmation.UserId,
 				confirmation.Key,

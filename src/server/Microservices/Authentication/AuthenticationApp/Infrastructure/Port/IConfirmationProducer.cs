@@ -1,4 +1,4 @@
-﻿namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure
+﻿namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Port
 {
 	public interface IConfirmationProducer
 	{

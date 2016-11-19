@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using PVDevelop.UCoach.AuthenticationApp.Application;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure;
-using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Email;
-using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo;
-using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo.Initializer;
-using PVDevelop.UCoach.AuthenticationApp.Infrastructure.WebApi;
+using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Email;
+using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.Confirmation;
+using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.User;
+using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.UserSession;
+using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi;
+using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Port;
 using PVDevelop.UCoach.Mongo;
 using PVDevelop.UCoach.Configuration;
 using PVDevelop.UCoach.Microservice;
@@ -84,6 +86,7 @@ namespace PVDevelop.UCoach.AuthenticationApp
 		{
 			x.For<IInitializer>().Use<MongoUserInitializer>();
 			x.For<IInitializer>().Use<MongoConfirmationInitializer>();
+			x.For<IInitializer>().Use<MongoUserSessionInitializer>();
 		}
 
 		private void SetupConfigurations(ConfigurationExpression x)

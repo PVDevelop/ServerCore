@@ -1,10 +1,11 @@
 ﻿using System;
 using MongoDB.Driver;
+using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Port;
 using PVDevelop.UCoach.Configuration;
 using PVDevelop.UCoach.Logging;
 using PVDevelop.UCoach.Mongo;
 
-namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo.Initializer
+namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.User
 {
 	public class MongoUserInitializer : IInitializer
 	{

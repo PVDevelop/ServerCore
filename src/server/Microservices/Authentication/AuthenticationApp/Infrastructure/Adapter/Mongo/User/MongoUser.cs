@@ -2,7 +2,7 @@
 using PVDevelop.UCoach.AuthenticationApp.Domain.Model;
 using PVDevelop.UCoach.Mongo;
 
-namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
+namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.User
 {
 	[MongoCollection("Users")]
 	public class MongoUser
@@ -37,10 +37,5 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
 		/// Время создания пользователя.
 		/// </summary>
 		public DateTime CreationTime { get; set; }
-
-		/// <summary>
-		/// Токен авторизации.
-		/// </summary>
-		public MongoUserSession Session { get; set; }
 	}
 }

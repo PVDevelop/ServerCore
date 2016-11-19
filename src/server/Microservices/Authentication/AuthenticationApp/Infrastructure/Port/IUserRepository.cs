@@ -1,6 +1,6 @@
 ﻿using PVDevelop.UCoach.AuthenticationApp.Domain.Model;
 
-namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure
+namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Port
 {
 	public interface IUserRepository
 	{

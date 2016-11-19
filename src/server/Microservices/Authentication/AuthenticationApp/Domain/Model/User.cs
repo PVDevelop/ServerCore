@@ -37,13 +37,6 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		public DateTime CreationTime { get; }
 
 		/// <summary>
-		/// Сессия аутентификации пользователя.
-		/// Если null, то сессия не начата.
-		/// Сессия начинается при подтверждении пользователя.
-		/// </summary>
-		public UserSession Session { get; private set; }
-
-		/// <summary>
 		/// Конструктор используется только при восстановлении из хранилища
 		/// </summary>
 		internal User(
@@ -51,15 +44,13 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 			string email,
 			string password,
 			UserState state,
-			DateTime creationTime,
-			UserSession session)
+			DateTime creationTime)
 		{
 			Id = id;
 			Email = email;
 			Password = password;
 			State = state;
 			CreationTime = creationTime;
-			Session = session;
 		}
 
 		public User(
@@ -121,31 +112,13 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		/// Перевод пользователя в состояние "Подтвержден".
 		/// </summary>
 		/// <returns>Токен авторизации</returns>
-		public AccessToken Confirm(IUserSessionGenerator userSessionGenerator, IUtcTimeProvider utcTimeProvider)
+		public void Confirm()
 		{
-			if (userSessionGenerator == null) throw new ArgumentNullException(nameof(userSessionGenerator));
-			if (utcTimeProvider == null) throw new ArgumentNullException(nameof(utcTimeProvider));
-
-			Session = new UserSession(userSessionGenerator, utcTimeProvider);
+			if(State != UserState.New)
+			{
+				throw new InvalidOperationException("Already confirmed");
+			}
 			State = UserState.Confirmed;
-
-			return Session.GenerateToken(Id);
-		}
-
-		public void ValidateToken(AccessToken token, IUtcTimeProvider utcTimeProvider)
-		{
-			if (token == null) throw new ArgumentNullException(nameof(token));
-			if (utcTimeProvider == null) throw new ArgumentNullException(nameof(utcTimeProvider));
-
-			if(Session == null)
-			{
-				throw new NotAuthorizedException("Session is not started yet.");
-			}
-
-			if(!Session.Validate(token, utcTimeProvider))
-			{
-				throw new NotAuthorizedException("Token is not valid.");
-			}
 		}
 	}
 }

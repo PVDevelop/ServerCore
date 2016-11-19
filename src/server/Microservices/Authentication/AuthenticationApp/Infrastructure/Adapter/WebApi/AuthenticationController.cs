@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PVDevelop.UCoach.AuthenticationApp.Application;
 using PVDevelop.UCoach.AuthenticationContrancts.Rest;
 
-namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.WebApi
+namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi
 {
 	public class AuthenticationController : Controller
 	{
@@ -45,9 +45,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.WebApi
 
 			var accessToken = TokenEncoder.Decode(token);
 
-			var email = _userService.ValidateToken(accessToken);
-
-			return new UserProfileDto(email);
+			throw new NotImplementedException();
 		}
 	}
 }

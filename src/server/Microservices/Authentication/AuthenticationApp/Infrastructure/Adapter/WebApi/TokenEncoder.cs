@@ -2,7 +2,7 @@
 using System.Text;
 using PVDevelop.UCoach.AuthenticationApp.Domain.Model;
 
-namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.WebApi
+namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi
 {
 	public static class TokenEncoder
 	{

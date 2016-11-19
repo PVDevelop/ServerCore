@@ -2,7 +2,7 @@
 using PVDevelop.UCoach.AuthenticationApp.Domain.Model;
 using PVDevelop.UCoach.Mongo;
 
-namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Mongo
+namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.Confirmation
 {
 	[MongoCollection("Confirmations")]
 	public class MongoConfirmation

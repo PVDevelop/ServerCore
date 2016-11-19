@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using NUnit.Framework;
 using PVDevelop.UCoach.AuthenticationApp.Domain.Model;
-using PVDevelop.UCoach.AuthenticationApp.Infrastructure.WebApi;
+using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi;
 
 namespace PVDevelop.UCoach.AuthenticationApp.Tests.Infrastructure.WebApi
 {

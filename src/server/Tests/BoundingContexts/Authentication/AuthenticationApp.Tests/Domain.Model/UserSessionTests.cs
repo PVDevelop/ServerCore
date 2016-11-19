@@ -15,12 +15,12 @@ namespace PVDevelop.UCoach.AuthenticationApp.Tests.Domain.Model
 		{
 			var time = DateTime.UtcNow;
 
-			var userSession = new UserSession(new UserSessionGeneratorStub("some_id"), new UtcTimeProviderStub(time));
-			var accessToken = userSession.GenerateToken("user");
+			var userSession = new UserSession("userId", "sessionId", time);
+			var accessToken = userSession.GenerateToken();
 
 			Assert.NotNull(accessToken);
 
-			Assert.AreEqual("user", accessToken.UserId);
+			Assert.AreEqual("userId", accessToken.UserId);
 			var expectedExpiration = time + UserSession.TokenExpirationPeriod;
 			Assert.AreEqual(accessToken.Expiration, expectedExpiration);
 			Assert.IsTrue(BCrypt.Net.BCrypt.Verify(userSession.Id, accessToken.Token));
@@ -30,9 +30,9 @@ namespace PVDevelop.UCoach.AuthenticationApp.Tests.Domain.Model
 		public void Validate_ValidToken_ReturnsTrue()
 		{
 			var timeProvider = new UtcTimeProviderStub(DateTime.UtcNow);
-			var userSession = new UserSession(new UserSessionGeneratorStub("some_id"), timeProvider);
+			var userSession = new UserSession("usId", "sessId", timeProvider.UtcNow);
 
-			var token = userSession.GenerateToken("user");
+			var token = userSession.GenerateToken();
 
 			Assert.IsTrue(userSession.Validate(token, timeProvider));
 		}
@@ -42,10 +42,10 @@ namespace PVDevelop.UCoach.AuthenticationApp.Tests.Domain.Model
 		{
 			var timeProvider = new UtcTimeProviderStub(DateTime.UtcNow);
 
-			var userSession1 = new UserSession(new UserSessionGeneratorStub("some_id_1"), timeProvider);
-			var userSession2 = new UserSession(new UserSessionGeneratorStub("some_id_2"), timeProvider);
+			var userSession1 = new UserSession("userId", "some_id_1", timeProvider.UtcNow);
+			var userSession2 = new UserSession("userId2", "some_id_2", timeProvider.UtcNow);
 
-			var token = userSession2.GenerateToken("user");
+			var token = userSession2.GenerateToken();
 
 			Assert.IsFalse(userSession1.Validate(token, timeProvider));
 		}
@@ -55,8 +55,8 @@ namespace PVDevelop.UCoach.AuthenticationApp.Tests.Domain.Model
 		{
 			var timeProvider = new UtcTimeProviderStub(DateTime.UtcNow);
 
-			var userSession = new UserSession(new UserSessionGeneratorStub("some_id"), timeProvider);
-			var token = userSession.GenerateToken("user");
+			var userSession = new UserSession("userId", "some_id", timeProvider.UtcNow);
+			var token = userSession.GenerateToken();
 
 			timeProvider.UtcNow += UserSession.TokenExpirationPeriod + TimeSpan.FromSeconds(1);
 
@@ -68,7 +68,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Tests.Domain.Model
 		{
 			var timeProvider = new UtcTimeProviderStub(DateTime.UtcNow);
 
-			var userSession = new UserSession(new UserSessionGeneratorStub("some_id"), timeProvider);
+			var userSession = new UserSession("userId", "some_id", timeProvider.UtcNow);
 
 			var salt = BCrypt.Net.BCrypt.GenerateSalt();
 			var token = BCrypt.Net.BCrypt.HashPassword(userSession.Id, salt);
