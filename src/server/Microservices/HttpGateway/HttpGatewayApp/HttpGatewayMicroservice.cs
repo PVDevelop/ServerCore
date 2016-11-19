@@ -1,8 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Threading;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Configuration;
 using PVDevelop.UCoach.Configuration;
 using PVDevelop.UCoach.HttpGatewayApp.Infrastructure.WebApi;

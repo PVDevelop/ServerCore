@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 
 import Home from "./components/home";
 import RegistrationFrom from "./components/registration/registrationForm";
-import Confirm from "./components/confirmation";
+import Confirmation from "./components/confirmation/confirmation";
 import NotFound from "./components/not_found";
 import configureStore from "./configureStore";
 
@@ -18,7 +18,7 @@ ReactDOM.render(
         <Router history={browserHistory}>
             <Route path="/" component={Home} />
             <Route path="/register" component={RegistrationFrom} />
-            <Route path="/confirmations/:confirmation_id" component={Confirm} />
+            <Route path="/confirmations/:key" component={Confirmation} />
 
             <Route path="*" component={NotFound} />
         </Router>

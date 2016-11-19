@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace PVDevelop.UCoach.AuthenticationApp.Application
 {
@@ -6,7 +7,9 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 	{
 		public string Generate()
 		{
-			return Guid.NewGuid().ToString();
+			var guidString = Guid.NewGuid().ToString();
+			var tokenBytes = Encoding.UTF8.GetBytes(guidString);
+			return Convert.ToBase64String(tokenBytes);
 		}
 	}
 }

@@ -61,9 +61,12 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 			_userRepository.Insert(user);
 
 			_logger.Debug($"Создаю ключ подтверждения для пользователя '{email}'.");
+
+			var confirmationKey = _confirmationKeyGenerator.Generate();
+
 			var confirmation = new Confirmation(
 				userId: user.Id,
-				key: _confirmationKeyGenerator.Generate(),
+				key: confirmationKey,
 				creationTime: _utcTimeProvider.UtcNow);
 			_confirmationRepository.Insert(confirmation);
 

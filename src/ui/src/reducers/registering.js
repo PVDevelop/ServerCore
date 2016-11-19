@@ -16,7 +16,7 @@ export default function registering(state = initialState, action) {
             console.debug("setting password to " + action.password);
             return {...state, password: action.password };
         case registrationState:
-            console.debug("setting state to " + action.state);
+            console.debug("setting registration state to " + action.state);
             return {...state, state: action.state};
         default:
             return state;

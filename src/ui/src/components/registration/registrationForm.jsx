@@ -17,6 +17,10 @@ import RegistrationFailureModal from "./registrationFailureModal";
 import * as registeringActions from "../../actions/registering";
 
 class RegistrationForm extends React.Component {
+    componentWillMount(){
+        this.props.registrationActions.setState(RegistrationState.NONE);
+    }
+
     render() {
         return (
             <Panel header="Создание нового пользователя">

@@ -34,7 +34,7 @@ gulp.task("default", ["copy_debug"], () => {
                         loader: "babel-loader",
                         exclude: /node_modules/,
                         query: {
-                            presets: ["es2015", "react", "stage-0", "stage-2"]
+                            presets: ["es2015", "react", "stage-0", "stage-1", "stage-2", "stage-3"]
                         }
                     }]
             },
