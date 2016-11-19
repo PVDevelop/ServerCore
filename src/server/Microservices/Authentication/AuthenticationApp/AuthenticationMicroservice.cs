@@ -3,7 +3,6 @@ using System.Threading;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using PVDevelop.UCoach.AuthenticationApp.Application;
-using PVDevelop.UCoach.AuthenticationApp.Infrastructure;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Email;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.Confirmation;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.User;
@@ -63,9 +62,9 @@ namespace PVDevelop.UCoach.AuthenticationApp
 		{
 			x.For<IUserService>().Use<UserService>();
 			x.For<IConfirmationKeyGenerator>().Use<ConfirmationKeyGenerator>();
-			x.For<IUserSessionGenerator>().Use<UserSessionGenerator>();
 			x.For<IUtcTimeProvider>().Use<UtcTimeProvider>();
 			x.For<IUserRepository>().Use<MongoUserRepository>();
+			x.For<IUserSessionRepository>().Use<MongoUserSessionRepository>();
 			x.For<IConfirmationRepository>().Use<MongoConfirmationRepository>();
 			x.For<IConfirmationProducer>().Use<EmailConfirmationProducer>();
 			x.For<IConfigurationRoot>().Add(ConfigurationRoot);
@@ -75,6 +74,7 @@ namespace PVDevelop.UCoach.AuthenticationApp
 		{
 			x.For<IMongoRepository<MongoUser>>().Use<MongoRepository<MongoUser>>();
 			x.For<IMongoRepository<MongoConfirmation>>().Use<MongoRepository<MongoConfirmation>>();
+			x.For<IMongoRepository<MongoUserSession>>().Use<MongoRepository<MongoUserSession>>();
 			x.
 				For<IConnectionStringProvider>().
 				Use<ConnectionStringFromConfigurationRootProvider>().

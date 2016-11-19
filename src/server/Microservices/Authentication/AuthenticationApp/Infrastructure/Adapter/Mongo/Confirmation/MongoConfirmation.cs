@@ -13,11 +13,6 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.Confir
 		public string Id { get; set; }
 
 		/// <summary>
-		/// Версия формата документа.
-		/// </summary>
-		public int Version { get; set; }
-
-		/// <summary>
 		/// Ключ подтверждения создания пользователя.
 		/// </summary>
 		[MongoIndexName("key")]

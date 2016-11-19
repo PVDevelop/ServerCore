@@ -27,11 +27,6 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		public string Password { get; private set; }
 
 		/// <summary>
-		/// Состояние пользователя.
-		/// </summary>
-		public UserState State { get; private set; }
-
-		/// <summary>
 		/// Время создания.
 		/// </summary>
 		public DateTime CreationTime { get; }
@@ -43,13 +38,11 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 			string id,
 			string email,
 			string password,
-			UserState state,
 			DateTime creationTime)
 		{
 			Id = id;
 			Email = email;
 			Password = password;
-			State = state;
 			CreationTime = creationTime;
 		}
 
@@ -65,7 +58,6 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 			Email = email;
 			EncryptAndSetPassword(password);
 			CreationTime = creationTime;
-			State = UserState.New;
 		}
 
 		private void EncryptAndSetPassword(string plainPassword)
@@ -106,19 +98,6 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 			{
 				throw new InvalidPasswordException(Email);
 			}
-		}
-
-		/// <summary>
-		/// Перевод пользователя в состояние "Подтвержден".
-		/// </summary>
-		/// <returns>Токен авторизации</returns>
-		public void Confirm()
-		{
-			if(State != UserState.New)
-			{
-				throw new InvalidOperationException("Already confirmed");
-			}
-			State = UserState.Confirmed;
 		}
 	}
 }

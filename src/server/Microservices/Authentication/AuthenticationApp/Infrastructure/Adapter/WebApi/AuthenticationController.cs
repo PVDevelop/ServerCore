@@ -1,12 +1,15 @@
 ﻿using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PVDevelop.UCoach.AuthenticationApp.Application;
-using PVDevelop.UCoach.AuthenticationContrancts.Rest;
+using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi.Dto;
 
 namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi
 {
 	public class AuthenticationController : Controller
 	{
+		private const string AccessTokenCookieName = "access_token";
+
 		private readonly IUserService _userService;
 
 		public AuthenticationController(IUserService userService)
@@ -21,31 +24,24 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi
 			if (createUserDto == null) throw new ArgumentNullException(nameof(createUserDto));
 
 			_userService.CreateUser(
-				email: createUserDto.Email, 
+				email: createUserDto.Email,
 				password: createUserDto.Password);
 		}
 
-		[HttpPost("api/confirmations")]
-		public TokenDto ConfirmUser([FromBody] ConfirmUserRegistrationDto confirmUserRegistrationDto)
+		[HttpGet("api/confirmations/{key}")]
+		public void ConfirmUser(string key)
 		{
-			if (confirmUserRegistrationDto == null)
-				throw new ArgumentNullException(nameof(confirmUserRegistrationDto));
+			if (string.IsNullOrWhiteSpace(key)) throw new ArgumentException("Not set", key);
 
-			var token = _userService.ConfirmUserRegistration(confirmUserRegistrationDto.ConfirmationKey);
+			var token = _userService.ConfirmUserRegistration(key);
 
+			var cookieOptions = new CookieOptions
+			{
+				Path = "/",
+				Expires = token.Expiration
+			};
 			var encodedToken = TokenEncoder.Encode(token);
-
-			return new TokenDto(encodedToken, token.Expiration);
-		}
-
-		[HttpGet("api/tokens/{token}")]
-		public UserProfileDto ValidateToken(string token)
-		{
-			if (string.IsNullOrWhiteSpace(token)) throw new ArgumentException("Not set", nameof(token));
-
-			var accessToken = TokenEncoder.Decode(token);
-
-			throw new NotImplementedException();
+			Response.Cookies.Append(AccessTokenCookieName, encodedToken, cookieOptions);
 		}
 	}
 }

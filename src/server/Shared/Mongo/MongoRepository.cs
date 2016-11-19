@@ -31,6 +31,12 @@ namespace PVDevelop.UCoach.Mongo
 			return coll.Find(predicate).SingleOrDefault();
 		}
 
+		public T[] FindMany(Expression<Func<T, bool>> predicate)
+		{
+			var coll = GetCollection();
+			return coll.Find(predicate).ToList().ToArray();
+		}
+
 		public void Insert(T document)
 		{
 			var coll = GetCollection();

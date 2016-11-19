@@ -71,11 +71,6 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		/// </summary>
 		public void Confirm()
 		{
-			if(State == ConfirmationState.Confirmed)
-			{
-				throw new AlreadyConfirmedException(UserId);
-			}
-
 			State = ConfirmationState.Confirmed;
 		}
 	}

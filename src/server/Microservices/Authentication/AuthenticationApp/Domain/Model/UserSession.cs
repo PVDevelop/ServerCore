@@ -29,18 +29,26 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		public DateTime Expiration { get; }
 
 		public UserSession(
-			string id,
 			string userId,
 			DateTime utcNow)
 		{
-			if(string.IsNullOrWhiteSpace(id)) throw new ArgumentException("Not set", nameof(id));
 			if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("Not set", nameof(userId));
 			if (utcNow == default(DateTime)) throw new ArgumentException("Not set", nameof(utcNow));
 			if (utcNow.Kind != DateTimeKind.Utc) throw new ArgumentException("Not UTC", nameof(utcNow));
 
-			Id = id;
+			Id = Guid.NewGuid().ToString();
 			UserId = userId;
 			Expiration = utcNow + TokenExpirationPeriod;
+		}
+
+		/// <summary>
+		/// Контсруктор, используемый для воостановления пользователя из хранилища.
+		/// </summary>
+		internal UserSession(string id, string userId, DateTime expiration)
+		{
+			Id = id;
+			UserId = userId;
+			Expiration = expiration;
 		}
 
 		/// <summary>

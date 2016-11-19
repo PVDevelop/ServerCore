@@ -29,6 +29,11 @@ namespace PVDevelop.UCoach.Mongo
 		T Find(Expression<Func<T, bool>> predicate);
 
 		/// <summary>
+		/// Возвращает элементы, удовлетворяющие условию.
+		/// </summary>
+		T[] FindMany(Expression<Func<T, bool>> predicate);
+
+		/// <summary>
 		/// Замещает имеющийся документ новым.
 		/// </summary>
 		void ReplaceOne(Expression<Func<T, bool>> predicate, T document);

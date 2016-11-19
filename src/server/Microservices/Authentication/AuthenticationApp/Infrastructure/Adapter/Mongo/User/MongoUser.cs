@@ -13,11 +13,6 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.User
 		public string Id { get; set; }
 
 		/// <summary>
-		/// Версия формата документа.
-		/// </summary>
-		public int Version { get; private set; }
-
-		/// <summary>
 		/// Почтовый адерс пользователя. Уникален в БД.
 		/// </summary>
 		[MongoIndexName("email")]
@@ -27,11 +22,6 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.User
 		/// Пароль пользователя. Закодирован.
 		/// </summary>
 		public string Password { get; set; }
-
-		/// <summary>
-		/// Состояние пользователя.
-		/// </summary>
-		public UserState State { get; set; }
 
 		/// <summary>
 		/// Время создания пользователя.

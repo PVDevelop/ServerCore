@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.Extensions.Configuration;
 using PVDevelop.UCoach.AuthenticationApp.Domain.Model;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure;
@@ -11,9 +12,9 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 	public class UserService : IUserService
 	{
 		private readonly IConfirmationKeyGenerator _confirmationKeyGenerator;
-		private readonly IUserSessionGenerator _tokenGenerator;
 		private readonly IUtcTimeProvider _utcTimeProvider;
 		private readonly IUserRepository _userRepository;
+		private readonly IUserSessionRepository _userSessionRepository;
 		private readonly IConfirmationRepository _confirmationRepository;
 		private readonly IConfirmationProducer _confirmationProducer;
 		private readonly ILogger _logger = LoggerHelper.GetLogger<UserService>();
@@ -21,25 +22,25 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 
 		public UserService(
 			IConfirmationKeyGenerator confirmationKeyGenerator,
-			IUserSessionGenerator tokenGenerator,
 			IUtcTimeProvider utcTimeProvider,
 			IUserRepository userRepository,
+			IUserSessionRepository userSessionRepository,
 			IConfirmationRepository confirmationRepository,
 			IConfirmationProducer confirmationProducer,
 			IConfigurationRoot configuration)
 		{
 			if (confirmationKeyGenerator == null) throw new ArgumentNullException(nameof(confirmationKeyGenerator));
-			if (tokenGenerator == null) throw new ArgumentNullException(nameof(tokenGenerator));
 			if (utcTimeProvider == null) throw new ArgumentNullException(nameof(utcTimeProvider));
 			if (userRepository == null) throw new ArgumentNullException(nameof(userRepository));
+			if (userSessionRepository == null) throw new ArgumentNullException(nameof(userSessionRepository));
 			if (confirmationRepository == null) throw new ArgumentNullException(nameof(confirmationRepository));
 			if (confirmationProducer == null) throw new ArgumentNullException(nameof(confirmationProducer));
 			if (configuration == null) throw new ArgumentNullException(nameof(configuration));
 
 			_confirmationKeyGenerator = confirmationKeyGenerator;
-			_tokenGenerator = tokenGenerator;
 			_utcTimeProvider = utcTimeProvider;
 			_userRepository = userRepository;
+			_userSessionRepository = userSessionRepository;
 			_confirmationRepository = confirmationRepository;
 			_confirmationProducer = confirmationProducer;
 
@@ -91,19 +92,22 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 			_logger.Debug($"Сохраняю подтверждение '{confirmation.Key}'.");
 			_confirmationRepository.Update(confirmation);
 
-			var user = _userRepository.GetById(confirmation.UserId);
-			if (user == null)
+			var userSession = _userSessionRepository.GetByUserId(confirmation.UserId).LastOrDefault();
+			if (userSession == null)
 			{
-				// todo: здесь надо откатить подтверждение.
-				throw new UserNotFoundException(confirmation.UserId);
+				_logger.Debug($"Создаю новую сессию пользователя '{confirmation.UserId}'");
+				userSession =
+					new UserSession(confirmation.UserId, _utcTimeProvider.UtcNow);
+
+				_logger.Debug($"Сохраняю сессию пользователя '{userSession.UserId}'");
+				_userSessionRepository.Insert(userSession);
+			}
+			else
+			{
+				_logger.Debug($"Сессия пользователя '{userSession.UserId}' уже существует, Id сессии - '{userSession.Id}'");
 			}
 
-			user.Confirm();
-
-			_logger.Debug($"Сохраняю пользователя '{user.Email}'");
-			_userRepository.Update(user);
-
-			throw new NotImplementedException();
+			return userSession.GenerateToken();
 		}
 
 		private static string GetConfirmationUrl(IConfigurationRoot configuration)

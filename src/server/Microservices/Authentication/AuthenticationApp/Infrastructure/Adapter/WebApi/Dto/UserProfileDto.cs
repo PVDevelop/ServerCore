@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace PVDevelop.UCoach.AuthenticationContrancts.Rest
+namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi.Dto
 {
 	public class UserProfileDto
 	{

@@ -1,8 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
-using PVDevelop.UCoach.AuthenticationApp.Application;
 using PVDevelop.UCoach.AuthenticationApp.Domain.Model;
-using PVDevelop.UCoach.AuthenticationApp.Infrastructure;
 using PVDevelop.UCoach.Timing;
 
 namespace PVDevelop.UCoach.AuthenticationApp.Tests.Domain.Model
@@ -86,21 +84,6 @@ namespace PVDevelop.UCoach.AuthenticationApp.Tests.Domain.Model
 			public UtcTimeProviderStub(DateTime time)
 			{
 				UtcNow = time;
-			}
-		}
-
-		internal class UserSessionGeneratorStub : IUserSessionGenerator
-		{
-			private readonly string _id;
-
-			public UserSessionGeneratorStub(string id)
-			{
-				_id = id;
-			}
-
-			public string Generate()
-			{
-				return _id;
 			}
 		}
 	}
