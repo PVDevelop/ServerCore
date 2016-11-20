@@ -49,10 +49,9 @@ class RegistrationForm extends React.Component {
 
                     <FormGroup>
                         <Col smOffset={2} sm={10}>
-                            <Button
-                                type="submit"
-                                disabled={this.props.state === RegistrationState.PENDING}
-                                onClick={::this.onRegisterButtonClicked}>Создать</Button>
+                            <Button type="submit" disabled={this.props.state === RegistrationState.PENDING} onClick={::this.onRegisterButtonClicked}>
+                                Создать
+                            </Button>
                         </Col>
                     </FormGroup>
 

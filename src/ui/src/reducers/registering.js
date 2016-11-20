@@ -10,10 +10,10 @@ const initialState = {
 export default function registering(state = initialState, action) {
     switch (action.type) {
         case registrationEmail:
-            console.debug("setting email to " + action.email);
+            console.debug("setting registration email to " + action.email);
             return {...state, email: action.email };
         case registrationPassword:
-            console.debug("setting password to " + action.password);
+            console.debug("setting registration password to " + action.password);
             return {...state, password: action.password };
         case registrationState:
             console.debug("setting registration state to " + action.state);
