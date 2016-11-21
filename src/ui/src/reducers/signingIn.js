@@ -18,7 +18,6 @@ export default function signingIn(state = initialState, action) {
             console.debug("setting isCreating to " + action.isCreating);
             return {...state, isCreating: action.isCreating };
         default:
-            console.debug("unknown signingIn action type " + action.type);
             return state;
     }
 }

@@ -11,14 +11,11 @@ import Button from "react-bootstrap/lib/Button";
 import Panel from "react-bootstrap/lib/Panel";
 import Col from "react-bootstrap/lib/Col";
 
-import RegistrationState from "../../const/registration";
-import RegistrationSuccessModal from "./registrationSuccessModal";
-import RegistrationFailureModal from "./registrationFailureModal";
-import * as registeringActions from "../../actions/registering";
+import * as registrationActions from "../actions/registration";
 
-class RegistrationForm extends React.Component {
-    componentWillMount(){
-        this.props.registrationActions.setState(RegistrationState.NONE);
+class Registration extends React.Component {
+    componentWillMount() {
+        this.props.registrationActions.setWaitingForResponse(false);
     }
 
     render() {
@@ -49,16 +46,13 @@ class RegistrationForm extends React.Component {
 
                     <FormGroup>
                         <Col smOffset={2} sm={10}>
-                            <Button type="submit" disabled={this.props.state === RegistrationState.PENDING} onClick={::this.onRegisterButtonClicked}>
+                            <Button type="submit" disabled={this.props.waitingForResponse === true} onClick={::this.onRegisterButtonClicked}>
                                 Создать
                             </Button>
                         </Col>
                     </FormGroup>
-
-                    {this.props.state === RegistrationState.SUCCESS ? <RegistrationSuccessModal /> : null}
-                    {this.props.state === RegistrationState.FAILURE ? <RegistrationFailureModal /> : null}
                 </Form>
-            </Panel>
+            </Panel >
         );
     }
 
@@ -72,7 +66,7 @@ class RegistrationForm extends React.Component {
 
     onRegisterButtonClicked(e) {
         e.preventDefault();
-        this.props.registrationActions.setState(RegistrationState.PENDING);
+        this.props.registrationActions.setWaitingForResponse(true);
 
         var data = {
             email: this.props.email,
@@ -95,30 +89,33 @@ class RegistrationForm extends React.Component {
         fetch(url, options)
             .then(response => {
                 if (response.status == 200) {
-                    this.props.registrationActions.setState(RegistrationState.SUCCESS);
+                    alert("Пользователь зарегистрирован.");
+                    browserHistory.push("/");
                 }
                 else {
-                    this.props.registrationActions.setState(RegistrationState.FAILURE);
+                    alert("Ошибка регистрации пользователя.");
                 }
+                this.props.registrationActions.setWaitingForResponse(false);
             })
             .catch(err => {
-                this.props.registrationActions.setState(RegistrationState.FAILURE);
+                alert("Ошибка регистрации пользователя.");
+                this.props.registrationActions.setWaitingForResponse(false);
             });
     }
 }
 
 function mapStateToProps(state) {
     return {
-        email: state.registering.email,
-        password: state.registering.password,
-        state: state.registering.state
+        email: state.registration.email,
+        password: state.registration.password,
+        waitingForResponse: state.registration.waitingForResponse
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        registrationActions: bindActionCreators(registeringActions, dispatch)
+        registrationActions: bindActionCreators(registrationActions, dispatch)
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(RegistrationForm);
+export default connect(mapStateToProps, mapDispatchToProps)(Registration);

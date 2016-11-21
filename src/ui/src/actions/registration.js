@@ -1,11 +1,12 @@
 export const registrationEmail = "REGISTRATION_EMAIL";
 export const registrationPassword = "REGISTRATION_PASSWORD";
-export const registrationState = "REGISTRATION_STATE";
+export const registrationWaitingForResponse = "REGISTRATION_WAITING_FOR_RESPONSE";
 
 export function setEmail(email) {
     return {
         type: registrationEmail,
-        email: email
+        email: email,
+        waitingForResponse: false
     };
 }
 
@@ -16,9 +17,9 @@ export function setPassword(password) {
     };
 }
 
-export function setState(state) {
+export function setWaitingForResponse(waitingForResponse) {
     return {
-        type: registrationState,
-        state: state
+        type: registrationWaitingForResponse,
+        waitingForResponse: waitingForResponse
     };
 }

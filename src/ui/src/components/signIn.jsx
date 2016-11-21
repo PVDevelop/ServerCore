@@ -11,10 +11,10 @@ import Col from "react-bootstrap/lib/Col";
 import ControlLabel from "react-bootstrap/lib/ControlLabel";
 import Button from "react-bootstrap/lib/Button";
 
-import * as signingInActions from "../../actions/signingIn";
+import * as signingInActions from "../actions/signingIn";
 
-class SignInForm extends React.Component {
-    componentWillMount(){
+class SignIn extends React.Component {
+    componentWillMount() {
         this.props.signInActions.setIsCreating(false);
     }
 
@@ -60,45 +60,46 @@ class SignInForm extends React.Component {
         e.preventDefault();
         this.props.signInActions.setIsCreating(true);
 
-            var data = {
-                email: this.props.email,
-                password: this.props.password
-            };
+        var data = {
+            email: this.props.email,
+            password: this.props.password
+        };
 
-            var json = JSON.stringify(data);
+        var json = JSON.stringify(data);
 
-            var options = {
-                method: "put",
-                credentials: "same-origin",
-                headers: {
-                    "Accept": "application/json",
-                    "Content-Type": "application/json"
-                },
-                body: json
-            };
+        var options = {
+            method: "put",
+            credentials: "same-origin",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: json
+        };
 
-            var url = "/api/users";
+        var url = "/api/users";
 
-            console.log("Sending user credentials at " + url);
+        console.log("Sending user credentials at " + url);
 
-            fetch(url, options)
-                .then(response => {
-                    console.log(response);
+        fetch(url, options)
+            .then(response => {
+                console.log(response);
 
-                    if (response.status == 200) {
-                        browserHistory.push('/');
-                    }
-                    else {
-                        alert("Fail!");
-                    }
+                if (response.status == 200) {
+                    alert("Вы успешно аутентифицировались.");
+                    browserHistory.push('/');
+                }
+                else {
+                    alert("Ошибка аутентификации");
+                }
 
-                    this.props.signInActions.setIsCreating(false);
-                })
-                .catch(err => {
-                    console.log(err);
-                    alert("Fail!");
-                    this.props.signInActions.setIsCreating(false);
-                });
+                this.props.signInActions.setIsCreating(false);
+            })
+            .catch(err => {
+                console.log(err);
+                alert("Ошибка аутентификации");
+                this.props.signInActions.setIsCreating(false);
+            });
     }
 
     onEmailChange(event) {
@@ -124,4 +125,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignInForm);
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn);
