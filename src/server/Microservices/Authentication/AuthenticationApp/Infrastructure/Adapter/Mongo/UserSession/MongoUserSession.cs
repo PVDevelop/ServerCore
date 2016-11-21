@@ -1,4 +1,4 @@
-﻿using System;
+﻿using PVDevelop.UCoach.AuthenticationApp.Domain.Model;
 using PVDevelop.UCoach.Mongo;
 
 namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.UserSession
@@ -11,6 +11,6 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.UserSe
 		[MongoIndexName("userId")]
 		public string UserId { get; set; }
 
-		public DateTime Expiration { get; set; }
+		public SessionState State { get; set; }
 	}
 }

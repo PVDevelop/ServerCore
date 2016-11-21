@@ -1,4 +1,5 @@
 ﻿using System;
+using PVDevelop.UCoach.AuthenticationApp.Domain.Model.Exceptions;
 
 namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 {

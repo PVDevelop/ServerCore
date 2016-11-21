@@ -27,5 +27,10 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.User
 		/// Время создания пользователя.
 		/// </summary>
 		public DateTime CreationTime { get; set; }
+
+		/// <summary>
+		/// Состояние пользователя.
+		/// </summary>
+		public UserState State { get; set; }
 	}
 }

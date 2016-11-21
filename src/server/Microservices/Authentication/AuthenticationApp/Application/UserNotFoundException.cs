@@ -4,8 +4,8 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 {
 	public class UserNotFoundException : Exception
 	{
-		public UserNotFoundException(string email) :
-			base($"User with email '{email}' not found.")
+		public UserNotFoundException(string name) :
+			base($"User '{name}' not found.")
 		{
 		}
 	}

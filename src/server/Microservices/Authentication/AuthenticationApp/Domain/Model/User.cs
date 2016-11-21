@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using PVDevelop.UCoach.AuthenticationApp.Application;
+using PVDevelop.UCoach.AuthenticationApp.Domain.Model.Exceptions;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure;
 using PVDevelop.UCoach.Timing;
 
@@ -32,20 +33,30 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		public DateTime CreationTime { get; }
 
 		/// <summary>
+		/// Состояние пользователя.
+		/// </summary>
+		public UserState State { get; private set; }
+
+		/// <summary>
 		/// Конструктор используется только при восстановлении из хранилища
 		/// </summary>
 		internal User(
 			string id,
 			string email,
 			string password,
-			DateTime creationTime)
+			DateTime creationTime,
+			UserState state)
 		{
 			Id = id;
 			Email = email;
 			Password = password;
 			CreationTime = creationTime;
+			State = state;
 		}
 
+		/// <summary>
+		/// Конструктор создания нового пользователя.
+		/// </summary>
 		public User(
 			string email,
 			string password,
@@ -89,13 +100,38 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		}
 
 		/// <summary>
-		/// Проверка некодированного пароля.
+		/// Вход пользователя в сеть.
 		/// </summary>
 		/// <param name="plainPassword">Незакодированный пароль</param>
-		/// <returns>Признак валидности пароля.</returns>
-		public bool ValidatePlainPassword(string plainPassword)
+		public void SignIn(string plainPassword)
 		{
-			return BCrypt.Net.BCrypt.Verify(plainPassword, Password);
+			if (!BCrypt.Net.BCrypt.Verify(plainPassword, Password))
+			{
+				throw new InvalidPasswordException(Email);
+			}
+
+			if(State == UserState.WaitingForCreationConfirm)
+			{
+				throw new UserWaitingForCreationConfirmException(Email);
+			}
+
+			State = UserState.SignedIn;
+		}
+
+		/// <summary>
+		/// Выход пользователя из сети.
+		/// </summary>
+		public void SignOut()
+		{
+			State = UserState.SignedOut;	
+		}
+
+		/// <summary>
+		/// Подтверждение создание пользователя и вход в сеть.
+		/// </summary>
+		public void Confirm()
+		{
+			State = UserState.SignedIn;
 		}
 	}
 }

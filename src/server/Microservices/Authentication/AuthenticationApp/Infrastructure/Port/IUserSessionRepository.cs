@@ -15,5 +15,11 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Port
 		/// </summary>
 		/// <param name="userSession">Сессия пользователя.</param>
 		void Insert(UserSession userSession);
+
+		/// <summary>
+		/// Обновить имеющуюся сессию пользователя.
+		/// </summary>
+		/// <param name="userSession">Сессия пользователя.</param>
+		void Update(UserSession userSession);
 	}
 }

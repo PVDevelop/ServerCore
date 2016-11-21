@@ -34,9 +34,17 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.UserSe
 			_repository.Insert(mongoUserSession);
 		}
 
+		public void Update(Domain.Model.UserSession userSession)
+		{
+			if (userSession == null) throw new ArgumentNullException(nameof(userSession));
+
+			var mongoUserSession = MapToMongoUserSession(userSession);
+			_repository.ReplaceOne(s => s.Id == mongoUserSession.Id, mongoUserSession);
+		}
+
 		private static Domain.Model.UserSession MapToDomainUserSession(MongoUserSession userSession)
 		{
-			return new Domain.Model.UserSession(userSession.Id, userSession.UserId, userSession.Expiration);
+			return new Domain.Model.UserSession(userSession.Id, userSession.UserId, userSession.State);
 		}
 
 		private static MongoUserSession MapToMongoUserSession(Domain.Model.UserSession userSession)
@@ -45,7 +53,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.UserSe
 			{
 				Id = userSession.Id,
 				UserId = userSession.UserId,
-				Expiration = userSession.Expiration
+				State = userSession.State
 			};
 		}
 	}

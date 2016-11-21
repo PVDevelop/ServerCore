@@ -58,6 +58,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.User
 				Email = user.Email,
 				Password = user.Password,
 				CreationTime = user.CreationTime,
+				State = user.State
 			};
 		}
 
@@ -67,7 +68,8 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.User
 				id: user.Id,
 				email: user.Email,
 				password: user.Password,
-				creationTime: user.CreationTime);
+				creationTime: user.CreationTime,
+				state: user.State);
 		}
 	}
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
+namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model.Exceptions
 {
 	public class InvalidPasswordException : Exception
 	{

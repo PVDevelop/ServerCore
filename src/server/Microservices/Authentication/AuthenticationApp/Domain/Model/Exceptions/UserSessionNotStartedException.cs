@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
+namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model.Exceptions
 {
 	/// <summary>
 	/// Генерируется при попытке выполнения действий пользователя, связанных с аутентификацией в ситуации, когда сессия пользователя еще не начата.

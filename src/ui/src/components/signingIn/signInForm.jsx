@@ -47,7 +47,7 @@ class SignInForm extends React.Component {
                     <FormGroup>
                         <Col smOffset={1} sm={11}>
                             <Button type="submit" disabled={this.props.isCreating === true} onClick={::this.onCreateButtonClicked}>
-                                Создать
+                                Войти
                         </Button>
                         </Col>
                     </FormGroup>

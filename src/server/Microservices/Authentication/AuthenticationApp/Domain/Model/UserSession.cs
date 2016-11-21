@@ -1,6 +1,5 @@
 ﻿using System;
-using PVDevelop.UCoach.AuthenticationApp.Application;
-using PVDevelop.UCoach.AuthenticationApp.Infrastructure;
+using PVDevelop.UCoach.AuthenticationApp.Domain.Model.Exceptions;
 using PVDevelop.UCoach.Timing;
 
 namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
@@ -24,43 +23,47 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		public string UserId { get; }
 
 		/// <summary>
-		/// Время истечения сессии. После окончания действия все токены становятся недействительны.
+		/// Состояние активности сессии.
 		/// </summary>
-		public DateTime Expiration { get; }
+		public SessionState State { get; private set; }
 
 		public UserSession(
-			string userId,
-			DateTime utcNow)
+			string userId)
 		{
 			if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("Not set", nameof(userId));
-			if (utcNow == default(DateTime)) throw new ArgumentException("Not set", nameof(utcNow));
-			if (utcNow.Kind != DateTimeKind.Utc) throw new ArgumentException("Not UTC", nameof(utcNow));
 
 			Id = Guid.NewGuid().ToString();
 			UserId = userId;
-			Expiration = utcNow + TokenExpirationPeriod;
 		}
 
 		/// <summary>
 		/// Контсруктор, используемый для воостановления пользователя из хранилища.
 		/// </summary>
-		internal UserSession(string id, string userId, DateTime expiration)
+		internal UserSession(string id, string userId, SessionState state)
 		{
 			Id = id;
 			UserId = userId;
-			Expiration = expiration;
+			State = state;
 		}
 
 		/// <summary>
 		/// Генерирует новый токен доступа.
 		/// </summary>
 		/// <returns>Токен доступа.</returns>
-		public AccessToken GenerateToken()
+		public AccessToken GenerateToken(DateTime utcNow)
 		{
 			var salt = BCrypt.Net.BCrypt.GenerateSalt();
 			var token = BCrypt.Net.BCrypt.HashPassword(Id, salt);
 
-			return new AccessToken(UserId, token, Expiration);
+			return new AccessToken(UserId, token, utcNow + TokenExpirationPeriod);
+		}
+
+		/// <summary>
+		/// Переводит сессию в состояние активности.
+		/// </summary>
+		public void Activate()
+		{
+			State = SessionState.Active;
 		}
 
 		/// <summary>
@@ -69,29 +72,27 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		/// <param name="accessToken">Валидируемый токен.</param>
 		/// <param name="utcTimeProvider">Провайдер UTC времени.</param>
 		/// <returns>Признак валидности токена.</returns>
-		public bool Validate(AccessToken accessToken, IUtcTimeProvider utcTimeProvider)
+		public void Validate(AccessToken accessToken, IUtcTimeProvider utcTimeProvider)
 		{
 			if (accessToken == null) throw new ArgumentNullException(nameof(accessToken));
 			if (utcTimeProvider == null) throw new ArgumentNullException(nameof(utcTimeProvider));
 
-			var utcNow = utcTimeProvider.UtcNow;
-
-			if (utcNow > Expiration)
+			if(State != SessionState.Active)
 			{
-				return false;
+				throw new InactiveSessionException();
 			}
+
+			var utcNow = utcTimeProvider.UtcNow;
 
 			if (utcNow > accessToken.Expiration)
 			{
-				return false;
+				throw new InvalidTokenException("Token expired.");
 			}
 
-			if (!BCrypt.Net.BCrypt.Verify(Id, accessToken.Token))
+			if(!BCrypt.Net.BCrypt.Verify(Id, accessToken.Token))
 			{
-				return false;
+				throw new InvalidTokenException("Incorrect token hash.");
 			}
-
-			return true;
 		}
 	}
 }
