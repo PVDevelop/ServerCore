@@ -10,6 +10,11 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Port
 		User GetById(string userId);
 
 		/// <summary>
+		/// Находит пользователя по его почтовому адрему. Если не найден, возвращает null.
+		/// </summary>
+		User GetByEmail(string email);
+
+		/// <summary>
 		/// Добавление нового пользователя.
 		/// </summary>
 		void Insert(User user);

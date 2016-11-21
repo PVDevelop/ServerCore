@@ -5,10 +5,10 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Port
 	public interface IUserSessionRepository
 	{
 		/// <summary>
-		/// Возвращает сессию пользователя. Если не находит, возвращает null.
+		/// Возвращает последнюю сессию пользователя. Если не находит, возвращает null.
 		/// </summary>
 		/// <param name="userId">Идентификатор пользователя.</param>
-		UserSession[] GetByUserId(string userId);
+		UserSession GetLastSession(string userId);
 
 		/// <summary>
 		/// Добавляет новую сессию пользователя.

@@ -1,5 +1,6 @@
 export const signingInEmail = "SIGNINGIN_EMAIL";
 export const signingInPassword = "SIGNINGIN_PASSWORD";
+export const signingInIsCreating = "SIGNINGIN_IS_CREATING"; 
 
 export function setEmail(email) {
     return {
@@ -13,4 +14,11 @@ export function setPassword(password) {
         type: signingInPassword,
         password: password
     };
+}
+
+export function setIsCreating(isCreating){
+    return{
+        type: signingInIsCreating,
+        isCreating: isCreating
+    }
 }

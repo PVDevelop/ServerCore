@@ -1,4 +1,4 @@
-import { confirmationState } from "../actions/confirming";
+import * as confirmingActions from "../actions/confirming";
 import ConfirmationState from "../const/confirmation";
 
 const initialState = {
@@ -7,10 +7,11 @@ const initialState = {
 
 export default function confirming(state = initialState, action) {
     switch (action.type) {
-        case confirmationState:
+        case confirmingActions.confirmationState:
             console.debug("setting confirmation state to " + action.state);
             return {...state, state: action.state};
         default:
+            console.debug("unknown confirming action type " + action.type);
             return state;
     }
 }

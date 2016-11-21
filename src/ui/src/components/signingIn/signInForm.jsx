@@ -1,5 +1,6 @@
 import React from "react";
 import { bindActionCreators } from "redux";
+import { browserHistory } from "react-router";
 import { connect } from "react-redux";
 
 import Panel from "react-bootstrap/lib/Panel";
@@ -13,6 +14,10 @@ import Button from "react-bootstrap/lib/Button";
 import * as signingInActions from "../../actions/signingIn";
 
 class SignInForm extends React.Component {
+    componentWillMount(){
+        this.props.signInActions.setIsCreating(false);
+    }
+
     render() {
         return (
             <Panel header="Вход в систему">
@@ -22,7 +27,7 @@ class SignInForm extends React.Component {
                         <Col sm={11}>
                             <FormControl
                                 type="email"
-                                placeholder="Введите почтовый адрес" 
+                                placeholder="Введите почтовый адрес"
                                 value={this.props.email}
                                 onChange={::this.onEmailChange}/>
                         </Col>
@@ -33,7 +38,7 @@ class SignInForm extends React.Component {
                         <Col sm={11}>
                             <FormControl
                                 type="password"
-                                placeholder="Введите пароль" 
+                                placeholder="Введите пароль"
                                 value={this.props.password}
                                 onChange={::this.onPasswordChange}/>
                         </Col>
@@ -41,14 +46,59 @@ class SignInForm extends React.Component {
 
                     <FormGroup>
                         <Col smOffset={1} sm={11}>
-                            <Button type="submit">
+                            <Button type="submit" disabled={this.props.isCreating === true} onClick={::this.onCreateButtonClicked}>
                                 Создать
                         </Button>
                         </Col>
                     </FormGroup>
                 </Form>
-            </Panel>
+            </Panel >
         );
+    }
+
+    onCreateButtonClicked(e) {
+        e.preventDefault();
+        this.props.signInActions.setIsCreating(true);
+
+            var data = {
+                email: this.props.email,
+                password: this.props.password
+            };
+
+            var json = JSON.stringify(data);
+
+            var options = {
+                method: "put",
+                credentials: "same-origin",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: json
+            };
+
+            var url = "/api/users";
+
+            console.log("Sending user credentials at " + url);
+
+            fetch(url, options)
+                .then(response => {
+                    console.log(response);
+
+                    if (response.status == 200) {
+                        browserHistory.push('/');
+                    }
+                    else {
+                        alert("Fail!");
+                    }
+
+                    this.props.signInActions.setIsCreating(false);
+                })
+                .catch(err => {
+                    console.log(err);
+                    alert("Fail!");
+                    this.props.signInActions.setIsCreating(false);
+                });
     }
 
     onEmailChange(event) {
@@ -63,7 +113,8 @@ class SignInForm extends React.Component {
 function mapStateToProps(state) {
     return {
         email: state.signingIn.email,
-        password: state.signingIn.password
+        password: state.signingIn.password,
+        isCreating: state.signingIn.isCreating
     };
 }
 

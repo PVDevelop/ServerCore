@@ -92,12 +92,10 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		/// Проверка некодированного пароля.
 		/// </summary>
 		/// <param name="plainPassword">Незакодированный пароль</param>
-		public void CheckPlainPassword(string plainPassword)
+		/// <returns>Признак валидности пароля.</returns>
+		public bool ValidatePlainPassword(string plainPassword)
 		{
-			if (!BCrypt.Net.BCrypt.Verify(plainPassword, Password))
-			{
-				throw new InvalidPasswordException(Email);
-			}
+			return BCrypt.Net.BCrypt.Verify(plainPassword, Password);
 		}
 	}
 }

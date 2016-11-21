@@ -23,6 +23,14 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.User
 			return mongoUser == null ? null : MapToDomainUser(mongoUser);
 		}
 
+		public Domain.Model.User GetByEmail(string email)
+		{
+			if (string.IsNullOrWhiteSpace(email)) throw new ArgumentException("Not set", nameof(email));
+
+			var mongoUser = _repository.Find(u => u.Email == email);
+			return mongoUser == null ? null : MapToDomainUser(mongoUser);
+		}
+
 		public void Insert(Domain.Model.User user)
 		{
 			if (user == null)

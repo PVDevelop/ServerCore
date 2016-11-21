@@ -3,6 +3,7 @@ using System.Threading;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PVDevelop.UCoach.AuthenticationApp.Application;
+using PVDevelop.UCoach.AuthenticationApp.Domain.Model;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi.Dto;
 
 namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi
@@ -35,13 +36,26 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi
 			if (string.IsNullOrWhiteSpace(key)) throw new ArgumentException("Not set", key);
 
 			var token = _userService.ConfirmUserRegistration(key);
+			SetAccessToken(token); ;
+		}
 
+		[HttpPut("api/users")]
+		public void SignIn([FromBody] UserCredentialsDto userSignInDto)
+		{
+			if (userSignInDto == null) throw new ArgumentNullException(nameof(userSignInDto));
+
+			var token = _userService.SignIn(userSignInDto.Email, userSignInDto.Password);
+			SetAccessToken(token);
+		}
+
+		private void SetAccessToken(AccessToken accessToken)
+		{
 			var cookieOptions = new CookieOptions
 			{
 				Path = "/",
-				Expires = token.Expiration
+				Expires = accessToken.Expiration
 			};
-			var encodedToken = TokenEncoder.Encode(token);
+			var encodedToken = TokenEncoder.Encode(accessToken);
 			Response.Cookies.Append(AccessTokenCookieName, encodedToken, cookieOptions);
 		}
 	}

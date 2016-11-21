@@ -2,7 +2,6 @@
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 using PVDevelop.UCoach.AuthenticationApp.Domain.Model;
-using PVDevelop.UCoach.AuthenticationApp.Infrastructure;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Port;
 using PVDevelop.UCoach.Logging;
 using PVDevelop.UCoach.Timing;
@@ -95,7 +94,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 			_logger.Debug($"Сохраняю подтверждение '{confirmation.Key}'.");
 			_confirmationRepository.Update(confirmation);
 
-			var userSession = _userSessionRepository.GetByUserId(confirmation.UserId).LastOrDefault();
+			var userSession = _userSessionRepository.GetLastSession(confirmation.UserId);
 			if (userSession == null)
 			{
 				_logger.Debug($"Создаю новую сессию пользователя '{confirmation.UserId}'");
@@ -111,6 +110,31 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 			}
 
 			return userSession.GenerateToken();
+		}
+
+		public AccessToken SignIn(string email, string password)
+		{
+			if (string.IsNullOrWhiteSpace(email)) throw new ArgumentException("Not set", nameof(email));
+			if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Not set", nameof(password));
+
+			var user = _userRepository.GetByEmail(email);
+			if(user == null)
+			{
+				throw new UserNotFoundException(email);
+			}
+
+			if(!user.ValidatePlainPassword(password))
+			{
+				throw new InvalidPasswordException(email);
+			}
+
+			var session = _userSessionRepository.GetLastSession(user.Id);
+			if(session == null)
+			{
+				throw new UserSessionNotStartedException(user.Email);
+			}
+
+			return session.GenerateToken();
 		}
 
 		private static string GetConfirmationUrl(IConfigurationRoot configuration)
