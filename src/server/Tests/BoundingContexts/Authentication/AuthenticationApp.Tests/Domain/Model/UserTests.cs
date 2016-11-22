@@ -17,12 +17,12 @@ namespace PVDevelop.UCoach.AuthenticationApp.Tests.Domain.Model
 		}
 
 		[Test]
-		public void Confirm_NewUser_BecomesSignedIn()
+		public void Confirm_NewUser_BecomesSignedOut()
 		{
 			var user = new User("some@mail.ru", "P@ssw0rd", DateTime.UtcNow);
 			user.Confirm();
 
-			Assert.AreEqual(UserState.SignedIn, user.State);
+			Assert.AreEqual(UserState.SignedOut, user.State);
 		}
 		[Test]
 		public void SignIn_InvalidPassword_ThrowsException()

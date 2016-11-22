@@ -123,15 +123,23 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		/// </summary>
 		public void SignOut()
 		{
+			if (State == UserState.WaitingForCreationConfirm)
+			{
+				throw new UserWaitingForCreationConfirmException(Email);
+			}
+
 			State = UserState.SignedOut;	
 		}
 
 		/// <summary>
-		/// Подтверждение создание пользователя и вход в сеть.
+		/// Подтверждение создание пользователя.
 		/// </summary>
 		public void Confirm()
 		{
-			State = UserState.SignedIn;
+			if (State != UserState.SignedIn)
+			{
+				State = UserState.SignedOut;
+			}
 		}
 	}
 }

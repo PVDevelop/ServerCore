@@ -15,8 +15,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 		/// Подтвердить регистрацию пользователя.
 		/// </summary>
 		/// <param name="confirmationKey">Ключ подтверждения.</param>
-		/// <returns>Токен авторизации.</returns>
-		AccessToken ConfirmUserRegistration(string confirmationKey);
+		void ConfirmUserRegistration(string confirmationKey);
 
 		/// <summary>
 		/// Осуществить вход пользователя в систему.
@@ -27,5 +26,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 		AccessToken SignIn(string email, string password);
 
 		void ValidateToken(AccessToken accessToken);
+
+		void SignOut(AccessToken accessToken);
 	}
 }

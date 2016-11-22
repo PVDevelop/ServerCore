@@ -69,7 +69,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 			_confirmationProducer.Produce(email, url);
 		}
 
-		public AccessToken ConfirmUserRegistration(string confirmationKey)
+		public void ConfirmUserRegistration(string confirmationKey)
 		{
 			if (string.IsNullOrWhiteSpace(confirmationKey)) throw new ArgumentException("Not set", nameof(confirmationKey));
 
@@ -96,17 +96,8 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 			{
 				userSession =
 					new UserSession(confirmation.UserId);
-				userSession.Activate();
-
 				_userSessionRepository.Insert(userSession);
 			}
-			else
-			{
-				userSession.Activate();
-				_userSessionRepository.Update(userSession);
-			}
-
-			return userSession.GenerateToken(_utcTimeProvider.UtcNow);
 		}
 
 		public AccessToken SignIn(string email, string password)
@@ -145,6 +136,29 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 			}
 
 			session.Validate(accessToken, _utcTimeProvider);
+		}
+
+		public void SignOut(AccessToken accessToken)
+		{
+			if (accessToken == null) throw new ArgumentNullException(nameof(accessToken));
+
+			var user = _userRepository.GetById(accessToken.UserId);
+			if (user == null)
+			{
+				throw new UserNotFoundException(accessToken.UserId);
+			}
+
+			user.SignOut();
+			_userRepository.Update(user);
+
+			var session = _userSessionRepository.GetLastSession(accessToken.UserId);
+			if (session == null)
+			{
+				throw new UserSessionNotStartedException(accessToken.UserId);
+			}
+
+			session.Inactivate();
+			_userSessionRepository.Update(session);
 		}
 
 		private static string GetConfirmationUrl(IConfigurationRoot configuration)

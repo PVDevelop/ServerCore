@@ -67,6 +67,14 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		}
 
 		/// <summary>
+		/// Переводит сессию в состояние неактивности.
+		/// </summary>
+		public void Inactivate()
+		{
+			State = SessionState.Inactive;
+		}
+
+		/// <summary>
 		/// Проверяет токен и возвращает признак его валидности.
 		/// </summary>
 		/// <param name="accessToken">Валидируемый токен.</param>

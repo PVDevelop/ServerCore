@@ -35,8 +35,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi
 		{
 			if (string.IsNullOrWhiteSpace(key)) throw new ArgumentException("Not set", key);
 
-			var token = _userService.ConfirmUserRegistration(key);
-			SetAccessToken(token); ;
+			_userService.ConfirmUserRegistration(key);
 		}
 
 		[HttpPut("api/users")]
@@ -51,14 +50,15 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi
 		[HttpPut("api/tokens")]
 		public void ValidateCurrentToken()
 		{
-			string token;
-			if(!Request.Cookies.TryGetValue(AccessTokenCookieName, out token))
-			{
-				throw new InvalidOperationException();
-			}
-
-			var accessToken = TokenEncoder.Decode(token);
+			var accessToken = GetAccessToken();
 			_userService.ValidateToken(accessToken);
+		}
+
+		[HttpPut("api/users/sign_out")]
+		public void SignOut()
+		{
+			var accessToken = GetAccessToken();
+			_userService.SignOut(accessToken);
 		}
 
 		private void SetAccessToken(AccessToken accessToken)
@@ -70,6 +70,17 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi
 			};
 			var encodedToken = TokenEncoder.Encode(accessToken);
 			Response.Cookies.Append(AccessTokenCookieName, encodedToken, cookieOptions);
+		}
+
+		private AccessToken GetAccessToken()
+		{
+			string token;
+			if (!Request.Cookies.TryGetValue(AccessTokenCookieName, out token))
+			{
+				throw new InvalidOperationException();
+			}
+
+			return TokenEncoder.Decode(token);
 		}
 	}
 }

@@ -2,25 +2,9 @@ import React from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { Link } from "react-router";
+import Button from "react-bootstrap/lib/Button";
 
 import * as signInActions from "../actions/signIn";
-
-const NotSignedIn = () => {
-    return (
-        <span>
-            Вы не вошли в систему
-            <Link to="signIn">Войти</Link>
-        </span>);
-};
-
-const SignedIn = () => {
-    return (
-        <span>
-            Вы вошли в систему
-            <Link to="signOut">Выйти</Link>
-        </span>
-    );
-};
 
 class Header extends React.Component {
     componentWillMount() {
@@ -54,17 +38,63 @@ class Header extends React.Component {
 
     render() {
         const isSignedIn = this.props.isSignedIn;
+        let content = null;
+
+        if (isSignedIn) {
+            content = (
+                <span>
+                    Вы вошли в систему
+                    <Button type="submit" onClick={::this.onSignOutClicked}>
+                        Выйти
+                    </Button>
+                </span >);
+        }
+        else {
+            content = (
+                <span>
+                    Вы не вошли в систему
+                    <Link to="signIn">Войти</Link>
+                </span>);
+        }
+
         return (
             <div>
                 <div>
                     Привет!
-                    {isSignedIn ? <SignedIn /> : <NotSignedIn />}
+                    {content}
                 </div>
                 <div>
                     {this.props.children}
                 </div>
             </div>
         );
+    }
+
+    onSignOutClicked(e) {
+        var options = {
+            method: "put",
+            credentials: "same-origin"
+        };
+
+        var url = "/api/users/sign_out";
+
+        console.log("Signing out at " + url);
+
+        fetch(url, options)
+            .then(response => {
+                console.log(response);
+
+                if (response.status == 200) {
+                    alert("Вы покинули систему.");
+                    this.props.signInActions.setIsSignedIn(false);
+                }
+                else {
+                    alert("Ошибки при выходе из системы.");
+                }
+            })
+            .catch(err => {
+                alert("Ошибки при выходе из системы.");
+            });
     }
 }
 

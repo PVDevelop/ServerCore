@@ -32,7 +32,6 @@ class Confirmation extends React.Component {
 
                 if (response.status == 200) {
                     alert("Пользователь подтвержден");
-                    signInActions.setIsSignedIn(true);
                     browserHistory.push("/");
                 }
                 else {
