@@ -48,6 +48,19 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi
 			SetAccessToken(token);
 		}
 
+		[HttpPut("api/tokens")]
+		public void ValidateCurrentToken()
+		{
+			string token;
+			if(!Request.Cookies.TryGetValue(AccessTokenCookieName, out token))
+			{
+				throw new InvalidOperationException();
+			}
+
+			var accessToken = TokenEncoder.Decode(token);
+			_userService.ValidateToken(accessToken);
+		}
+
 		private void SetAccessToken(AccessToken accessToken)
 		{
 			var cookieOptions = new CookieOptions

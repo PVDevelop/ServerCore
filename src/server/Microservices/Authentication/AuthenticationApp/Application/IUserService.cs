@@ -25,5 +25,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 		/// <param name="password">Пароль пользователя.</param>
 		/// <returns>Токен авторизации</returns>
 		AccessToken SignIn(string email, string password);
+
+		void ValidateToken(AccessToken accessToken);
 	}
 }

@@ -1,8 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Route, Router, Link, browserHistory } from "react-router";
+import { IndexRoute, Route, Router, Link, browserHistory } from "react-router";
 import { Provider } from "react-redux";
 
+import Header from "./components/header";
 import Home from "./components/home";
 import SignIn from "./components/signIn";
 import Registration from "./components/registration";
@@ -15,10 +16,12 @@ const store = configureStore();
 ReactDOM.render(
     <Provider store={store}>
         <Router history={browserHistory}>
-            <Route path="/" component={Home} />
-            <Route path="/signin" component={SignIn} />
-            <Route path="/register" component={Registration} />
-            <Route path="/confirmations/:key" component={Confirmation} />
+            <Route path="/" component={Header}>
+                <IndexRoute component={Home} />
+                <Route path="/signin" component={SignIn} />
+                <Route path="/register" component={Registration} />
+                <Route path="/confirmations/:key" component={Confirmation} />
+            </Route>
 
             <Route path="*" component={NotFound} />
         </Router>

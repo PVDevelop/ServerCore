@@ -134,6 +134,19 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 			return session.GenerateToken(_utcTimeProvider.UtcNow);
 		}
 
+		public void ValidateToken(AccessToken accessToken)
+		{
+			if (accessToken == null) throw new ArgumentNullException(nameof(accessToken));
+
+			var session = _userSessionRepository.GetLastSession(accessToken.UserId);
+			if(session == null)
+			{
+				throw new UserSessionNotStartedException(accessToken.UserId);
+			}
+
+			session.Validate(accessToken, _utcTimeProvider);
+		}
+
 		private static string GetConfirmationUrl(IConfigurationRoot configuration)
 		{
 			var confirmationUrl = configuration.GetConnectionString("ConfirmationUrl");

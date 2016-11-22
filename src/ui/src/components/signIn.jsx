@@ -11,7 +11,7 @@ import Col from "react-bootstrap/lib/Col";
 import ControlLabel from "react-bootstrap/lib/ControlLabel";
 import Button from "react-bootstrap/lib/Button";
 
-import * as signingInActions from "../actions/signingIn";
+import * as signInActions from "../actions/signIn";
 
 class SignIn extends React.Component {
     componentWillMount() {
@@ -87,6 +87,7 @@ class SignIn extends React.Component {
 
                 if (response.status == 200) {
                     alert("Вы успешно аутентифицировались.");
+                    this.props.signInActions.setIsSignedIn(true);
                     browserHistory.push('/');
                 }
                 else {
@@ -113,15 +114,15 @@ class SignIn extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        email: state.signingIn.email,
-        password: state.signingIn.password,
-        isCreating: state.signingIn.isCreating
+        email: state.signIn.email,
+        password: state.signIn.password,
+        isCreating: state.signIn.isCreating
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        signInActions: bindActionCreators(signingInActions, dispatch)
+        signInActions: bindActionCreators(signInActions, dispatch)
     };
 }
 
