@@ -45,7 +45,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi
 			_userService.ConfirmUserRegistration(key);
 		}
 
-		[HttpPut("api/users")]
+		[HttpPut("api/sign_in")]
 		public void SignIn([FromBody] UserCredentialsDto userSignInDto)
 		{
 			if (userSignInDto == null) throw new ArgumentNullException(nameof(userSignInDto));
@@ -54,7 +54,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi
 			SetAccessToken(token);
 		}
 
-		[HttpPut("api/users/sign_out")]
+		[HttpPut("api/sign_out")]
 		public void SignOut()
 		{
 			var accessToken = GetAccessToken();

@@ -12,6 +12,8 @@ import ControlLabel from "react-bootstrap/lib/ControlLabel";
 import Button from "react-bootstrap/lib/Button";
 
 import * as signInActions from "../actions/signIn";
+import { httpPut } from "../utils/http";
+import * as routes from "../routes";
 
 class SignIn extends React.Component {
     componentWillMount() {
@@ -65,23 +67,7 @@ class SignIn extends React.Component {
             password: this.props.password
         };
 
-        var json = JSON.stringify(data);
-
-        var options = {
-            method: "put",
-            credentials: "same-origin",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: json
-        };
-
-        var url = "/api/users";
-
-        console.log("Sending user credentials at " + url);
-
-        fetch(url, options)
+        httpPut(routes.SignIn, data)
             .then(response => {
                 console.log(response);
 

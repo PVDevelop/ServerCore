@@ -5,19 +5,12 @@ import { Link } from "react-router";
 import Button from "react-bootstrap/lib/Button";
 
 import * as signInActions from "../actions/signIn";
+import { httpPut } from "../utils/http";
+import * as routes from "../routes";
 
 class Header extends React.Component {
     componentWillMount() {
-        var options = {
-            method: "put",
-            credentials: "same-origin"
-        };
-
-        var url = "/api/tokens";
-
-        console.log("Validating token at " + url);
-
-        fetch(url, options)
+        httpPut(routes.ValidateToken)
             .then(response => {
                 console.log(response);
 
@@ -71,16 +64,7 @@ class Header extends React.Component {
     }
 
     onSignOutClicked(e) {
-        var options = {
-            method: "put",
-            credentials: "same-origin"
-        };
-
-        var url = "/api/users/sign_out";
-
-        console.log("Signing out at " + url);
-
-        fetch(url, options)
+        httpPut(routes.SignOut)
             .then(response => {
                 console.log(response);
 

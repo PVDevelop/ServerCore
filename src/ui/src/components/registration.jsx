@@ -12,6 +12,8 @@ import Panel from "react-bootstrap/lib/Panel";
 import Col from "react-bootstrap/lib/Col";
 
 import * as registrationActions from "../actions/registration";
+import { httpPost } from "../utils/http";
+import * as routes from "../routes";
 
 class Registration extends React.Component {
     componentWillMount() {
@@ -73,20 +75,7 @@ class Registration extends React.Component {
             password: this.props.password
         };
 
-        var json = JSON.stringify(data);
-
-        var options = {
-            method: "post",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
-            body: json
-        };
-
-        var url = "/api/users";
-
-        fetch(url, options)
+        httpPost(routes.RegisterUser, data)
             .then(response => {
                 if (response.status == 200) {
                     alert("Пользователь зарегистрирован.");

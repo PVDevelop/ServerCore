@@ -5,6 +5,8 @@ import { connect } from "react-redux";
 
 import * as signInActions from "../actions/signIn";
 import * as confirmationActions from "../actions/confirmation";
+import * as routes from "../routes";
+import { httpGet } from "../utils/http";
 
 class Confirmation extends React.Component {
     render() {
@@ -12,21 +14,7 @@ class Confirmation extends React.Component {
     }
 
     componentDidMount() {
-        console.log("Confirmation did mount");
-
-        var options = {
-            method: "get",
-            credentials: "same-origin",
-            headers: {
-                "Accept": "application/json"
-            }
-        };
-
-        var url = "/api/confirmations/" + this.props.params.key;
-
-        console.log("Sending confirmation at " + url);
-
-        fetch(url, options)
+        httpGet(routes.ConfirmUser + "/" + this.props.params.key)
             .then(response => {
                 console.log(response);
 
