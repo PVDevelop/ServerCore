@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using PVDevelop.UCoach.AuthenticationApp.Application;
 using PVDevelop.UCoach.AuthenticationApp.Domain.Model;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi.Dto;
+using PVDevelop.UCoach.Timing;
 
 namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi
 {
@@ -13,11 +14,17 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi
 		private const string AccessTokenCookieName = "access_token";
 
 		private readonly IUserService _userService;
+		private readonly IUtcTimeProvider _utcTimeProvider;
 
-		public AuthenticationController(IUserService userService)
+		public AuthenticationController(
+			IUserService userService, 
+			IUtcTimeProvider utcTimeProvider)
 		{
 			if (userService == null) throw new ArgumentNullException(nameof(userService));
+			if (utcTimeProvider == null) throw new ArgumentNullException(nameof(utcTimeProvider));
+
 			_userService = userService;
+			_utcTimeProvider = utcTimeProvider;
 		}
 
 		[HttpPost("api/users")]
@@ -47,18 +54,19 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi
 			SetAccessToken(token);
 		}
 
-		[HttpPut("api/tokens")]
-		public void ValidateCurrentToken()
-		{
-			var accessToken = GetAccessToken();
-			_userService.ValidateToken(accessToken);
-		}
-
 		[HttpPut("api/users/sign_out")]
 		public void SignOut()
 		{
 			var accessToken = GetAccessToken();
 			_userService.SignOut(accessToken);
+			ExpireToken();
+		}
+
+		[HttpPut("api/tokens")]
+		public void ValidateCurrentToken()
+		{
+			var accessToken = GetAccessToken();
+			_userService.ValidateToken(accessToken);
 		}
 
 		private void SetAccessToken(AccessToken accessToken)
@@ -81,6 +89,24 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi
 			}
 
 			return TokenEncoder.Decode(token);
+		}
+
+		private void ExpireToken()
+		{
+			string token;
+			if (!Request.Cookies.TryGetValue(AccessTokenCookieName, out token))
+			{
+				return;
+			}
+
+			var accessToken = TokenEncoder.Decode(token);
+
+			var expiredAccessToken = new AccessToken(
+				accessToken.UserId, 
+				accessToken.Token, 
+				_utcTimeProvider.UtcNow.AddDays(-1));
+
+			SetAccessToken(expiredAccessToken);
 		}
 	}
 }
