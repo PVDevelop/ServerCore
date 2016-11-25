@@ -1,32 +1,67 @@
-export const signInEmail = "SIGN_IN_EMAIL";
-export const signInPassword = "SIGN_IN_PASSWORD";
-export const signInIsCreating = "SIGN_IN_IS_CREATING";
-export const signInIsSignedIn = "SIGN_IN_IS_SIGNED_IN";
+import { httpPut } from "../utils/http";
+import * as routes from "../routes";
+import { browserHistory } from "react-router";
 
+export const EMAIL = "EMAIL";
 export function setEmail(email) {
     return {
-        type: signInEmail,
+        type: EMAIL,
         email: email
     };
 }
 
+export const PASSWORD = "PASSWORD";
 export function setPassword(password) {
     return {
-        type: signInPassword,
+        type: PASSWORD,
         password: password
     };
 }
 
-export function setIsCreating(isCreating) {
+export const SIGNING_IN = "SIGNING_IN";
+function onSigningIn() {
     return {
-        type: signInIsCreating,
-        isCreating: isCreating
+        type: SIGNING_IN
     }
 }
 
-export function setIsSignedIn(isSignedIn) {
+export const FAILURE = "FAILURE";
+function onFailure() {
     return {
-        type: signInIsSignedIn,
-        isSignedIn: isSignedIn
+        type: FAILURE
     }
+}
+
+export const SIGNED_IN = "SIGNED_IN";
+export function onSignedIn() {
+    return {
+        type: SIGNED_IN
+    }
+}
+
+export function signIn(email, password) {
+    return dispatch => {
+        dispatch(onSigningIn());
+
+        var data = {
+            email: email,
+            password: password
+        };
+
+        httpPut(routes.SignIn, data)
+            .then(response => {
+                if (response.status == 200) {
+                    dispatch(onSignedIn());
+                    browserHistory.push("/");
+                }
+                else {
+                    dispatch(onFailure());
+                    alert("Ошибка аутентификации");
+                }
+            })
+            .catch(err => {
+                dispatch(onFailure());
+                alert("Ошибка аутентификации");
+            });
+    };
 }

@@ -1,14 +1,12 @@
 import { combineReducers } from "redux";
 import registration from "./registration";
 import confirmation from "./confirmation";
-import signIn from "./signIn";
-import test from "./test";
+import user from "./user";
 
 const root = combineReducers({
     registration,
     confirmation,
-    signIn,
-    test
+    user
 });
 
 export default root;

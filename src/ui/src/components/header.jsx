@@ -1,34 +1,12 @@
 import React from "react";
-import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { Link } from "react-router";
 import Button from "react-bootstrap/lib/Button";
 
-import * as signInActions from "../actions/signIn";
-import { httpPut } from "../utils/http";
-import * as routes from "../routes";
+import * as validateUserActions from "../actions/validateUser";
+import * as signOutActions from "../actions/signOut";
 
 class Header extends React.Component {
-    componentWillMount() {
-        httpPut(routes.ValidateToken)
-            .then(response => {
-                console.log(response);
-
-                if (response.status == 200) {
-                    console.log("Токен валиден, вы аутентифицированы.");
-                    this.props.signInActions.setIsSignedIn(true);
-                }
-                else {
-                    console.log("Токен невалиден, вы не аутентифицированы.");
-                    this.props.signInActions.setIsSignedIn(false);
-                }
-            })
-            .catch(err => {
-                console.log(err);
-                this.props.signInActions.setIsSignedIn(false);
-            });
-    }
-
     render() {
         const isSignedIn = this.props.isSignedIn;
         let content = null;
@@ -64,34 +42,18 @@ class Header extends React.Component {
     }
 
     onSignOutClicked(e) {
-        httpPut(routes.SignOut)
-            .then(response => {
-                console.log(response);
+        this.props.dispatch(signOutActions.signOut());
+    }
 
-                if (response.status == 200) {
-                    alert("Вы покинули систему.");
-                    this.props.signInActions.setIsSignedIn(false);
-                }
-                else {
-                    alert("Ошибки при выходе из системы.");
-                }
-            })
-            .catch(err => {
-                alert("Ошибки при выходе из системы.");
-            });
+    componentWillMount() {
+        this.props.dispatch(validateUserActions.validate());
     }
 }
 
 function mapStateToProps(state) {
     return {
-        isSignedIn: state.signIn.isSignedIn
+        isSignedIn: state.user.currentUser != null
     };
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        signInActions: bindActionCreators(signInActions, dispatch)
-    };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default connect(mapStateToProps)(Header);

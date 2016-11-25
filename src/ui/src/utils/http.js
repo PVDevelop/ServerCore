@@ -8,8 +8,6 @@ export function httpGet(resource) {
         }
     };
 
-    console.log("Requesting resource from " + resource);
-
     return fetch(resource, options);
 }
 
@@ -27,8 +25,6 @@ export function httpPost(resource, data) {
         options.body = JSON.stringify(data);
     }
 
-    console.log("Sending post resource at " + resource + ", data: " + options.body);
-
     return fetch(resource, options);
 }
 
@@ -45,8 +41,6 @@ export function httpPut(resource, data) {
     if (data) {
         options.body = JSON.stringify(data);
     }
-
-    console.log("Sending put resource at " + resource + ", data: " + options.body);
 
     return fetch(resource, options);
 }

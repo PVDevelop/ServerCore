@@ -18,10 +18,11 @@ ReactDOM.render(
         <Router history={browserHistory}>
             <Route path="/" component={Header}>
                 <IndexRoute component={Home} />
-                <Route path="/signin" component={SignIn} />
-                <Route path="/register" component={Registration} />
-                <Route path="/confirmations/:key" component={Confirmation} />
             </Route>
+            
+            <Route path="/signin" component={SignIn} />
+            <Route path="/register" component={Registration} />
+            <Route path="/confirmations/:key" component={Confirmation} />
 
             <Route path="*" component={NotFound} />
         </Router>
