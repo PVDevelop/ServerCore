@@ -1,5 +1,4 @@
 import React from "react";
-import { browserHistory } from "react-router";
 import { connect } from "react-redux";
 
 import Panel from "react-bootstrap/lib/Panel";

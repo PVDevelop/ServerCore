@@ -1,8 +1,8 @@
+import { browserHistory } from "react-router";
 import { httpPut } from "../utils/http";
 import * as routes from "../routes";
-import { browserHistory } from "react-router";
 
-export const EMAIL = "EMAIL";
+export const EMAIL = "SIGN_IN_EMAIL";
 export function setEmail(email) {
     return {
         type: EMAIL,
@@ -10,7 +10,7 @@ export function setEmail(email) {
     };
 }
 
-export const PASSWORD = "PASSWORD";
+export const PASSWORD = "SIGN_IN_PASSWORD";
 export function setPassword(password) {
     return {
         type: PASSWORD,
@@ -18,22 +18,24 @@ export function setPassword(password) {
     };
 }
 
-export const SIGNING_IN = "SIGNING_IN";
+export const SIGNING_IN = "SIGN_IN_SIGNING_IN";
 function onSigningIn() {
     return {
         type: SIGNING_IN
     }
 }
 
-export const FAILURE = "FAILURE";
+export const FAILURE = "SIGN_IN_FAILURE";
 function onFailure() {
+    alert("Ошибка входа");
     return {
         type: FAILURE
     }
 }
 
-export const SIGNED_IN = "SIGNED_IN";
-export function onSignedIn() {
+export const SIGNED_IN = "SIGN_IN_SIGNED_IN";
+function onSignedIn() {
+    browserHistory.push("/")
     return {
         type: SIGNED_IN
     }
@@ -52,16 +54,13 @@ export function signIn(email, password) {
             .then(response => {
                 if (response.status == 200) {
                     dispatch(onSignedIn());
-                    browserHistory.push("/");
                 }
                 else {
                     dispatch(onFailure());
-                    alert("Ошибка аутентификации");
                 }
             })
             .catch(err => {
                 dispatch(onFailure());
-                alert("Ошибка аутентификации");
             });
     };
 }

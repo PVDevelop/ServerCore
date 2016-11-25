@@ -1,21 +1,21 @@
 import { httpPut } from "../utils/http";
 import * as routes from "../routes";
 
-export const VALIDATING = "VALIDATING";
+export const VALIDATING = "VALIDATE_USER_VALIDATING";
 function onValidating() {
     return {
         type: VALIDATING
     }
 }
 
-export const VALIDATED = "VALIDATED";
+export const VALIDATED = "VALIDATE_USER_VALIDATED";
 function onValidated() {
     return {
         type: VALIDATED
     }
 }
 
-export const FAILURE = "FAILURE";
+export const FAILURE = "VALIDATE_USER_FAILURE";
 function onFailure() {
     return {
         type: FAILURE

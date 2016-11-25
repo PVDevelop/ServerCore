@@ -1,12 +1,16 @@
 import * as signInActions from "../actions/signIn";
 import * as signOutActions from "../actions/signOut";
-import * as validateUserActions from "../actions/validateUser";
+import * as validateTokenActions from "../actions/validateToken";
+import * as registerUserActions from "../actions/registerUser";
+import * as confirmUserActions from "../actions/confirmUser";
 
 const initialState = {
     email: "",
     password: "",
     signingIn: false,
     signingOut: false,
+    registering: false,
+    confirming: false,
     failedToSignIn: false,
     failedToSignOut: false,
     validating: false,
@@ -15,11 +19,13 @@ const initialState = {
 
 export default function user(state = initialState, action) {
     switch (action.type) {
+        case registerUserActions.EMAIL:
         case signInActions.EMAIL:
             return {
                 ...state,
                 email: action.email
             };
+        case registerUserActions.PASSWORD:
         case signInActions.PASSWORD:
             return {
                 ...state,
@@ -61,21 +67,51 @@ export default function user(state = initialState, action) {
                 signingOut: false,
                 failedToSignIn: true
             };
-        case validateUserActions.VALIDATING:
+        case validateTokenActions.VALIDATING:
             return {
                 ...state,
                 validating: true
             }
-        case validateUserActions.FAILURE:
+        case validateTokenActions.FAILURE:
             return {
                 ...state,
                 validating: false
             }
-        case validateUserActions.VALIDATED:
+        case validateTokenActions.VALIDATED:
             return {
             ...state,
                 validating: false,
                 currentUser: {}
+            }
+        case registerUserActions.REGISTERING:
+            return {
+            ...state,
+                registering: true
+            }
+        case registerUserActions.FAILURE:
+            return {
+                ...state,
+                registering: false
+            }
+        case registerUserActions.REGISTERED:
+            return {
+                ...state,
+                registering: false
+            }
+        case confirmUserActions.CONFIRMING:
+            return {
+                ...state,
+                confirming: true
+            }
+        case confirmUserActions.CONFIRMED:
+            return {
+                ...state,
+                confirming: false
+            }
+        case confirmUserActions.FAILURE:
+            return {
+                ...state,
+                confirming: false
             }
         default:
             return state;

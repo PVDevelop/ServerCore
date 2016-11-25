@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router";
 import Button from "react-bootstrap/lib/Button";
 
-import * as validateUserActions from "../actions/validateUser";
+import * as validateTokenActions from "../actions/validateToken";
 import * as signOutActions from "../actions/signOut";
 
 class Header extends React.Component {
@@ -46,7 +46,7 @@ class Header extends React.Component {
     }
 
     componentWillMount() {
-        this.props.dispatch(validateUserActions.validate());
+        this.props.dispatch(validateTokenActions.validate());
     }
 }
 
