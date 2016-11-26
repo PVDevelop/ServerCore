@@ -1,7 +1,4 @@
 import React from "react";
-import { browserHistory } from "react-router";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
 
 import Form from "react-bootstrap/lib/Form";
 import FormControl from "react-bootstrap/lib/FormControl";
@@ -11,15 +8,7 @@ import Button from "react-bootstrap/lib/Button";
 import Panel from "react-bootstrap/lib/Panel";
 import Col from "react-bootstrap/lib/Col";
 
-import * as registrationActions from "../actions/registration";
-import { httpPost } from "../utils/http";
-import * as routes from "../routes";
-
-class Registration extends React.Component {
-    componentWillMount() {
-        this.props.registrationActions.setWaitingForResponse(false);
-    }
-
+export default class Registration extends React.Component {
     render() {
         return (
             <Panel header="Создание нового пользователя">
@@ -31,7 +20,7 @@ class Registration extends React.Component {
                                 type="email"
                                 placeholder="Введите почтовый адрес"
                                 value={this.props.email}
-                                onChange={::this.onEmailChange} />
+                                onChange={e => this.props.onEmailChanged(e.target.value)} />
                         </Col>
                     </FormGroup>
 
@@ -42,13 +31,16 @@ class Registration extends React.Component {
                                 type="password"
                                 placeholder="Введите пароль"
                                 value={this.props.password}
-                                onChange={::this.onPasswordChange} />
+                                onChange={e => this.props.onPasswordChanged(e.target.value)} />
                         </Col>
                     </FormGroup>
 
                     <FormGroup>
                         <Col smOffset={2} sm={10}>
-                            <Button type="submit" disabled={this.props.waitingForResponse === true} onClick={::this.onRegisterButtonClicked}>
+                            <Button
+                                type="submit"
+                                disabled={this.props.isRegistering === true}
+                                onClick={::this.onRegisterButtonClicked}>
                                 Создать
                             </Button>
                         </Col>
@@ -58,53 +50,8 @@ class Registration extends React.Component {
         );
     }
 
-    onEmailChange(event) {
-        this.props.registrationActions.setEmail(event.target.value);
-    }
-
-    onPasswordChange(event) {
-        this.props.registrationActions.setPassword(event.target.value);
-    }
-
     onRegisterButtonClicked(e) {
         e.preventDefault();
-        this.props.registrationActions.setWaitingForResponse(true);
-
-        var data = {
-            email: this.props.email,
-            password: this.props.password
-        };
-
-        httpPost(routes.RegisterUser, data)
-            .then(response => {
-                if (response.status == 200) {
-                    alert("Пользователь зарегистрирован.");
-                    browserHistory.push("/");
-                }
-                else {
-                    alert("Ошибка регистрации пользователя.");
-                }
-                this.props.registrationActions.setWaitingForResponse(false);
-            })
-            .catch(err => {
-                alert("Ошибка регистрации пользователя.");
-                this.props.registrationActions.setWaitingForResponse(false);
-            });
+        this.props.onRegisterSubmitRequested();
     }
 }
-
-function mapStateToProps(state) {
-    return {
-        email: state.registration.email,
-        password: state.registration.password,
-        waitingForResponse: state.registration.waitingForResponse
-    };
-}
-
-function mapDispatchToProps(dispatch) {
-    return {
-        registrationActions: bindActionCreators(registrationActions, dispatch)
-    };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Registration);

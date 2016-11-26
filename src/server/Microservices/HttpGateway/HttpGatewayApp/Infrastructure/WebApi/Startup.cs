@@ -25,8 +25,7 @@ namespace PVDevelop.UCoach.HttpGatewayApp.Infrastructure.WebApi
 			app.
 				UseExceptionHandler().
 				UseMiddleware<ProxyMiddleware>(HttpGatewayMicroservice.Instance.Container.GetInstance<IConnectionStringProvider>()).
-				UseStaticFiles().
-				UseMiddleware<UiBinariesSelectorMiddleware>().
+				UseMiddleware<IndexSelectorMiddleware>().
 				UseStaticFiles();
 		}
 	}

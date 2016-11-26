@@ -1,34 +1,8 @@
 import React from "react";
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
 import { Link } from "react-router";
 import Button from "react-bootstrap/lib/Button";
 
-import * as signInActions from "../actions/signIn";
-import { httpPut } from "../utils/http";
-import * as routes from "../routes";
-
-class Header extends React.Component {
-    componentWillMount() {
-        httpPut(routes.ValidateToken)
-            .then(response => {
-                console.log(response);
-
-                if (response.status == 200) {
-                    console.log("Токен валиден, вы аутентифицированы.");
-                    this.props.signInActions.setIsSignedIn(true);
-                }
-                else {
-                    console.log("Токен невалиден, вы не аутентифицированы.");
-                    this.props.signInActions.setIsSignedIn(false);
-                }
-            })
-            .catch(err => {
-                console.log(err);
-                this.props.signInActions.setIsSignedIn(false);
-            });
-    }
-
+export default class Header extends React.Component {
     render() {
         const isSignedIn = this.props.isSignedIn;
         let content = null;
@@ -37,7 +11,7 @@ class Header extends React.Component {
             content = (
                 <span>
                     Вы вошли в систему
-                    <Button type="submit" onClick={::this.onSignOutClicked}>
+                    <Button type="submit" onClick={this.props.onSignOutClicked}>
                         Выйти
                     </Button>
                 </span >);
@@ -47,6 +21,7 @@ class Header extends React.Component {
                 <span>
                     Вы не вошли в систему
                     <Link to="signIn">Войти</Link>
+                    <Link to="register">Создать пользователя</Link>
                 </span>);
         }
 
@@ -56,42 +31,7 @@ class Header extends React.Component {
                     Привет!
                     {content}
                 </div>
-                <div>
-                    {this.props.children}
-                </div>
             </div>
         );
     }
-
-    onSignOutClicked(e) {
-        httpPut(routes.SignOut)
-            .then(response => {
-                console.log(response);
-
-                if (response.status == 200) {
-                    alert("Вы покинули систему.");
-                    this.props.signInActions.setIsSignedIn(false);
-                }
-                else {
-                    alert("Ошибки при выходе из системы.");
-                }
-            })
-            .catch(err => {
-                alert("Ошибки при выходе из системы.");
-            });
-    }
 }
-
-function mapStateToProps(state) {
-    return {
-        isSignedIn: state.signIn.isSignedIn
-    };
-}
-
-function mapDispatchToProps(dispatch) {
-    return {
-        signInActions: bindActionCreators(signInActions, dispatch)
-    };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Header);

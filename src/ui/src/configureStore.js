@@ -1,10 +1,14 @@
-import { combineReducers, createStore } from "redux";
-import registration from "./reducers/registration";
-import confirmation from "./reducers/confirmation";
-import signIn from "./reducers/signIn";
+import thunkMiddleware from "redux-thunk";
+import createLogger from "redux-logger";
+import { createStore, applyMiddleware } from "redux";
+import root from "./reducers/root";
 
 export default function configureStore() {
-    const combinedReducer = combineReducers({ registration, confirmation, signIn });
-    const store = createStore(combinedReducer);
-    return store;
+    const loggerMiddleware = createLogger();
+    return createStore(
+        root,
+        applyMiddleware(
+            thunkMiddleware,
+            loggerMiddleware
+        ));
 }
