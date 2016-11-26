@@ -1,30 +1,31 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { IndexRoute, Route, Router, Link, browserHistory } from "react-router";
+import { IndexRoute, Route, Router, browserHistory } from "react-router";
 import { Provider } from "react-redux";
 
-import Header from "./components/header";
-import Home from "./components/home";
-import SignIn from "./components/signIn";
-import Registration from "./components/registration";
-import Confirmation from "./components/confirmation";
-import NotFound from "./components/not_found";
 import configureStore from "./configureStore";
+
+import MainContainer from "./containers/mainContainer";
+import HomeContainer from "./containers/homeContainer";
+import SignInContainer from "./containers/signInContainer";
+import RegistrationContainer from "./containers/registrationContainer";
+import ConfirmationContainer from "./containers/confirmationContainer";
+import NotFoundContainer from "./containers/notFoundContainer";
 
 const store = configureStore();
 
 ReactDOM.render(
     <Provider store={store}>
         <Router history={browserHistory}>
-            <Route path="/" component={Header}>
-                <IndexRoute component={Home} />
+            <Route path="/" component={MainContainer}>
+                <IndexRoute component={HomeContainer} />
             </Route>
             
-            <Route path="/signin" component={SignIn} />
-            <Route path="/register" component={Registration} />
-            <Route path="/confirmations/:key" component={Confirmation} />
+            <Route path="/signin" component={SignInContainer} />
+            <Route path="/register" component={RegistrationContainer} />
+            <Route path="/confirmations/:key" component={ConfirmationContainer} />
 
-            <Route path="*" component={NotFound} />
+            <Route path="*" component={NotFoundContainer} />
         </Router>
     </Provider>,
     document.getElementById("main")

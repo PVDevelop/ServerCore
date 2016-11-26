@@ -1,5 +1,4 @@
 import React from "react";
-import { connect } from "react-redux";
 
 import Panel from "react-bootstrap/lib/Panel";
 import Form from "react-bootstrap/lib/Form";
@@ -9,10 +8,9 @@ import Col from "react-bootstrap/lib/Col";
 import ControlLabel from "react-bootstrap/lib/ControlLabel";
 import Button from "react-bootstrap/lib/Button";
 
-import * as signInActions from "../actions/signIn";
-
-class SignIn extends React.Component {
+export default class SignIn extends React.Component {
     render() {
+        var p = this.props;
         return (
             <Panel header="Вход в систему">
                 <Form>
@@ -23,7 +21,7 @@ class SignIn extends React.Component {
                                 type="email"
                                 placeholder="Введите почтовый адрес"
                                 value={this.props.email}
-                                onChange={::this.onEmailChanged} />
+                                onChange={e => this.props.onEmailChanged(e.target.value)} />
                         </Col>
                     </FormGroup>
 
@@ -34,7 +32,7 @@ class SignIn extends React.Component {
                                 type="password"
                                 placeholder="Введите пароль"
                                 value={this.props.password}
-                                onChange={::this.onPasswordChanged} />
+                                onChange={e => this.props.onPasswordChanged(e.target.value)} />
                         </Col>
                     </FormGroup>
 
@@ -55,24 +53,6 @@ class SignIn extends React.Component {
 
     onSignInClicked(e) {
         e.preventDefault();
-        this.props.dispatch(signInActions.signIn(this.props.email, this.props.password));
-    }
-
-    onEmailChanged(e) {
-        this.props.dispatch(signInActions.setEmail(e.target.value));
-    }
-
-    onPasswordChanged(e) {
-        this.props.dispatch(signInActions.setPassword(e.target.value));
+        this.props.onSignInClicked();
     }
 }
-
-function mapStateToProps(state) {
-    return {
-        email: state.user.email,
-        password: state.user.password,
-        isSigningIn: state.user.signingIn
-    };
-}
-
-export default connect(mapStateToProps)(SignIn);

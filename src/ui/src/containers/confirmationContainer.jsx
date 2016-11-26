@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 
 import * as confirmUserActions from "../actions/confirmUser";
 
-class Confirmation extends React.Component {
+class ConfirmationContainer extends React.Component {
     render() {
         return (<div>Ожидание подтверждения пользователя...</div>);
     }
@@ -18,4 +18,4 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps)(Confirmation);
+export default connect(mapStateToProps)(ConfirmationContainer);

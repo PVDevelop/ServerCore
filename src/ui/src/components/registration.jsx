@@ -1,5 +1,4 @@
 import React from "react";
-import { connect } from "react-redux";
 
 import Form from "react-bootstrap/lib/Form";
 import FormControl from "react-bootstrap/lib/FormControl";
@@ -9,9 +8,7 @@ import Button from "react-bootstrap/lib/Button";
 import Panel from "react-bootstrap/lib/Panel";
 import Col from "react-bootstrap/lib/Col";
 
-import * as registerUserActions from "../actions/registerUser";
-
-class Registration extends React.Component {
+export default class Registration extends React.Component {
     render() {
         return (
             <Panel header="Создание нового пользователя">
@@ -23,7 +20,7 @@ class Registration extends React.Component {
                                 type="email"
                                 placeholder="Введите почтовый адрес"
                                 value={this.props.email}
-                                onChange={::this.onEmailChanged} />
+                                onChange={e => this.props.onEmailChanged(e.target.value)} />
                         </Col>
                     </FormGroup>
 
@@ -34,7 +31,7 @@ class Registration extends React.Component {
                                 type="password"
                                 placeholder="Введите пароль"
                                 value={this.props.password}
-                                onChange={::this.onPasswordChanged} />
+                                onChange={e => this.props.onPasswordChanged(e.target.value)} />
                         </Col>
                     </FormGroup>
 
@@ -53,26 +50,8 @@ class Registration extends React.Component {
         );
     }
 
-    onEmailChanged(e) {
-        this.props.dispatch(registerUserActions.onEmailChanged(e.target.value));
-    }
-
-    onPasswordChanged(e) {
-        this.props.dispatch(registerUserActions.onPasswordChanged(e.target.value));
-    }
-
     onRegisterButtonClicked(e) {
         e.preventDefault();
-        this.props.dispatch(registerUserActions.register(this.props.email, this.props.password));
+        this.props.onRegisterSubmitRequested();
     }
 }
-
-function mapStateToProps(state) {
-    return {
-        email: state.user.email,
-        password: state.user.password,
-        isRegistering: state.user.registering
-    };
-}
-
-export default connect(mapStateToProps)(Registration);
