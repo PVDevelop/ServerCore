@@ -7,6 +7,7 @@ import * as confirmUserActions from "../actions/confirmUser";
 const initialState = {
     email: "",
     password: "",
+    confirmPassword: "",
     signingIn: false,
     signingOut: false,
     registering: false,
@@ -30,6 +31,11 @@ export default function user(state = initialState, action) {
             return {
                 ...state,
                 password: action.password
+            };
+        case registerUserActions.CONFIRM_PASSWORD:
+            return {
+                ...state,
+                confirmPassword: action.confirmPassword
             };
         case signInActions.SIGNING_IN:
             return {

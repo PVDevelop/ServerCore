@@ -18,6 +18,14 @@ export function onPasswordChanged(password) {
     }
 }
 
+export const CONFIRM_PASSWORD = "REGISTER_USER_CONFIRM_PASSWORD";
+export function onConfirmPasswordChanged(password) {
+    return {
+        type: CONFIRM_PASSWORD,
+        confirmPassword: password
+    }
+}
+
 export const REGISTERING = "REGISTER_USER_REGISTERING";
 function onRegistering() {
     return {

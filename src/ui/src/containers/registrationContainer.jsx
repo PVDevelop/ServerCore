@@ -10,9 +10,11 @@ class RegistrationContainer extends React.Component {
             <Registration 
                 email={this.props.email}
                 password={this.props.password}
+                confirmPassword={this.props.confirmPassword}
                 isRegistering={this.props.isRegistering}
                 onEmailChanged={::this.onEmailChanged}
                 onPasswordChanged={::this.onPasswordChanged}
+                onConfirmPasswordChanged={::this.onConfirmPasswordChanged}
                 onRegisterSubmitRequested={::this.onRegisterSubmitRequested}/>
         );
     }
@@ -23,6 +25,10 @@ class RegistrationContainer extends React.Component {
 
     onPasswordChanged(password) {
         this.props.dispatch(registerUserActions.onPasswordChanged(password));
+    }
+
+    onConfirmPasswordChanged(password) {
+        this.props.dispatch(registerUserActions.onConfirmPasswordChanged(password));
     }
 
     onRegisterSubmitRequested() {
