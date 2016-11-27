@@ -14,7 +14,7 @@ export default class Registration extends React.Component {
     render() {
         return (
             <form>
-            <Col lg="4">
+            <Col lg={4}>
                 <Panel header="Создание нового пользователя">
                     <FormInput
                         label="Почтовый адрес"

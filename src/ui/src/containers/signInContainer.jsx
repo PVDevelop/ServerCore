@@ -32,9 +32,9 @@ class SignInContainer extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        email: state.user.email,
-        password: state.user.password,
-        isSigningIn: state.user.signingIn
+        email: state.signIn.email,
+        password: state.signIn.password,
+        isSigningIn: state.signIn.signingIn
     };
 }
 

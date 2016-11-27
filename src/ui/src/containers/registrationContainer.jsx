@@ -38,9 +38,10 @@ class RegistrationContainer extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        email: state.user.email,
-        password: state.user.password,
-        isRegistering: state.user.registering
+        email: state.registration.email,
+        password: state.registration.password,
+        confirmPassword: state.registration.confirmPassword,
+        isRegistering: state.registration.registering
     };
 }
 
