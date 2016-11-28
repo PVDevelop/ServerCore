@@ -1,4 +1,3 @@
-import { browserHistory } from "react-router";
 import { httpPost } from "../utils/http";
 import * as routes from "../routes";
 
@@ -26,6 +25,13 @@ export function onConfirmPasswordChanged(password) {
     }
 }
 
+export const REGISTER_COMPONENT_WILL_MOUNT = "REGISTER_USER_REGISTER_COMPONENT_WILL_MOUNT";
+export function onRegisterComponentWillMount(){
+    return{
+        type: REGISTER_COMPONENT_WILL_MOUNT
+    }
+}
+
 export const REGISTERING = "REGISTER_USER_REGISTERING";
 function onRegistering() {
     return {
@@ -43,8 +49,6 @@ function onFailure() {
 
 export const REGISTERED = "REGISTER_USER_REGISTERED";
 function onRegistered() {
-    alert("Пользователь зарегистрирован");
-    browserHistory.push("/");
     return {
         type: REGISTERED
     }
