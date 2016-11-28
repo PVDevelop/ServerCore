@@ -13,7 +13,7 @@ import FormInput from "./formInput";
 export default class Registration extends React.Component {
     render() {
         return (
-            <form>
+            <Form>
                 <Col lg={4} lgOffset={4} md={6} mdOffset={3} sm={6} smOffset={3} xs={8} xsOffset={2}>
                     <Panel header="Создание нового пользователя">
                         <FormInput
@@ -56,7 +56,7 @@ export default class Registration extends React.Component {
                     </FormGroup>
                 </Panel >
                 </Col>
-            </form >
+            </Form >
         );
     }
 
