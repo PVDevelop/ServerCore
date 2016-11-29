@@ -13,8 +13,7 @@ gulp.task("clean_debug", () => gulp.src(debug_build_path).pipe(clean({ force: tr
 // копируем в папку с дебажными бинарями необходимые файлы
 gulp.task("copy_debug", ["clean_debug"], () => {
     var copiedFiles = [
-        "./src/Index.html",
-        "./src/styles/**"];
+        "./src/Index.html"];
         //"./src/theme/**"];
     gulp
         .src(copiedFiles)

@@ -9,15 +9,17 @@ import Panel from "react-bootstrap/lib/Panel";
 import Col from "react-bootstrap/lib/Col";
 
 import FormInput from "./formInput";
+import FormSubmitButton from "./formSubmitButton";
 
 export default class Registration extends React.Component {
     render() {
         return (
-            <Form>
+            <form>
                 <Col lg={4} lgOffset={4} md={6} mdOffset={3} sm={6} smOffset={3} xs={8} xsOffset={2}>
                     <Panel header="Создание нового пользователя">
                         <FormInput
                             controlId="inputEmail"
+                            showValidationState={true}
                             validationError={this.props.emailError}
                             label="Почтовый адрес"
                             type="email"
@@ -27,6 +29,7 @@ export default class Registration extends React.Component {
 
                         <FormInput
                             controlId="inputPassword"
+                            showValidationState={true}
                             validationError={this.props.passwordError}
                             label="Пароль"
                             type="password"
@@ -36,6 +39,7 @@ export default class Registration extends React.Component {
 
                         <FormInput
                             controlId="inputConfirmPassword"
+                            showValidationState={true}
                             validationError={this.props.confirmPasswordError}
                             label="Подтверждение пароля"
                             type="password"
@@ -43,20 +47,14 @@ export default class Registration extends React.Component {
                             value={this.props.confirmPassword}
                             onChange={e => this.props.onConfirmPasswordChanged(e.target.value)} />
 
-                        <FormGroup>
-                            <Button
-                                type="submit"
-                                bsSize="large"
-                                bsStyle="primary"
-                                block
-                                disabled={this.props.isRegistering === true || this.props.hasErrors === true}
-                                onClick={::this.onRegisterButtonClicked}>
-                                Создать
-                            </Button>
-                    </FormGroup>
-                </Panel >
+                        <FormSubmitButton
+                            text={"Создать"}
+                            error={this.props.registrationError}
+                            disabled={this.props.isRegistering || this.props.hasInputErrors}
+                            onClicked={::this.onRegisterButtonClicked}/>
+                    </Panel >
                 </Col>
-            </Form >
+            </form >
         );
     }
 

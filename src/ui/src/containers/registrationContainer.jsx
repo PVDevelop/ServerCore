@@ -17,8 +17,9 @@ class RegistrationContainer extends React.Component {
                     confirmPasswordError={this.props.confirmPasswordError}
                     password={this.props.password}
                     confirmPassword={this.props.confirmPassword}
-                    hasErrors={this.props.hasErrors}
+                    hasInputErrors={this.props.hasInputErrors}
                     isRegistering={this.props.isRegistering}
+                    registrationError={this.props.registrationError}
                     onEmailChanged={::this.onEmailChanged}
                     onPasswordChanged={::this.onPasswordChanged}
                     onConfirmPasswordChanged={::this.onConfirmPasswordChanged}
@@ -64,7 +65,8 @@ function mapStateToProps(state) {
         passwordError: state.registration.passwordError,
         confirmPassword: state.registration.confirmPassword,
         confirmPasswordError: state.registration.confirmPasswordError,
-        hasErrors: state.registration.hasErrors,
+        hasInputErrors: state.registration.hasInputErrors,
+        registrationError: state.registration.registrationError,
         isRegistering: state.registration.registering,
         showRegistrationSuccess: state.registration.registered
     };

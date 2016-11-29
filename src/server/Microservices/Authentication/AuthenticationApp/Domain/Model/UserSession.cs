@@ -52,6 +52,11 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		/// <returns>Токен доступа.</returns>
 		public AccessToken GenerateToken(DateTime utcNow)
 		{
+			if (State != SessionState.Active)
+			{
+				throw new InactiveSessionException();
+			}
+
 			var salt = BCrypt.Net.BCrypt.GenerateSalt();
 			var token = BCrypt.Net.BCrypt.HashPassword(Id, salt);
 

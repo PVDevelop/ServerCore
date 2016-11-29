@@ -1,5 +1,7 @@
 ﻿using System;
+using MongoDB.Driver;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Port;
+using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Port.Exceptions;
 using PVDevelop.UCoach.Mongo;
 
 namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.User
@@ -38,8 +40,19 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.Mongo.User
 				throw new ArgumentNullException(nameof(user));
 			}
 
-			var mongoUser = MapToMongoUser(user);
-			_repository.Insert(mongoUser);
+			try
+			{
+				var mongoUser = MapToMongoUser(user);
+				_repository.Insert(mongoUser);
+			}
+			catch (MongoWriteException ex)
+			{
+				if (ex.WriteError.Code == 11000)
+				{
+					throw new DuplicateEmailException();
+				}
+				throw;
+			}
 		}
 
 		public void Update(Domain.Model.User user)

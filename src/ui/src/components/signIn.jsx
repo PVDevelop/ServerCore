@@ -8,46 +8,41 @@ import Col from "react-bootstrap/lib/Col";
 import ControlLabel from "react-bootstrap/lib/ControlLabel";
 import Button from "react-bootstrap/lib/Button";
 
+import FormInput from "./formInput";
+import FormSubmitButton from "./formSubmitButton";
+
 export default class SignIn extends React.Component {
     render() {
         var p = this.props;
         return (
-            <Panel header="Вход в систему">
-                <Form>
-                    <FormGroup>
-                        <Col sm={1} componentClass={ControlLabel}>Email</Col>
-                        <Col sm={11}>
-                            <FormControl
-                                type="email"
-                                placeholder="Введите почтовый адрес"
-                                value={this.props.email}
-                                onChange={e => this.props.onEmailChanged(e.target.value)} />
-                        </Col>
-                    </FormGroup>
+            <form>
+                <Col lg={4} lgOffset={4} md={6} mdOffset={3} sm={6} smOffset={3} xs={8} xsOffset={2}>
+                    <Panel header="Вход в систему">
+                    
+                        <FormInput
+                            controlId="inputEmail"
+                            label="Почтовый адрес"
+                            type="email"
+                            placeholder="Введите почтовый адрес"
+                            value={this.props.email}
+                            onChange={e => this.props.onEmailChanged(e.target.value)} />
 
-                    <FormGroup>
-                        <Col sm={1} componentClass={ControlLabel}>Пароль</Col>
-                        <Col sm={11}>
-                            <FormControl
-                                type="password"
-                                placeholder="Введите пароль"
-                                value={this.props.password}
-                                onChange={e => this.props.onPasswordChanged(e.target.value)} />
-                        </Col>
-                    </FormGroup>
+                        <FormInput
+                            controlId="inputPassword"
+                            label="Пароль"
+                            type="password"
+                            placeholder="Введите пароль"
+                            value={this.props.password}
+                            onChange={e => this.props.onPasswordChanged(e.target.value)} />
 
-                    <FormGroup>
-                        <Col smOffset={1} sm={11}>
-                            <Button
-                                type="submit"
-                                disabled={this.props.isSigningIn === true}
-                                onClick={::this.onSignInClicked}>
-                                Войти
-                        </Button>
-                        </Col>
-                    </FormGroup>
-                </Form>
-            </Panel >
+                        <FormSubmitButton
+                            text={"Войти"}
+                            error={this.props.signInError}
+                            disabled={this.props.isSigningIn === true}
+                            onClicked={::this.onSignInClicked}/>
+                    </Panel >
+                </Col>
+            </form>
         );
     }
 

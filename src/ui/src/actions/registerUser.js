@@ -26,8 +26,8 @@ export function onConfirmPasswordChanged(password) {
 }
 
 export const REGISTER_COMPONENT_WILL_MOUNT = "REGISTER_USER_REGISTER_COMPONENT_WILL_MOUNT";
-export function onRegisterComponentWillMount(){
-    return{
+export function onRegisterComponentWillMount() {
+    return {
         type: REGISTER_COMPONENT_WILL_MOUNT
     }
 }
@@ -40,10 +40,10 @@ function onRegistering() {
 }
 
 export const FAILURE = "REGISTER_USER_FAILURE";
-function onFailure() {
-    alert("Ошибка регистрации");
+function onFailure(error) {
     return {
-        type: FAILURE
+        type: FAILURE,
+        error: error
     }
 }
 
@@ -65,15 +65,24 @@ export function register(email, password) {
 
         httpPost(routes.RegisterUser, data)
             .then(response => {
-                if (response.status == 200) {
+                if (response.status === 200) {
+                    console.log("Success");
                     dispatch(onRegistered());
                 }
+                else if (response.status === 400) {
+                    response
+                        .json()
+                        .then(j => {
+                            dispatch(onFailure(j.message));
+                        });
+                }
                 else {
-                    dispatch(onFailure());
+                    throw new Error("Unepected status code: " + response.status);
                 }
             })
             .catch(err => {
-                dispatch(onFailure());
+                console.error(err);
+                dispatch(onFailure("Возникла непредвиденная ошибка. Повторите попытку."));
             });
     };
 }

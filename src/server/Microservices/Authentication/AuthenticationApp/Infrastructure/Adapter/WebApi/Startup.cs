@@ -9,7 +9,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Infrastructure.Adapter.WebApi
 	{
 		public IServiceProvider ConfigureServices(IServiceCollection services)
 		{
-			services.AddMvc();
+			services.AddMvc().AddMvcOptions(o => o.Filters.Add(typeof(GlobalExceptionHandler)));
 			AuthenticationMicroservice.Instance.Container.Populate(services);
 			return AuthenticationMicroservice.Instance.Container.GetInstance<IServiceProvider>();
 		}

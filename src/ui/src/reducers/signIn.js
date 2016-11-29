@@ -5,6 +5,7 @@ const initialState = {
     email: "",
     password: "",
     signingIn: false,
+    signInError: "",
     signingOut: false
 };
 
@@ -28,12 +29,14 @@ export default function signIn(state = initialState, action) {
         case signInActions.SIGNED_IN:
             return {
                 ...state,
-                signingIn: false
+                signingIn: false,
+                signInError: null
             }
         case signInActions.FAILURE:
             return {
                 ...state,
-                signingIn: false
+                signingIn: false,
+                error: action.error
             };
         case signOutActions.SIGNING_OUT:
             return {

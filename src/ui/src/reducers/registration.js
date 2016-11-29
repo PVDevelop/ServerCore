@@ -7,38 +7,46 @@ const initialState = {
     passwordError: "",
     confirmPassword: "",
     confirmPasswordError: "",
-    hasErrors: false,
+    registrationError: "",
+    hasInputErrors: false,
     registering: false,
     registered: false
 };
 
 export function validate(state) {
-    var hasErrors = false;
-
-    var emailError="";
+    var emailError = "";
     if (!state.email) {
         emailError = "Почтовый адрес не задан";
-        hasErrors = true;
+    } else {
+        let regExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,6})+$/;
+        if (!regExp.test(state.email)) {
+            emailError = "Потовый адрес указан неверно";
+        }
     }
 
-    var passwordError="";
-    if(!state.password){
+    var passwordError = "";
+    if (!state.password) {
         passwordError = "Пароль не задан";
-        hasErrors = true;
+    }
+    else {
+        let regEp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{7,25}$/;
+        if (!regEp.test(state.password)){
+            passwordError = "Пароль должен быть длиной от 7 до 25 символов, содержать цифры, латинские заглавные и прописные буквы";
+        }
     }
 
     var confirmPasswordError = "";
-    if(state.confirmPassword != state.password){
+    if (state.confirmPassword != state.password) {
         confirmPasswordError = "Пароли не совпадают";
-        hasErrors = true;
     }
 
+    const hasInputErrors = emailError !== "" || passwordError !== "" || confirmPasswordError !== "";
     return {
         ...state,
         emailError: emailError,
         passwordError: passwordError,
         confirmPasswordError: confirmPasswordError,
-        hasErrors: hasErrors
+        hasInputErrors: hasInputErrors
     }
 }
 
@@ -47,7 +55,7 @@ export default function registration(state, action) {
         case registerUserActions.EMAIL:
         {
             const newState = {
-                ...state,
+            ...state,
                 email: action.email
             };
             return validate(newState);
@@ -70,19 +78,21 @@ export default function registration(state, action) {
         }
         case registerUserActions.REGISTERING:
             return {
-            ...state,
+                ...state,
                 registering: true
             };
         case registerUserActions.FAILURE:
             return {
                 ...state,
-                registering: false
+                registering: false,
+                registrationError: action.error
             };
         case registerUserActions.REGISTERED:
             return {
                 ...state,
                 registering: false,
-                registered: true
+                registered: true,
+                registrationError: null
             };
         case registerUserActions.REGISTER_COMPONENT_WILL_MOUNT:
             return {
@@ -90,7 +100,7 @@ export default function registration(state, action) {
                 registered: false
             };
         default:
-            if(!state){
+            if (!state) {
                 return validate(initialState);
             }
             return state;

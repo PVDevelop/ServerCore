@@ -26,10 +26,10 @@ function onSigningIn() {
 }
 
 export const FAILURE = "SIGN_IN_FAILURE";
-function onFailure() {
-    alert("Ошибка входа");
+function onFailure(error) {
     return {
-        type: FAILURE
+        type: FAILURE,
+        error: error
     }
 }
 
@@ -55,12 +55,20 @@ export function signIn(email, password) {
                 if (response.status == 200) {
                     dispatch(onSignedIn());
                 }
+                else if (response.status == 400) {
+                    response
+                        .json()
+                        .then(j => {
+                            dispatch(onFailure(j.message));
+                        });
+                }
                 else {
-                    dispatch(onFailure());
+                    throw new Error("Unepected status code: " + response.status);
                 }
             })
             .catch(err => {
-                dispatch(onFailure());
+                console.error(err);
+                dispatch(onFailure("Возникла непредвиденная ошибка. Повторите попытку."));
             });
     };
 }

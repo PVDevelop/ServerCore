@@ -82,7 +82,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		{
 			if (string.IsNullOrWhiteSpace(email)) throw new ArgumentException("Not set", nameof(email));
 
-			if (!Regex.IsMatch(email, @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", RegexOptions.IgnoreCase))
+			if (!Regex.IsMatch(email, @"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,6})+$", RegexOptions.IgnoreCase))
 			{
 				throw new InvalidEmailFormatException(email);
 			}
@@ -93,7 +93,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 			if (string.IsNullOrWhiteSpace(email)) throw new ArgumentException("Not set", nameof(email));
 			if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Not set", password);
 
-			if (!Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{7,15}$", RegexOptions.IgnoreCase))
+			if (!Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{7,25}$", RegexOptions.IgnoreCase))
 			{
 				throw new InvalidPasswordFormatException(email);
 			}
@@ -105,14 +105,14 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 		/// <param name="plainPassword">Незакодированный пароль</param>
 		public void SignIn(string plainPassword)
 		{
+			if (State == UserState.WaitingForCreationConfirm)
+			{
+				throw new UserWaitingForCreationConfirmException(Email);
+			}
+
 			if (!BCrypt.Net.BCrypt.Verify(plainPassword, Password))
 			{
 				throw new InvalidPasswordException(Email);
-			}
-
-			if(State == UserState.WaitingForCreationConfirm)
-			{
-				throw new UserWaitingForCreationConfirmException(Email);
 			}
 
 			State = UserState.SignedIn;

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
+using PVDevelop.UCoach.AuthenticationApp.Domain;
 using PVDevelop.UCoach.AuthenticationApp.Domain.Model;
 using PVDevelop.UCoach.AuthenticationApp.Domain.Model.Exceptions;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Port;
+using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Port.Exceptions;
 using PVDevelop.UCoach.Logging;
 using PVDevelop.UCoach.Timing;
 
@@ -51,22 +53,29 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 			if (string.IsNullOrWhiteSpace(email)) throw new ArgumentException("Not set", nameof(email));
 			if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Not set", nameof(password));
 
-			var user = new User(
-				email,
-				password,
-				_utcTimeProvider.UtcNow);
-			_userRepository.Insert(user);
+			try
+			{
+				var user = new User(
+					email,
+					password,
+					_utcTimeProvider.UtcNow);
+				_userRepository.Insert(user);
 
-			var confirmationKey = _confirmationKeyGenerator.Generate();
+				var confirmationKey = _confirmationKeyGenerator.Generate();
 
-			var confirmation = new Confirmation(
-				userId: user.Id,
-				key: confirmationKey,
-				creationTime: _utcTimeProvider.UtcNow);
-			_confirmationRepository.Insert(confirmation);
+				var confirmation = new Confirmation(
+					userId: user.Id,
+					key: confirmationKey,
+					creationTime: _utcTimeProvider.UtcNow);
+				_confirmationRepository.Insert(confirmation);
 
-			var url = string.Format(_confirmationUrl, confirmation.Key);
-			_confirmationProducer.Produce(email, url);
+				var url = string.Format(_confirmationUrl, confirmation.Key);
+				_confirmationProducer.Produce(email, url);
+			}
+			catch (DuplicateEmailException)
+			{
+				throw new ApplicationException("Указанный почтовый адрес уже кем-то используется.");
+			}
 		}
 
 		public void ConfirmUserRegistration(string confirmationKey)
@@ -83,9 +92,9 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 			_confirmationRepository.Update(confirmation);
 
 			var user = _userRepository.GetById(confirmation.UserId);
-			if(user == null)
+			if (user == null)
 			{
-				throw new UserNotFoundException(confirmation.Id);
+				throw new ApplicationException("Пользователь не зарегистрирован.");
 			}
 
 			user.Confirm();
@@ -106,12 +115,26 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 			if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Not set", nameof(password));
 
 			var user = _userRepository.GetByEmail(email);
-			if(user == null)
+			if (user == null)
 			{
-				throw new UserNotFoundException(email);
+				throw new ApplicationException("Пользователь не зарегистрирован.");
 			}
 
-			user.SignIn(password);
+			try
+			{
+				user.SignIn(password);
+			}
+			catch (UserWaitingForCreationConfirmException)
+			{
+				throw new ApplicationException(@"Пользователь не подтвержден. 
+Для подтверждения перейдите по ссылке, указанной в отправленном на почту письме.");
+			}
+			catch (InvalidPasswordException)
+			{
+				throw new ApplicationException("Пароль указан неверно.");
+			}
+
+			_userRepository.Update(user);
 
 			var session = _userSessionRepository.GetLastSession(user.Id);
 			if(session == null)
@@ -145,7 +168,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 			var user = _userRepository.GetById(accessToken.UserId);
 			if (user == null)
 			{
-				throw new UserNotFoundException(accessToken.UserId);
+				throw new ApplicationException("Пользователь не зарегистрирован");
 			}
 
 			user.SignOut();

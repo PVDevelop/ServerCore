@@ -11,6 +11,7 @@ class SignInContainer extends React.Component {
                 email={this.props.email}
                 password={this.props.password}
                 isSigningIn={this.props.isSigningIn}
+                signInError={this.props.signInError}
                 onSignInClicked={::this.onSignInClicked }
                 onEmailChanged={::this.onEmailChanged }
                 onPasswordChanged={::this.onPasswordChanged } > 
@@ -34,7 +35,8 @@ function mapStateToProps(state) {
     return {
         email: state.signIn.email,
         password: state.signIn.password,
-        isSigningIn: state.signIn.signingIn
+        isSigningIn: state.signIn.signingIn,
+        signInError: state.signIn.error
     };
 }
 
