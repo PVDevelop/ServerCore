@@ -1,4 +1,3 @@
-import { browserHistory } from "react-router";
 import * as routes from "../routes";
 import { httpGet } from "../utils/http";
 
@@ -11,19 +10,17 @@ function onConfirming() {
 
 export const CONFIRMED = "CONFIRM_USER_CONFIRMED";
 function onConfirmed() {
-    alert("Пользователь подтвержден");
-    browserHistory.push("/");
     return {
         type: CONFIRMED
     };
 }
 
 export const FAILURE = "CONFIRM_USER_FAILURE";
-function onFailure() {
-    alert("Ошибка подтверждения пользователя");
-    browserHistory.push("/");
+function onFailure(error, repeat) {
     return {
-        type: FAILURE
+        type: FAILURE,
+        error: error,
+        repeat: repeat
     }
 }
 
@@ -33,15 +30,23 @@ export function confirm(key) {
 
         httpGet(routes.ConfirmUser + "/" + key)
             .then(response => {
-                if (response.status == 200) {
+                if (response.status === 200) {
                     dispatch(onConfirmed());
                 }
+                else if (response.status === 400) {
+                    response
+                        .json()
+                        .then(j => {
+                            dispatch(onFailure(j.message, false));
+                        });
+                }
                 else {
-                    dispatch(onFailure());
+                    throw new Error("Unepected status code: " + response.status);
                 }
             })
             .catch(err => {
-                dispatch(onFailure());
+                console.error(err, true);
+                dispatch(onFailure("Возникла непредвиденная ошибка. Повторите попытку.", true));
             });
     }
 }

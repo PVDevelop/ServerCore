@@ -66,10 +66,11 @@ export function register(email, password) {
         httpPost(routes.RegisterUser, data)
             .then(response => {
                 if (response.status === 200) {
-                    console.log("Success");
+                    console.log("Registration succeeded");
                     dispatch(onRegistered());
                 }
                 else if (response.status === 400) {
+                    console.log("Registration status: 400");
                     response
                         .json()
                         .then(j => {
