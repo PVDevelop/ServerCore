@@ -7,6 +7,16 @@ import Registration from "../components/registration";
 import RegistrationSuccessModal from "../components/registrationSuccessModal";
 
 class RegistrationContainer extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.onEmailChanged = this.onEmailChanged.bind(this);
+        this.onPasswordChanged = this.onPasswordChanged.bind(this);
+        this.onConfirmPasswordChanged = this.onConfirmPasswordChanged.bind(this);
+        this.onRegisterSubmitRequested = this.onRegisterSubmitRequested.bind(this);
+        this.onRegistrationModalOkClicked = this.onRegistrationModalOkClicked.bind(this);
+    }
+
     render() {
         return (
             <div>
@@ -20,14 +30,14 @@ class RegistrationContainer extends React.Component {
                     hasInputErrors={this.props.hasInputErrors}
                     isRegistering={this.props.isRegistering}
                     registrationError={this.props.registrationError}
-                    onEmailChanged={::this.onEmailChanged}
-                    onPasswordChanged={::this.onPasswordChanged}
-                    onConfirmPasswordChanged={::this.onConfirmPasswordChanged}
-                    onRegisterSubmitRequested={::this.onRegisterSubmitRequested}/>
+                    onEmailChanged={this.onEmailChanged}
+                    onPasswordChanged={this.onPasswordChanged}
+                    onConfirmPasswordChanged={this.onConfirmPasswordChanged}
+                    onRegisterSubmitRequested={this.onRegisterSubmitRequested} />
 
                 <RegistrationSuccessModal
                     show={this.props.showRegistrationSuccess}
-                    onOkClicked={::this.onRegistrationModalOkClicked}/>
+                    onOkClicked={this.onRegistrationModalOkClicked} />
             </div>
         );
     }

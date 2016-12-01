@@ -3,9 +3,7 @@ import React from "react";
 export default class NotFoundContainer extends React.Component {
     render() {
         return (
-            <div>
-                Ресурс не найден!
-            </div>
+            <img className="center" alt="Страница не найдена" src="/resources/images/404.png"/>
         );
     }
 }

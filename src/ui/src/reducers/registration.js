@@ -30,13 +30,13 @@ export function validate(state) {
     }
     else {
         let regEp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{7,25}$/;
-        if (!regEp.test(state.password)){
+        if (!regEp.test(state.password)) {
             passwordError = "Пароль должен быть длиной от 7 до 25 символов, содержать цифры, латинские заглавные и прописные буквы";
         }
     }
 
     var confirmPasswordError = "";
-    if(!state.confirmPassword){
+    if (!state.confirmPassword) {
         confirmPasswordError = "Пароль не задан";
     }
     else if (state.confirmPassword != state.password) {
@@ -44,64 +44,62 @@ export function validate(state) {
     }
 
     const hasInputErrors = emailError !== "" || passwordError !== "" || confirmPasswordError !== "";
-    return {
-        ...state,
+    return Object.assign({}, state, {
         emailError: emailError,
         passwordError: passwordError,
         confirmPasswordError: confirmPasswordError,
         hasInputErrors: hasInputErrors
-    }
+    });
 }
 
 export default function registration(state, action) {
     switch (action.type) {
         case registerUserActions.EMAIL:
-        {
-            const newState = {
-            ...state,
-                email: action.email
-            };
-            return validate(newState);
-        }
+            {
+                const newState = Object.assign({}, state, {
+                    email: action.email
+                });
+                return validate(newState);
+            }
         case registerUserActions.PASSWORD:
-        {
-            const newState = {
-                ...state,
-                password: action.password
-            };
-            return validate(newState);
-        }
+            {
+                const newState = Object.assign({},
+                    state, {
+                        password: action.password
+                    });
+                return validate(newState);
+            }
         case registerUserActions.CONFIRM_PASSWORD:
-        {
-            const newState = {
-                ...state,
-                confirmPassword: action.confirmPassword
-            };
-            return validate(newState);
-        }
+            {
+                const newState = Object.assign({},
+                    state, {
+                        confirmPassword: action.confirmPassword
+                    });
+                return validate(newState);
+            }
         case registerUserActions.REGISTERING:
-            return {
-                ...state,
-                registering: true
-            };
+            return Object.assign({},
+                state, {
+                    registering: true
+                });
         case registerUserActions.FAILURE:
-            return {
-                ...state,
-                registering: false,
-                registrationError: action.error
-            };
+            return Object.assign({},
+                state, {
+                    registering: false,
+                    registrationError: action.error
+                });
         case registerUserActions.REGISTERED:
-            return {
-                ...state,
-                registering: false,
-                registered: true,
-                registrationError: null
-            };
+            return Object.assign({},
+                state, {
+                    registering: false,
+                    registered: true,
+                    registrationError: null
+                });
         case registerUserActions.REGISTER_COMPONENT_WILL_MOUNT:
-            return {
-                ...state,
-                registered: false
-            };
+            return Object.assign({},
+                state, {
+                    registered: false
+                });
         default:
             if (!state) {
                 return validate(initialState);

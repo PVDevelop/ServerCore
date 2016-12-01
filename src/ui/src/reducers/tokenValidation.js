@@ -7,20 +7,20 @@ const initialState = {
 export default function tokenValidation(state = initialState, action) {
     switch (action.type) {
         case validateTokenActions.VALIDATING:
-            return {
-                ...state,
-                validating: true
-            }
+            return Object.assign({},
+                state, {
+                    validating: true
+                });
         case validateTokenActions.FAILURE:
-            return {
-                ...state,
-                validating: false
-            }
+            return Object.assign({},
+                state, {
+                    validating: false
+                });
         case validateTokenActions.VALIDATED:
-            return {
-                ...state,
-                validating: false
-            }
+            return Object.assign({},
+                state, {
+                    validating: false
+                });
         default:
             return state;
     };

@@ -12,6 +12,12 @@ import FormInput from "./formInput";
 import FormSubmitButton from "./formSubmitButton";
 
 export default class SignIn extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.onSignInClicked = this.onSignInClicked.bind(this);
+    }
+
     render() {
         var p = this.props;
         return (
@@ -24,6 +30,7 @@ export default class SignIn extends React.Component {
                             label="Почтовый адрес"
                             type="email"
                             placeholder="Введите почтовый адрес"
+                            glyph="user"
                             value={this.props.email}
                             onChange={e => this.props.onEmailChanged(e.target.value)} />
 
@@ -32,6 +39,7 @@ export default class SignIn extends React.Component {
                             label="Пароль"
                             type="password"
                             placeholder="Введите пароль"
+                            glyph="lock"
                             value={this.props.password}
                             onChange={e => this.props.onPasswordChanged(e.target.value)} />
 
@@ -39,7 +47,7 @@ export default class SignIn extends React.Component {
                             text={"Войти"}
                             error={this.props.signInError}
                             disabled={this.props.isSigningIn === true}
-                            onClicked={::this.onSignInClicked}/>
+                            onClicked={this.onSignInClicked}/>
                     </Panel >
                 </Col>
             </form>

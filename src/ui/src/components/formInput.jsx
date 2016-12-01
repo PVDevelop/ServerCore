@@ -3,6 +3,7 @@ import React from "react";
 import FormGroup from "react-bootstrap/lib/FormGroup";
 import FormControl from "react-bootstrap/lib/FormControl";
 import ControlLabel from "react-bootstrap/lib/ControlLabel";
+import Glyphicon from "react-bootstrap/lib/Glyphicon";
 
 export default class FormInput extends React.Component {
     render() {
@@ -28,7 +29,9 @@ export default class FormInput extends React.Component {
                     placeholder={this.props.placeholder}
                     value={this.props.value}
                     onChange={this.props.onChange} />
-                <FormControl.Feedback />
+                <FormControl.Feedback>
+                    <Glyphicon glyph={this.props.glyph} />
+                </FormControl.Feedback>
                 {validationLabel}
             </FormGroup>
         );

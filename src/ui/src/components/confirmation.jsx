@@ -9,6 +9,12 @@ import ControlLabel from "react-bootstrap/lib/ControlLabel";
 import FormSubmitButton from "./formSubmitButton";
 
 export default class Confirmation extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.onSubmitClicked = this.onSubmitClicked.bind(this);
+    }
+
     render() {
         let text = null;
         if (this.props.isConfirming) {
@@ -19,9 +25,9 @@ export default class Confirmation extends React.Component {
         }
 
         let buttonText = null;
-        if(this.props.repeat){
+        if (this.props.repeat) {
             buttonText = "Повторить";
-        }else{
+        } else {
             buttonText = "Войти";
         }
 
@@ -34,7 +40,7 @@ export default class Confirmation extends React.Component {
                             text={buttonText}
                             error={this.props.confirmationError}
                             disabled={this.props.isConfirming}
-                            onClicked={::this.onSubmitClicked}/>
+                            onClicked={this.onSubmitClicked} />
                     </Panel>
                 </Col>
             </form>
@@ -43,12 +49,10 @@ export default class Confirmation extends React.Component {
 
     onSubmitClicked(e) {
         e.preventDefault();
-        if(this.props.repeat)
-        {
+        if (this.props.repeat) {
             this.props.onRepeatClicked();
         }
-        else
-        {
+        else {
             this.props.onSuccessClicked();
         }
     }

@@ -12,47 +12,47 @@ const initialState = {
 export default function signIn(state = initialState, action) {
     switch (action.type) {
         case signInActions.EMAIL:
-            return {
-                ...state,
-                email: action.email
-            };
+            return Object.assign({},
+                state, {
+                    email: action.email
+                });
         case signInActions.PASSWORD:
-            return {
-                ...state,
-                password: action.password
-            };
+            return Object.assign({},
+                state, {
+                    password: action.password
+                });
         case signInActions.SIGNING_IN:
-            return {
-                ...state,
-                signingIn: true
-            };
+            return Object.assign({},
+                state, {
+                    signingIn: true
+                });
         case signInActions.SIGNED_IN:
-            return {
-                ...state,
-                signingIn: false,
-                signInError: null
-            }
+            return Object.assign({},
+                state, {
+                    signingIn: false,
+                    signInError: null
+                });
         case signInActions.FAILURE:
-            return {
-                ...state,
-                signingIn: false,
-                error: action.error
-            };
+            return Object.assign({},
+                state, {
+                    signingIn: false,
+                    error: action.error
+                });
         case signOutActions.SIGNING_OUT:
-            return {
-                ...state,
-                signingOut: true
-            };
+            return Object.assign({},
+                state, {
+                    signingOut: true
+                });
         case signOutActions.SIGNED_OUT:
-            return {
-                ...state,
-                signingOut: false
-            }
+            return Object.assign({},
+                state, {
+                    signingOut: false
+                });
         case signOutActions.FAILURE:
-            return {
-                ...state,
-                signingOut: false
-            };
+            return Object.assign({},
+                state, {
+                    signingOut: false
+                });
         default:
             return state;
     };

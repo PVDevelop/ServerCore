@@ -12,13 +12,19 @@ import FormInput from "./formInput";
 import FormSubmitButton from "./formSubmitButton";
 
 export default class Registration extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.onRegisterButtonClicked = this.onRegisterButtonClicked.bind(this);
+    }
+
     render() {
         const showEmailValidationState = this.props.email;
 
         const showPasswordValidationState = this.props.password;
 
-        const showConfirmPasswordValidationState = 
-            (this.props.confirmPassword && this.props.confirmPasswordError) || 
+        const showConfirmPasswordValidationState =
+            (this.props.confirmPassword && this.props.confirmPasswordError) ||
             this.props.password;
         return (
             <form>
@@ -31,7 +37,8 @@ export default class Registration extends React.Component {
                             label="Почтовый адрес"
                             type="email"
                             placeholder="Введите почтовый адрес"
-                            value={this.props.email}
+                            glyph="user"
+                            value={this.props.user}
                             onChange={e => this.props.onEmailChanged(e.target.value)} />
 
                         <FormInput
@@ -41,6 +48,7 @@ export default class Registration extends React.Component {
                             label="Пароль"
                             type="password"
                             placeholder="Введите пароль"
+                            glyph="lock"
                             value={this.props.password}
                             onChange={e => this.props.onPasswordChanged(e.target.value)} />
 
@@ -51,6 +59,7 @@ export default class Registration extends React.Component {
                             label="Подтверждение пароля"
                             type="password"
                             placeholder="Подтвердите пароль"
+                            glyph="lock"
                             value={this.props.confirmPassword}
                             onChange={e => this.props.onConfirmPasswordChanged(e.target.value)} />
 
@@ -58,7 +67,7 @@ export default class Registration extends React.Component {
                             text={"Создать"}
                             error={this.props.registrationError}
                             disabled={this.props.isRegistering || this.props.hasInputErrors}
-                            onClicked={::this.onRegisterButtonClicked}/>
+                            onClicked={this.onRegisterButtonClicked} />
                     </Panel >
                 </Col>
             </form >

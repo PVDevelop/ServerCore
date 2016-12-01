@@ -5,6 +5,14 @@ import SignIn from "../components/signIn";
 import * as signInActions from "../actions/signIn";
 
 class SignInContainer extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.onSignInClicked = this.onSignInClicked.bind(this);
+        this.onEmailChanged = this.onEmailChanged.bind(this);
+        this.onPasswordChanged = this.onPasswordChanged.bind(this);
+    }
+
     render() {
         return (
             <SignIn
@@ -12,9 +20,9 @@ class SignInContainer extends React.Component {
                 password={this.props.password}
                 isSigningIn={this.props.isSigningIn}
                 signInError={this.props.signInError}
-                onSignInClicked={::this.onSignInClicked }
-                onEmailChanged={::this.onEmailChanged }
-                onPasswordChanged={::this.onPasswordChanged } > 
+                onSignInClicked={this.onSignInClicked}
+                onEmailChanged={this.onEmailChanged}
+                onPasswordChanged={this.onPasswordChanged} >
             </SignIn>);
     }
 

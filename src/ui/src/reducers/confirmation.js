@@ -9,24 +9,23 @@ const initialState = {
 export default function confirmation(state = initialState, action) {
     switch (action.type) {
         case confirmUserActions.CONFIRMING:
-            return {
-                ...state,
+            return Object.assign({}, state, {
                 confirming: true,
                 error: null
-            }
+            });
         case confirmUserActions.CONFIRMED:
-            return {
-                ...state,
-                confirming: false,
-                error: null
-            }
+            return Object.assign({},
+                state, {
+                    confirming: false,
+                    error: null
+                });
         case confirmUserActions.FAILURE:
-            return {
-                ...state,
-                confirming: false,
-                error: action.error,
-                repeat: action.repeat
-            }
+            return Objec.assign({},
+                state, {
+                    confirming: false,
+                    error: action.error,
+                    repeat: action.repeat
+                });
         default:
             return state;
     }

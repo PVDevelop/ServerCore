@@ -11,34 +11,34 @@ const initialState = {
 export default function user(state = initialState, action) {
     switch (action.type) {
         case validateTokenActions.VALIDATING:
-            return {
-                ...state,
-                validating: true
-            }
+            return Object.assign({},
+                state, {
+                    validating: true
+                });
         case validateTokenActions.FAILURE:
-            return {
-                ...state,
-                validating: false,
-                everValidated: true
-            }
+            return Object.assign({},
+                state, {
+                    validating: false,
+                    everValidated: true
+                });
         case validateTokenActions.VALIDATED:
-            return {
-                ...state,
-                validating: false,
-                everValidated: true,
-                currentUser: {}
-            }
+            return Object.assign({},
+                state, {
+                    validating: false,
+                    everValidated: true,
+                    currentUser: {}
+                });
         case signOutActions.SIGNED_OUT:
-            return {
-                ...state,
-                currentUser: null
-            }
+            return Object.assign({},
+                state, {
+                    currentUser: null
+                });
         case validateTokenActions.VALIDATED:
         case signInActions.SIGNED_IN:
-            return {
-                ...state,
-                currentUser: {}
-            }
+            return Object.assign({},
+                state, {
+                    currentUser: {}
+                });
         default:
             return state;
     };

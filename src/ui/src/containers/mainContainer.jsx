@@ -8,15 +8,22 @@ import * as validateTokenActions from "../actions/validateToken";
 import * as signOutActions from "../actions/signOut";
 
 class MainContainer extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.onSignOutClicked = this.onSignOutClicked.bind(this);
+        this.onSignInClicked = this.onSignInClicked.bind(this);
+        this.onRegisterClicked = this.onRegisterClicked.bind(this);
+    }
     render() {
         return (
             <div>
-                <Header 
+                <Header
                     isSignedIn={this.props.isSignedIn}
                     isSigningInFirstTime={this.props.isSigningInFirstTime}
-                    onSignOutClicked={::this.onSignOutClicked}
-                    onSignInClicked={::this.onSignInClicked}
-                    onRegisterClicked={::this.onRegisterClicked}/>
+                    onSignOutClicked={this.onSignOutClicked}
+                    onSignInClicked={this.onSignInClicked}
+                    onRegisterClicked={this.onRegisterClicked} />
                 {this.props.children}
             </div>);
     }
@@ -29,11 +36,11 @@ class MainContainer extends React.Component {
         this.props.dispatch(signOutActions.signOut());
     }
 
-    onSignInClicked(){
+    onSignInClicked() {
         browserHistory.push("/signin");
     }
 
-    onRegisterClicked(){
+    onRegisterClicked() {
         browserHistory.push("/register");
     }
 }

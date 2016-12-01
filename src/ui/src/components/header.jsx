@@ -5,6 +5,14 @@ import Button from "react-bootstrap/lib/Button";
 import ButtonGroup from "react-bootstrap/lib/ButtonGroup";
 
 export default class Header extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.onSignOutClicked = this.onSignOutClicked.bind(this);
+        this.onSignInClicked = this.onSignInClicked.bind(this);
+        this.onRegisterClicked = this.onRegisterClicked.bind(this);
+    }
+
     render() {
         const isSigningInFirstTime = this.props.isSigningInFirstTime;
         const isSignedIn = this.props.isSignedIn;
@@ -15,7 +23,7 @@ export default class Header extends React.Component {
         else if (isSignedIn) {
             content = (
                 <ButtonGroup bsSize="small">
-                    <Button onClick={::this.onSignOutClicked}>
+                    <Button onClick={this.onSignOutClicked}>
                         Выйти
                     </Button>
                 </ButtonGroup >);
@@ -24,13 +32,13 @@ export default class Header extends React.Component {
             content =
                 (
                     <ButtonGroup bsSize="small">
-                        <Button onClick={::this.onSignInClicked}>Войти</Button>
-                        <Button onClick={::this.onRegisterClicked}>Создать</Button >
+                        <Button onClick={this.onSignInClicked}>Войти</Button>
+                        <Button onClick={this.onRegisterClicked}>Создать</Button >
                     </ButtonGroup >
-            );
-    }
+                );
+        }
 
-        return( 
+        return (
             <Navbar fluid>
                 <Navbar.Header>
                     <Navbar.Brand>
@@ -45,17 +53,17 @@ export default class Header extends React.Component {
             </Navbar>);
     }
 
-    onSignOutClicked(e){
+    onSignOutClicked(e) {
         e.preventDefault();
         this.props.onSignOutClicked();
     }
 
-    onSignInClicked(e){
+    onSignInClicked(e) {
         e.preventDefault();
         this.props.onSignInClicked();
     }
 
-    onRegisterClicked(e){
+    onRegisterClicked(e) {
         e.preventDefault();
         this.props.onRegisterClicked();
     }
