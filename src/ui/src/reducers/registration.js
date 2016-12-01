@@ -36,7 +36,10 @@ export function validate(state) {
     }
 
     var confirmPasswordError = "";
-    if (state.confirmPassword != state.password) {
+    if(!state.confirmPassword){
+        confirmPasswordError = "Пароль не задан";
+    }
+    else if (state.confirmPassword != state.password) {
         confirmPasswordError = "Пароли не совпадают";
     }
 

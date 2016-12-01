@@ -4,7 +4,8 @@ import * as signOutActions from "../actions/signOut";
 
 const initialState = {
     validating: false,
-    currentUser: null
+    currentUser: null,
+    everValidated: false
 };
 
 export default function user(state = initialState, action) {
@@ -17,12 +18,14 @@ export default function user(state = initialState, action) {
         case validateTokenActions.FAILURE:
             return {
                 ...state,
-                validating: false
+                validating: false,
+                everValidated: true
             }
         case validateTokenActions.VALIDATED:
             return {
-            ...state,
+                ...state,
                 validating: false,
+                everValidated: true,
                 currentUser: {}
             }
         case signOutActions.SIGNED_OUT:

@@ -13,13 +13,20 @@ import FormSubmitButton from "./formSubmitButton";
 
 export default class Registration extends React.Component {
     render() {
+        const showEmailValidationState = this.props.email;
+
+        const showPasswordValidationState = this.props.password;
+
+        const showConfirmPasswordValidationState = 
+            (this.props.confirmPassword && this.props.confirmPasswordError) || 
+            this.props.password;
         return (
             <form>
                 <Col lg={4} lgOffset={4} md={6} mdOffset={3} sm={6} smOffset={3} xs={8} xsOffset={2}>
                     <Panel header="Создание нового пользователя">
                         <FormInput
                             controlId="inputEmail"
-                            showValidationState={true}
+                            showValidationState={showEmailValidationState}
                             validationError={this.props.emailError}
                             label="Почтовый адрес"
                             type="email"
@@ -29,7 +36,7 @@ export default class Registration extends React.Component {
 
                         <FormInput
                             controlId="inputPassword"
-                            showValidationState={true}
+                            showValidationState={showPasswordValidationState}
                             validationError={this.props.passwordError}
                             label="Пароль"
                             type="password"
@@ -39,7 +46,7 @@ export default class Registration extends React.Component {
 
                         <FormInput
                             controlId="inputConfirmPassword"
-                            showValidationState={true}
+                            showValidationState={showConfirmPasswordValidationState}
                             validationError={this.props.confirmPasswordError}
                             label="Подтверждение пароля"
                             type="password"

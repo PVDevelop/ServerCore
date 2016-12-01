@@ -12,12 +12,16 @@ gulp.task("clean_debug", () => gulp.src(debug_build_path).pipe(clean({ force: tr
 
 // копируем в папку с дебажными бинарями необходимые файлы
 gulp.task("copy_debug", ["clean_debug"], () => {
-    var copiedFiles = [
-        "./src/Index.html"];
-        //"./src/theme/**"];
+    var copiedFiles = ["./src/Index.html"];
     gulp
         .src(copiedFiles)
         .pipe(gulp.dest(debug_build_path));
+
+    var copiedResources = ["./resources/**"];
+    var resourcesPath = debug_build_path + "/resources";
+    gulp
+        .src(copiedResources)
+        .pipe(gulp.dest(resourcesPath));
 });
 
 gulp.task("default", ["copy_debug"], () => {

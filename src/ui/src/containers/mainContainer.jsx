@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import { browserHistory } from "react-router";
 
 import Header from "../components/header"
 
@@ -10,7 +11,12 @@ class MainContainer extends React.Component {
     render() {
         return (
             <div>
-                <Header isSignedIn={this.props.isSignedIn} onSignOutClicked={::this.onSignOutClicked}/>
+                <Header 
+                    isSignedIn={this.props.isSignedIn}
+                    isSigningInFirstTime={this.props.isSigningInFirstTime}
+                    onSignOutClicked={::this.onSignOutClicked}
+                    onSignInClicked={::this.onSignInClicked}
+                    onRegisterClicked={::this.onRegisterClicked}/>
                 {this.props.children}
             </div>);
     }
@@ -22,10 +28,19 @@ class MainContainer extends React.Component {
     onSignOutClicked() {
         this.props.dispatch(signOutActions.signOut());
     }
+
+    onSignInClicked(){
+        browserHistory.push("/signin");
+    }
+
+    onRegisterClicked(){
+        browserHistory.push("/register");
+    }
 }
 
 function mapStateToProps(state) {
     return {
+        isSigningInFirstTime: state.user.everValidated === false,
         isSignedIn: state.user.currentUser != null
     };
 }

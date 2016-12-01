@@ -1,37 +1,62 @@
 import React from "react";
 import { Link } from "react-router";
+import Navbar from "react-bootstrap/lib/Navbar";
 import Button from "react-bootstrap/lib/Button";
+import ButtonGroup from "react-bootstrap/lib/ButtonGroup";
 
 export default class Header extends React.Component {
     render() {
+        const isSigningInFirstTime = this.props.isSigningInFirstTime;
         const isSignedIn = this.props.isSignedIn;
-        let content = null;
 
-        if (isSignedIn) {
+        let content = null;
+        if (isSigningInFirstTime) {
+        }
+        else if (isSignedIn) {
             content = (
-                <span>
-                    Вы вошли в систему
-                    <Button type="submit" onClick={this.props.onSignOutClicked}>
+                <ButtonGroup bsSize="small">
+                    <Button onClick={::this.onSignOutClicked}>
                         Выйти
                     </Button>
-                </span >);
+                </ButtonGroup >);
         }
         else {
-            content = (
-                <span>
-                    Вы не вошли в систему
-                    <Link to="signIn">Войти</Link>
-                    <Link to="register">Создать пользователя</Link>
-                </span>);
-        }
+            content =
+                (
+                    <ButtonGroup bsSize="small">
+                        <Button onClick={::this.onSignInClicked}>Войти</Button>
+                        <Button onClick={::this.onRegisterClicked}>Создать</Button >
+                    </ButtonGroup >
+            );
+    }
 
-        return (
-            <div>
-                <div>
-                    Привет!
-                    {content}
-                </div>
-            </div>
-        );
+        return( 
+            <Navbar fluid>
+                <Navbar.Header>
+                    <Navbar.Brand>
+                        <Link to="/">UCoach</Link>
+                    </Navbar.Brand>
+                </Navbar.Header>
+                <Navbar.Collapse>
+                    <Navbar.Form pullRight>
+                        {content}
+                    </Navbar.Form>
+                </Navbar.Collapse>
+            </Navbar>);
+    }
+
+    onSignOutClicked(e){
+        e.preventDefault();
+        this.props.onSignOutClicked();
+    }
+
+    onSignInClicked(e){
+        e.preventDefault();
+        this.props.onSignInClicked();
+    }
+
+    onRegisterClicked(e){
+        e.preventDefault();
+        this.props.onRegisterClicked();
     }
 }

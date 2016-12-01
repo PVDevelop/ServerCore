@@ -19,13 +19,13 @@ ReactDOM.render(
         <Router history={browserHistory}>
             <Route path="/" component={MainContainer}>
                 <IndexRoute component={HomeContainer} />
-            </Route>
             
-            <Route path="/signin" component={SignInContainer} />
-            <Route path="/register" component={RegistrationContainer} />
-            <Route path="/confirmations/:key" component={ConfirmationContainer} />
+                <Route path="/signin" component={SignInContainer} />
+                <Route path="/register" component={RegistrationContainer} />
+                <Route path="/confirmations/:key" component={ConfirmationContainer} />
 
-            <Route path="*" component={NotFoundContainer} />
+                <Route path="*" component={NotFoundContainer} />
+            </Route>
         </Router>
     </Provider>,
     document.getElementById("main")
