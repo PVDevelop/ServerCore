@@ -5,7 +5,6 @@
 	},
 
 	"dependencies": {
-		"AuthenticationContrancts": "1.0.0-*",
 		"BCrypt.Net-Core": "1.1.0",
 		"Configuration": "1.0.0-*",
 		"Logging": "1.0.0-*",
