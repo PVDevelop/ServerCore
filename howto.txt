@@ -1,0 +1,4 @@
+1. Install dotnet core
+2. Install node.je (with npm)
+3. Install and run mongoDB
+4. Execute build.bat
