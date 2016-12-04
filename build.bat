@@ -1,4 +1,3 @@
 @echo off
-call run_ui.bat
-start run_auth.bat
-start run_proxy.bat
+start run_ui.bat
+call run_dotnet.bat
