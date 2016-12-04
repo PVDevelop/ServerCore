@@ -1,4 +1,6 @@
-1. Install dotnet core
-2. Install node.je (with npm)
-3. Install and run mongoDB
-4. Execute build.bat
+1. Install dotnet core;
+2. Install node.js (with npm);
+3. Install and run mongoDB;
+4. Execute build.bat;
+5. Wait a few minutes until npm downloads all required packages, build UI package, dotnet core projects got restored and all required services got started;
+6. Visit http://localhost:8000.

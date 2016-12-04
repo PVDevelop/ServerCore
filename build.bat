@@ -1,6 +1,4 @@
 @echo off
-call install_npm
-call build_npm
-call dotnet
-start run_auth
-start run_proxy
+call run_ui.bat
+start run_auth.bat
+start run_proxy.bat
