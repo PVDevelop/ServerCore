@@ -3,16 +3,5 @@
 		"Mongo": "mongodb://localhost/authentication",
 		"Host": "http://localhost:8001",
 		"ConfirmationUrl": "http://localhost:8000/confirmations/{0}"
-	},
-	"EmailConfirmationProducer": {
-		"EnableSsl": "true",
-		"SenderAddress": "PVDevelop@yandex.ru",
-		"SmtpHost": "smtp.yandex.ru",
-		"SmtpPort": "25",
-		"Password": "tkvXp7IvXlUEo9N7EBU7",
-		"UserName": "PVDevelop@yandex.ru"
 	}
 }
-
-
-

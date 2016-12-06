@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 
 import Col from "react-bootstrap/lib/Col";
 import Panel from "react-bootstrap/lib/Panel";
@@ -34,7 +34,7 @@ export default class Confirmation extends React.Component {
         return (
             <form>
                 <Col lg={4} lgOffset={4} md={6} mdOffset={3} sm={6} smOffset={3} xs={8} xsOffset={2}>
-                    <Panel header="Подтверждения пользователя">
+                    <Panel header="Подтверждение пользователя">
                         {text}
                         <FormSubmitButton
                             text={buttonText}

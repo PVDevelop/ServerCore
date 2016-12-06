@@ -10,13 +10,15 @@ const rl = readline.createInterface({
 const smtpPath = "../server/Microservices/Authentication/AuthenticationApp/smtp.json";
 
 var smtp = {
-    EnableSsl: true,
-    SenderAddress: "some@mail.com",
-    SmtpHost: "smtp.some.com",
-    SmtpPort: 25,
-    Password: "password",
-    UserName: "user"
-};
+    emailConfirmationProducer: {
+        EnableSsl: "true",
+        SenderAddress: "some@mail.com",
+        SmtpHost: "smtp.some.com",
+        SmtpPort: "25",
+        Password: "password",
+        UserName: "user"
+    }
+}
 
 console.log("Setting up Smtp parameters (to allow sending user creation confirmations).");
 
@@ -55,9 +57,9 @@ function readSmtp() {
 function readBoolParameter(displayName, paramName) {
     return readParameter(displayName, paramName, answer => {
         if (answer === "true") {
-            smtp[paramName] = true;
+            smtp.emailConfirmationProducer[paramName] = "true";
         } else if (answer == "false") {
-            smtp[paramName] = false;
+            smtp.emailConfirmationProducer[paramName] = "false";
         }
     });
 }
@@ -66,13 +68,13 @@ function readIntParameter(displayName, paramName) {
     return readParameter(displayName, paramName, answer => {
         const intParseResult = parseInt(answer);
         if (intParseResult) {
-            smtp[paramName] = intParseResult;
+            smtp.emailConfirmationProducer[paramName] = intParseResult.toString();
         }
     });
 }
 
 function readStringParameter(displayName, paramName) {
-    return readParameter(displayName, paramName, answer => { smtp[paramName] = answer });
+    return readParameter(displayName, paramName, answer => { smtp.emailConfirmationProducer[paramName] = answer });
 }
 
 function readParameter(displayName, paramName, processAnswer) {
@@ -89,13 +91,13 @@ function readParameter(displayName, paramName, processAnswer) {
                 reject(err);
             }
         });
-        const value = smtp[paramName];
+        const value = smtp.emailConfirmationProducer[paramName];
         rl.write(value.toString());
     })
 }
 
 function writeResult() {
-    const json = JSON.stringify(smtp);
+    const json = JSON.stringify(smtp, null, 4);
     console.log(json);
     fs.writeFile(smtpPath, json, err => {
         if (err) {

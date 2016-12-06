@@ -13,6 +13,7 @@ using PVDevelop.UCoach.Mongo;
 using PVDevelop.UCoach.Configuration;
 using PVDevelop.UCoach.Microservice;
 using PVDevelop.UCoach.Timing;
+using PVDevelop.UCoach.Logging;
 using StructureMap;
 
 namespace PVDevelop.UCoach.AuthenticationApp
@@ -20,6 +21,7 @@ namespace PVDevelop.UCoach.AuthenticationApp
 	public class AuthenticationMicroservice : IMicroservice
 	{
 		internal static readonly AuthenticationMicroservice Instance = new AuthenticationMicroservice();
+		private readonly ILogger _logger = LoggerHelper.GetLogger<MongoConfirmationInitializer>();
 
 		public IContainer Container { get; private set; }
 		public IConfigurationRoot ConfigurationRoot { get; private set; }
@@ -38,11 +40,20 @@ namespace PVDevelop.UCoach.AuthenticationApp
 
 		private void SetupConfigurationRoot()
 		{
-			ConfigurationRoot =
-				new ConfigurationBuilder().
-				SetBasePath(Directory.GetCurrentDirectory()).
-				AddJsonFile("config.json").
-				Build();
+			try
+			{
+				ConfigurationRoot =
+					new ConfigurationBuilder().
+					SetBasePath(Directory.GetCurrentDirectory()).
+					AddJsonFile("config.json").
+					AddJsonFile("smtp.json").
+					Build();
+			}
+			catch(FileNotFoundException ex)
+			{
+				_logger.Fatal(ex, "Failed to configure microservice");
+				throw;
+			}
 		}
 
 		private void SetupContainer()
