@@ -20,7 +20,7 @@ export default function confirmation(state = initialState, action) {
                     error: null
                 });
         case confirmUserActions.FAILURE:
-            return Objec.assign({},
+            return Object.assign({},
                 state, {
                     confirming: false,
                     error: action.error,

@@ -246,3 +246,6 @@ ModelManifest.xml
 
 # UI logs
 *.log.*
+
+# settings
+/**/smtp.json
