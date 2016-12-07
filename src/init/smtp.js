@@ -40,7 +40,7 @@ function readSmtp() {
             fs.readFile(smtpPath, "utf8", (err, data) => {
                 if (err) reject(err);
                 try {
-                    let tempSmtp = JSON.parse(data);
+                    const tempSmtp = JSON.parse(data);
                     smtp = Object.assign({}, smtp, tempSmtp);
                 }
                 catch (err) {
@@ -79,7 +79,7 @@ function readStringParameter(displayName, paramName) {
 
 function readParameter(displayName, paramName, processAnswer) {
     return new Promise((resolve, reject) => {
-        let displayText = displayName + ":";
+        const displayText = displayName + ":";
         rl.question(displayText, (answer) => {
             try {
                 if (answer) {
