@@ -14,12 +14,12 @@ namespace PVDevelop.UCoach.Infrastructure
 		{
 			var eventStore = new InMemoryEventStore();
 
-			var aggregate = new Aggregate();
+			var aggregate = Aggregate.New(Guid.NewGuid());
 			aggregate.Mutate(new QttyDomainEvent(55));
 
 			var repository = new EventSourcedAggregateRepository(eventStore);
 			repository.SaveAggregate(aggregate);
-			var restoredAggregate = repository.RestoreAggregate<Aggregate>(aggregate.Id);
+			var restoredAggregate = repository.RestoreAggregate(aggregate.Id, Aggregate.Restore);
 
 			Assert.NotNull(restoredAggregate.Events);
 			Assert.AreEqual(aggregate.Id, restoredAggregate.Id);
@@ -30,11 +30,21 @@ namespace PVDevelop.UCoach.Infrastructure
 		{
 			public int Qtty { get; private set; }
 
-			public Aggregate() : base(true)
+			internal static Aggregate New(Guid id)
+			{
+				return new Aggregate(id);
+			}
+
+			internal static Aggregate Restore(Guid id, int version, IEnumerable<IDomainEvent> domainEvents)
+			{
+				return new Aggregate(id, version, domainEvents);
+			}
+
+			private Aggregate(Guid id) : base(id)
 			{
 			}
 
-			public Aggregate(Guid id, int version, IEnumerable<IDomainEvent> domainEvents) :
+			private Aggregate(Guid id, int version, IEnumerable<IDomainEvent> domainEvents) :
 				base(id, version, domainEvents)
 			{
 			}
@@ -49,9 +59,9 @@ namespace PVDevelop.UCoach.Infrastructure
 				throw new InvalidOperationException($"Event {@event} has not been processed.");
 			}
 
-			private void When(QttyDomainEvent domainEvent)
+			private void When(QttyDomainEvent @event)
 			{
-				Qtty = domainEvent.Qtty;
+				Qtty = @event.Qtty;
 			}
 		}
 

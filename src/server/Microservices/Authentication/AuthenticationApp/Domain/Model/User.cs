@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using PVDevelop.UCoach.AuthenticationApp.Application;
 using PVDevelop.UCoach.AuthenticationApp.Domain.Model.Exceptions;
-using PVDevelop.UCoach.AuthenticationApp.Infrastructure;
-using PVDevelop.UCoach.Timing;
 
 namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 {
@@ -63,7 +60,7 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 			DateTime creationTime)
 		{
 			ValidateEmail(email);
-			ValidatePassword(email, password);
+			ValidatePassword(password);
 
 			Id = Guid.NewGuid().ToString();
 			Email = email;
@@ -88,14 +85,13 @@ namespace PVDevelop.UCoach.AuthenticationApp.Domain.Model
 			}
 		}
 
-		private static void ValidatePassword(string email, string password)
+		private static void ValidatePassword(string password)
 		{
-			if (string.IsNullOrWhiteSpace(email)) throw new ArgumentException("Not set", nameof(email));
 			if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Not set", password);
 
 			if (!Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{7,25}$", RegexOptions.IgnoreCase))
 			{
-				throw new InvalidPasswordFormatException(email);
+				throw new InvalidPasswordFormatException();
 			}
 		}
 

@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Linq;
 using Microsoft.Extensions.Configuration;
-using PVDevelop.UCoach.AuthenticationApp.Domain;
 using PVDevelop.UCoach.AuthenticationApp.Domain.Model;
 using PVDevelop.UCoach.AuthenticationApp.Domain.Model.Exceptions;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Port;
 using PVDevelop.UCoach.AuthenticationApp.Infrastructure.Port.Exceptions;
-using PVDevelop.UCoach.Logging;
 using PVDevelop.UCoach.Timing;
 
 namespace PVDevelop.UCoach.AuthenticationApp.Application
@@ -50,9 +47,6 @@ namespace PVDevelop.UCoach.AuthenticationApp.Application
 
 		public void CreateUser(string email, string password)
 		{
-			if (string.IsNullOrWhiteSpace(email)) throw new ArgumentException("Not set", nameof(email));
-			if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Not set", nameof(password));
-
 			try
 			{
 				var user = new User(

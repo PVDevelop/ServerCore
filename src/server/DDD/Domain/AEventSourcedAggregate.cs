@@ -28,16 +28,13 @@ namespace PVDevelop.UCoach.Domain
 		/// <summary>
 		/// Создание нового агрегата.
 		/// </summary>
-		/// <param name="creatingNew">
-		/// Фейковый атрибут, добавленный для того, чтобы насленики не забывали опрелять все неоходимые конструкторы.
-		/// Наследники всегда должны передавать true.
-		/// </param>
-		protected AEventSourcedAggregate(bool creatingNew)
+		/// <param name="id">Идентификатор агрегата</param>
+		protected AEventSourcedAggregate(Guid id)
 		{
-			if(!creatingNew) throw new InvalidOperationException("Only new aggregate can be created with this constructor");
+			if (id == default(Guid)) throw new ArgumentException("Not set", nameof(id));
 
 			_events = new List<IDomainEvent>();
-			Id = Guid.NewGuid();
+			Id = id;
 		}
 
 		/// <summary>
@@ -48,11 +45,13 @@ namespace PVDevelop.UCoach.Domain
 		/// <param name="events">События, произошедшие на агрегате.</param>
 		protected AEventSourcedAggregate(Guid id, int version, IEnumerable<IDomainEvent> events)
 		{
+			if(id == default(Guid)) throw new ArgumentException("Not set" , nameof(id));
 			if (events == null) throw new ArgumentNullException(nameof(events));
 
 			_events = new List<IDomainEvent>();
 			Id = id;
 			InitialVersion = version;
+
 			foreach (var @event in events)
 			{
 				When(@event);
