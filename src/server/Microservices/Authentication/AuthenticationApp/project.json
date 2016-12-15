@@ -1,43 +1,43 @@
 {
-	"version": "1.0.0-*",
-	"buildOptions": {
-		"emitEntryPoint": true
-	},
+    "version": "1.0.0-*",
+    "buildOptions": {
+        "emitEntryPoint": true
+    },
 
-	"dependencies": {
-		"BCrypt.Net-Core": "1.1.0",
-		"Configuration": "1.0.0-*",
-        "Domain": "1.0.0-*",
-					"Infrastructure": "1.0.0-*",
-					"Logging": "1.0.0-*",
-					"MailKit": "1.8.1",
-					"Microservice": "1.0.0-*",
-					"Microsoft.AspNetCore.Diagnostics": "1.0.0",
-					"Microsoft.AspNetCore.Mvc": "1.0.1",
-					"Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
-					"Microsoft.Extensions.Configuration.Json": "1.0.0",
-					"Microsoft.Extensions.Logging.Console": "1.0.0",
-					"Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
-					"Microsoft.NETCore.App": {
-						"type": "platform",
-						"version": "1.0.1"
-					},
-		"Mongo": "1.0.0-*",
-		"StructureMap.Microsoft.DependencyInjection": "1.2.0",
+    "dependencies": {
+        "BCrypt.Net-Core": "1.1.0",
+        "Shared.Configuration": "1.0.0-*",
+        "DDD.Domain": "1.0.0-*",
+        "DDD.Infrastructure": "1.0.0-*",
+        "Shared.Logging": "1.0.0-*",
+        "MailKit": "1.8.1",
+        "Shared.Microservice": "1.0.0-*",
+        "Microsoft.AspNetCore.Diagnostics": "1.0.0",
+        "Microsoft.AspNetCore.Mvc": "1.0.1",
+        "Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
+        "Microsoft.Extensions.Configuration.Json": "1.0.0",
+        "Microsoft.Extensions.Logging.Console": "1.0.0",
+        "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
+        "Microsoft.NETCore.App": {
+            "type": "platform",
+            "version": "1.0.1"
+        },
+        "Shared.Mongo": "1.0.0-*",
+        "StructureMap.Microsoft.DependencyInjection": "1.2.0",
         "System.Linq": "4.1.0",
         "System.Linq.Parallel": "4.0.1",
         "System.Linq.Queryable": "4.0.1",
-		"Timing": "1.0.0-*"
-	},
-	"frameworks": {
-		"netcoreapp1.0": {
-			"imports": "dnxcore50"
-		}
-	},
-	"publishOptions": {
-		"include": [
-			"config.json",
-			"nlog.config"
-		]
-	}
+        "Shared.Timing": "1.0.0-*"
+    },
+    "frameworks": {
+        "netcoreapp1.0": {
+            "imports": "dnxcore50"
+        }
+    },
+    "publishOptions": {
+        "include": [
+            "config.json",
+            "nlog.config"
+        ]
+    }
 }

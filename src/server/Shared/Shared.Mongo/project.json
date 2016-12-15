@@ -1,0 +1,16 @@
+﻿{
+    "version": "1.0.0-*",
+
+    "dependencies": {
+        "Shared.Configuration": "1.0.0-*",
+        "Shared.Logging": "1.0.0-*",
+        "MongoDB.Driver": "2.3.0",
+        "NETStandard.Library": "1.6.0"
+    },
+
+    "frameworks": {
+        "netstandard1.6": {
+            "imports": "dnxcore50"
+        }
+    }
+}

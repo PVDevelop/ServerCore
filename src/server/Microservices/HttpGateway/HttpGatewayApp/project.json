@@ -4,24 +4,24 @@
 		"emitEntryPoint": true
 	},
 
-	"dependencies": {
-		"Microsoft.NETCore.App": {
-			"type": "platform",
-			"version": "1.0.1"
-		},
-		"Microsoft.Extensions.Configuration.FileExtensions": "1.0.0",
-		"Microsoft.AspNetCore.Mvc": "1.0.1",
-		"StructureMap.Microsoft.DependencyInjection": "1.2.0",
-		"Microsoft.Extensions.Configuration.Json": "1.0.0",
-		"Microsoft.AspNetCore.Diagnostics": "1.0.0",
-		"Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
-		"Configuration": "1.0.0-*",
-		"Logging": "1.0.0-*",
-		"Rest": "1.0.0-*",
-		"Microservice": "1.0.0-*",
-		"Microsoft.AspNetCore.StaticFiles": "1.0.0",
-		"Microsoft.AspNetCore.Http.Features": "1.0.0"
-	},
+    "dependencies": {
+        "Microsoft.NETCore.App": {
+            "type": "platform",
+            "version": "1.0.1"
+        },
+        "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0",
+        "Microsoft.AspNetCore.Mvc": "1.0.1",
+        "StructureMap.Microsoft.DependencyInjection": "1.2.0",
+        "Microsoft.Extensions.Configuration.Json": "1.0.0",
+        "Microsoft.AspNetCore.Diagnostics": "1.0.0",
+        "Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
+        "Shared.Configuration": "1.0.0-*",
+        "Shared.Logging": "1.0.0-*",
+        "Shared.Rest": "1.0.0-*",
+        "Shared.Microservice": "1.0.0-*",
+        "Microsoft.AspNetCore.StaticFiles": "1.0.0",
+        "Microsoft.AspNetCore.Http.Features": "1.0.0"
+    },
 
 	"frameworks": {
 		"netcoreapp1.0": {

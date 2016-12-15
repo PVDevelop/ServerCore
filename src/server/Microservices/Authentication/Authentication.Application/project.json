@@ -2,8 +2,8 @@
   "version": "1.0.0-*",
 
     "dependencies": {
-        "Domain": "1.0.0-*",
-        "EventStore": "1.0.0-*",
+        "Authentication.Domain": "1.0.0-*",
+        "DDD.Infrastructure": "1.0.0-*",
         "NETStandard.Library": "1.6.0"
     },
 
