@@ -4,7 +4,8 @@
     "dependencies": {
         "DDD.Domain": "1.0.0-*",
         "Shared.EventStore": "1.0.0-*",
-        "NETStandard.Library": "1.6.0"
+        "NETStandard.Library": "1.6.0",
+        "Shared.Saga": "1.0.0-*"
     },
 
   "frameworks": {

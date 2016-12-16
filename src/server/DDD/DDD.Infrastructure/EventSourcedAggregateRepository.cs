@@ -19,7 +19,7 @@ namespace PVDevelop.UCoach.Infrastructure
 
 		public void SaveAggregate(AEventSourcedAggregate aggregate)
 		{
-			var stream = _eventStore.CreateStream(aggregate.Id.ToString());
+			var stream = _eventStore.GetOrCreateStream(aggregate.Id.ToString());
 			stream.SaveEvents(aggregate.Events);
 		}
 

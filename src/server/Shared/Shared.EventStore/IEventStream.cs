@@ -8,7 +8,7 @@ namespace PVDevelop.UCoach.EventStore
 		/// Сохранить последовательность событий.
 		/// </summary>
 		/// <param name="events">ПО=оследовательность сохраняемых событий.</param>
-		void SaveEvents(IEnumerable<object> events);
+		void SaveEvents(IReadOnlyCollection<object> events);
 
 		/// <summary>
 		/// Возвращает последовательность событий.

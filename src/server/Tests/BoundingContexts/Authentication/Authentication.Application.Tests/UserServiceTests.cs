@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Threading;
 using NUnit.Framework;
+using PVDevelop.UCoach.Domain.Service;
+using PVDevelop.UCoach.EventStore;
 using PVDevelop.UCoach.Infrastructure;
+using PVDevelop.UCoach.Saga;
 
 namespace PVDevelop.UCoach.Application.Tests
 {
@@ -9,13 +12,26 @@ namespace PVDevelop.UCoach.Application.Tests
 	public class UserServiceTests
 	{
 		[Test]
-		public void RegisterUser_ExecutesSaga()
+		public void RegisterUser_UserDaoReturnsExpectedResult()
 		{
-			var userService = new UserService();
+			var eventStore  = new InMemoryEventStore();
+
+			var userSagaMessageConsumer = new UserSagaMessagesConsumer();
+
+			var sagaRepository = new InMemorySagaRepository();
+
+			var sagaMessageDispatcher = new SagaMessageDispatcher(userSagaMessageConsumer, sagaRepository);
+
+			var sagaMessageConsumer = new EventConsumerWithSagaRedirection(eventStore, sagaMessageDispatcher);
+
+			var messagePublisher = new SagaMessagePublisherToEventStore(eventStore);
+
+			var userService = new UserService(messagePublisher);
+
 			var userDao = new UserDao();
 
-			var transactionId = Guid.NewGuid();
-			userService.CreateUser(transactionId, "some@mail.ru", "P@ssw0rd");
+			var sagaId = Guid.NewGuid();
+			userService.CreateUser(sagaId, "some@mail.ru", "P@ssw0rd");
 
 			Thread.Sleep(TimeSpan.FromSeconds(1));
 

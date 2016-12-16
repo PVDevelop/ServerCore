@@ -6,11 +6,11 @@
 	public interface IEventStore
 	{
 		/// <summary>
-		/// Создать новый поток событий.
+		/// Вернуть имеющийся или создать новый поток событий.
 		/// </summary>
 		/// <param name="id">Идентификатор потока событий.</param>
-		/// <returns>Созданный поток событий.</returns>
-		IEventStream CreateStream(string id);
+		/// <returns>Поток событий.</returns>
+		IEventStream GetOrCreateStream(string id);
 
 		/// <summary>
 		/// Вернуть поток по идентификатору.
@@ -18,5 +18,11 @@
 		/// <param name="id">Идентификатор искомого потока.</param>
 		/// <returns>Поток событий.</returns>
 		IEventStream GetStream(string id);
+
+		/// <summary>
+		/// Зарегистрировать потребителя событий.
+		/// </summary>
+		/// <param name="consumer">Потребитель событий.</param>
+		void RegisterConsumer(IEventConsumer consumer);
 	}
 }
