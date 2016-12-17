@@ -1,12 +1,22 @@
 ﻿using System;
+using PVDevelop.UCoach.Domain.Model;
+using PVDevelop.UCoach.Domain.Port;
 
 namespace PVDevelop.UCoach.Application
 {
 	public class UserDao
 	{
-		public UserCreationResult GetUserCreationResult()
+		private readonly IUserProcessRepository _userProcessRepository;
+
+		public UserDao(IUserProcessRepository userProcessRepository)
 		{
-			throw new NotImplementedException();
+			if (userProcessRepository == null) throw new ArgumentNullException(nameof(userProcessRepository));
+			_userProcessRepository = userProcessRepository;
+		}
+
+		public UserCreationResult GetUserCreationResult(Guid sagaId)
+		{
+			return _userProcessRepository.GetUserCreationResult(sagaId);
 		}
 	}
 }

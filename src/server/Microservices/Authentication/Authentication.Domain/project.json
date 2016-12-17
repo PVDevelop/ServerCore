@@ -2,6 +2,8 @@
     "version": "1.0.0-*",
 
     "dependencies": {
+        "BCrypt.Net-Core": "1.1.0",
+        "DDD.Domain": "1.0.0-*",
         "Microsoft.CSharp": "4.3.0",
         "NETStandard.Library": "1.6.0",
         "Shared.EventStore": "1.0.0-*",

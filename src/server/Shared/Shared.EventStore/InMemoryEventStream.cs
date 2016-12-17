@@ -5,13 +5,14 @@ namespace PVDevelop.UCoach.EventStore
 {
 	public class InMemoryEventStream : IEventStream
 	{
-		private readonly InMemoryEventStore _ownerEventStore;
 		private readonly List<object> _events = new List<object>();
 
-		internal InMemoryEventStream(InMemoryEventStore ownerEventStore)
+		public string StreamId { get; }
+
+		public InMemoryEventStream(string streamId)
 		{
-			if (ownerEventStore == null) throw new ArgumentNullException(nameof(ownerEventStore));
-			_ownerEventStore = ownerEventStore;
+			if (string.IsNullOrWhiteSpace(streamId)) throw new ArgumentException("streamId", nameof(streamId));
+			StreamId = streamId;
 		}
 
 		public void SaveEvents(IReadOnlyCollection<object> events)
@@ -27,16 +28,14 @@ namespace PVDevelop.UCoach.EventStore
 			}
 
 			_events.AddRange(events);
-
-			foreach (var @event in _events)
-			{
-				_ownerEventStore.NotifyNewEvent(@event);
-			}
 		}
 
-		public IEnumerable<object> GetEvents()
+		public EventsData GetEvents(int startNumber, int endNumber)
 		{
-			return _events;
+			var first = Math.Max(0, startNumber);
+			var count = Math.Min(endNumber, _events.Count - first);
+			var events = _events.GetRange(first, count).ToArray();
+			return new EventsData(_events.Count, events);
 		}
 	}
 }

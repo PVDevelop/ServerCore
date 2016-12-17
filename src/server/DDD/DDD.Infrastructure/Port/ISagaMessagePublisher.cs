@@ -1,6 +1,6 @@
 ﻿using PVDevelop.UCoach.Saga;
 
-namespace PVDevelop.UCoach.Infrastructure
+namespace PVDevelop.UCoach.Infrastructure.Port
 {
 	public interface ISagaMessagePublisher
 	{

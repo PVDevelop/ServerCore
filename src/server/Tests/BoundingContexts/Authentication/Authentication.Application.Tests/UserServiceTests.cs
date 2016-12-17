@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Threading;
 using NUnit.Framework;
+using PVDevelop.UCoach.Domain;
+using PVDevelop.UCoach.Domain.Model;
+using PVDevelop.UCoach.Domain.Port;
 using PVDevelop.UCoach.Domain.Service;
 using PVDevelop.UCoach.EventStore;
-using PVDevelop.UCoach.Infrastructure;
+using PVDevelop.UCoach.Infrastructure.Adapter;
 using PVDevelop.UCoach.Saga;
 
 namespace PVDevelop.UCoach.Application.Tests
@@ -14,29 +17,57 @@ namespace PVDevelop.UCoach.Application.Tests
 		[Test]
 		public void RegisterUser_UserDaoReturnsExpectedResult()
 		{
-			var eventStore  = new InMemoryEventStore();
+			var eventStore = new InMemoryEventStore();
 
-			var userSagaMessageConsumer = new UserSagaMessagesConsumer();
+			var eventSourcedRepository = new EventSourcedAggregateRepository(eventStore);
+
+			var userRepository = new UserRepository(eventSourcedRepository);
+
+			var confirmationRepository = new ConfirmationRepository(eventSourcedRepository);
+
+			var confirmationKeyGenerator = new ConfirmationKeyGenerator();
+
+			var userProcessRepository = new InMemoryUserProcessRepository();
+
+			var userSagaMessageConsumer = new Domain.Service.UserService(
+				userRepository,
+				confirmationRepository,
+				confirmationKeyGenerator,
+				new FakeConfirmationSender(),
+				userProcessRepository);
 
 			var sagaRepository = new InMemorySagaRepository();
 
 			var sagaMessageDispatcher = new SagaMessageDispatcher(userSagaMessageConsumer, sagaRepository);
 
-			var sagaMessageConsumer = new EventConsumerWithSagaRedirection(eventStore, sagaMessageDispatcher);
+			var sagaMessageConsumer = new EventConsumerWithSagaRedirection(sagaMessageDispatcher);
 
-			var messagePublisher = new SagaMessagePublisherToEventStore(eventStore);
+			using (var observable = new EventStoreObservable(eventStore, TimeSpan.FromMilliseconds(100)))
+			{
+				observable.AddObserver(sagaMessageConsumer);
+				observable.Start();
 
-			var userService = new UserService(messagePublisher);
+				var messagePublisher = new SagaMessagePublisherToEventStore(eventStore);
 
-			var userDao = new UserDao();
+				var userService = new UserService(messagePublisher);
 
-			var sagaId = Guid.NewGuid();
-			userService.CreateUser(sagaId, "some@mail.ru", "P@ssw0rd");
+				var userDao = new UserDao(userProcessRepository);
 
-			Thread.Sleep(TimeSpan.FromSeconds(1));
+				var sagaId = Guid.NewGuid();
+				userService.CreateUser(sagaId, "some@mail.ru", "P@ssw0rd");
 
-			var result = userDao.GetUserCreationResult();
-			Assert.AreEqual(UserCreationState.Succeeded, result.State);
+				Thread.Sleep(TimeSpan.FromSeconds(5));
+
+				var result = userDao.GetUserCreationResult(sagaId);
+				Assert.AreEqual(UserCreationState.Succeeded, result.State);
+			}
+		}
+
+		private class FakeConfirmationSender : IConfirmationSender
+		{
+			public void Send(ConfirmationKey confirmationKey)
+			{
+			}
 		}
 	}
 }

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using PVDevelop.UCoach.Domain;
 
-namespace PVDevelop.UCoach.Infrastructure
+namespace PVDevelop.UCoach.Domain
 {
 	/// <summary>
 	/// Хранилище агрегатов, основанных на доменных событиях.
@@ -13,7 +12,7 @@ namespace PVDevelop.UCoach.Infrastructure
 		/// Сохраняет последовательность событий, произошедших на агрегате в хранилище событий.
 		/// </summary>
 		/// <param name="aggregate">Сохраняемый агрегат.</param>
-		void SaveAggregate(AEventSourcedAggregate aggregate);
+		void SaveAggregate<TId>(AEventSourcedAggregate<TId> aggregate);
 
 		/// <summary>
 		/// Восстанавливает агрегает по событиям из хранилища.
@@ -22,9 +21,9 @@ namespace PVDevelop.UCoach.Infrastructure
 		/// <param name="aggregateId">Идентификатор восстанавливаемого агрегата.</param>
 		/// <param name="restoreAggregateCallback">Делегат восстановления агрегата.</param>
 		/// <returns>Восстановленный агрегат.</returns>
-		TAggregate RestoreAggregate<TAggregate>(
-			Guid aggregateId,
-			Func<Guid, int, IEnumerable<IDomainEvent>, TAggregate> restoreAggregateCallback)
-			where TAggregate : AEventSourcedAggregate;
+		TAggregate RestoreAggregate<TId, TAggregate>(
+			TId aggregateId,
+			Func<TId, int, IEnumerable<IDomainEvent>, TAggregate> restoreAggregateCallback)
+			where TAggregate : AEventSourcedAggregate<TId>;
 	}
 }

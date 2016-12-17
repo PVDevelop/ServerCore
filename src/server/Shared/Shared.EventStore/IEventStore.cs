@@ -1,4 +1,6 @@
-﻿namespace PVDevelop.UCoach.EventStore
+﻿using System.Collections.Generic;
+
+namespace PVDevelop.UCoach.EventStore
 {
 	/// <summary>
 	/// Хранилище событий.
@@ -20,9 +22,8 @@
 		IEventStream GetStream(string id);
 
 		/// <summary>
-		/// Зарегистрировать потребителя событий.
+		/// Возваращает все доступные стримы.
 		/// </summary>
-		/// <param name="consumer">Потребитель событий.</param>
-		void RegisterConsumer(IEventConsumer consumer);
+		IReadOnlyCollection<IEventStream> GetAllStreams();
 	}
 }

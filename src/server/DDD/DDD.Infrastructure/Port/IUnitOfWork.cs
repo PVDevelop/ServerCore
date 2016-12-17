@@ -1,4 +1,4 @@
-﻿namespace PVDevelop.UCoach.Infrastructure
+﻿namespace PVDevelop.UCoach.Infrastructure.Port
 {
 	public interface IUnitOfWork
 	{

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using PVDevelop.UCoach.Domain;
 using PVDevelop.UCoach.EventStore;
+using PVDevelop.UCoach.Infrastructure.Adapter;
 
 namespace PVDevelop.UCoach.Infrastructure
 {
@@ -26,7 +27,7 @@ namespace PVDevelop.UCoach.Infrastructure
 			Assert.AreEqual(aggregate.Qtty, restoredAggregate.Qtty);
 		}
 
-		private class Aggregate : AEventSourcedAggregate
+		private class Aggregate : AEventSourcedAggregate<Guid>
 		{
 			public int Qtty { get; private set; }
 
@@ -44,8 +45,8 @@ namespace PVDevelop.UCoach.Infrastructure
 			{
 			}
 
-			private Aggregate(Guid id, int version, IEnumerable<IDomainEvent> domainEvents) :
-				base(id, version, domainEvents)
+			private Aggregate(Guid id, int initialVersion, IEnumerable<IDomainEvent> domainEvents) :
+				base(id, initialVersion, domainEvents)
 			{
 			}
 

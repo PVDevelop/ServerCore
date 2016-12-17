@@ -6,7 +6,7 @@ namespace PVDevelop.UCoach.Domain
 	/// <summary>
 	/// Базовый класс агрегата, прелставленного цепочкой событий.
 	/// </summary>
-	public abstract class AEventSourcedAggregate
+	public abstract class AEventSourcedAggregate<TId>
 	{
 		private readonly List<IDomainEvent> _events;
 
@@ -18,10 +18,10 @@ namespace PVDevelop.UCoach.Domain
 		/// <summary>
 		/// Идентификатор агрегата.
 		/// </summary>
-		public Guid Id { get; }
+		public TId Id { get; }
 
 		/// <summary>
-		/// Начальная версия агрегата в момент восстановления по событяим. Если не задана, то это новый агрегат.
+		/// Версия агрегата в момент восстановления по событяим. Если не задана, то это новый агрегат.
 		/// </summary>
 		public int? InitialVersion { get; }
 
@@ -29,9 +29,9 @@ namespace PVDevelop.UCoach.Domain
 		/// Создание нового агрегата.
 		/// </summary>
 		/// <param name="id">Идентификатор агрегата</param>
-		protected AEventSourcedAggregate(Guid id)
+		protected AEventSourcedAggregate(TId id)
 		{
-			if (id == default(Guid)) throw new ArgumentException("Not set", nameof(id));
+			if (Equals(id, default(TId))) throw new ArgumentException("Not set", nameof(id));
 
 			_events = new List<IDomainEvent>();
 			Id = id;
@@ -41,16 +41,16 @@ namespace PVDevelop.UCoach.Domain
 		/// Воссоздает агрегат по событиям.
 		/// </summary>
 		/// <param name="id">Идентификатор агрегата.</param>
-		/// <param name="version">Текущая версия агрегата.</param>
+		/// <param name="initialVersion">Текущая версия агрегата.</param>
 		/// <param name="events">События, произошедшие на агрегате.</param>
-		protected AEventSourcedAggregate(Guid id, int version, IEnumerable<IDomainEvent> events)
+		protected AEventSourcedAggregate(TId id, int initialVersion, IEnumerable<IDomainEvent> events)
 		{
-			if(id == default(Guid)) throw new ArgumentException("Not set" , nameof(id));
+			if (Equals(id, default(TId))) throw new ArgumentException("Not set", nameof(id));
 			if (events == null) throw new ArgumentNullException(nameof(events));
 
 			_events = new List<IDomainEvent>();
 			Id = id;
-			InitialVersion = version;
+			InitialVersion = initialVersion;
 
 			foreach (var @event in events)
 			{
