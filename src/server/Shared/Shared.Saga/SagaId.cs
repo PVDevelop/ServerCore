@@ -1,18 +1,17 @@
 ﻿using System;
 
-namespace PVDevelop.UCoach.Domain.Model
+namespace PVDevelop.UCoach.Saga
 {
-	public class UserId
+	public class SagaId
 	{
 		public Guid Value { get; }
 
-		public UserId(Guid value)
+		public SagaId(Guid value)
 		{
-			if (value == default(Guid)) throw new ArgumentException("Not set", nameof(value));
 			Value = value;
 		}
 
-		protected bool Equals(UserId other)
+		protected bool Equals(SagaId other)
 		{
 			return Value.Equals(other.Value);
 		}
@@ -22,7 +21,7 @@ namespace PVDevelop.UCoach.Domain.Model
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
 			if (obj.GetType() != this.GetType()) return false;
-			return Equals((UserId)obj);
+			return Equals((SagaId) obj);
 		}
 
 		public override int GetHashCode()

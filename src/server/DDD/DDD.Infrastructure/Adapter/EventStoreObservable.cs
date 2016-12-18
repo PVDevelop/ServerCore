@@ -70,7 +70,7 @@ namespace PVDevelop.UCoach.Infrastructure.Adapter
 				foreach (var @event in eventsData.Events)
 				foreach (var eventObserver in _observers)
 				{
-					eventObserver.HandleEvent(@event);
+					eventObserver.HandleEvent(eventStream.StreamId, @event);
 				}
 
 				_observedStreams[eventStream.StreamId] = eventsData.LatestVersion;

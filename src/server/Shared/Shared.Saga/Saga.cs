@@ -1,26 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using PVDevelop.UCoach.EventStore;
 
 namespace PVDevelop.UCoach.Saga
 {
-	public class Saga
+	public class Saga : AEventSourcing<SagaId, ISagaMessage>
 	{
-		private readonly List<ISagaMessage> _sagaMessages = new List<ISagaMessage>();
-
-		public Guid Id { get; }
+		private readonly Dictionary<Type, ISagaMessage> _sagaMessages = 
+			new Dictionary<Type, ISagaMessage>();
 
 		public SagaStatus Status { get; private set; }
 
-		public Saga(Guid id)
+		public Saga(SagaId sagaId) : base(sagaId)
 		{
-			Id = id;
 		}
 
-		public void AddMessage(ISagaMessage message)
+		public Saga(SagaId id, int initialVersion, IEnumerable<ISagaMessage> events)
+			: base(id, initialVersion, events)
 		{
-			if (message == null) throw new ArgumentNullException(nameof(message));
-			_sagaMessages.Add(message);
-			Status = message.Status;
+
+		}
+
+		protected override void When(ISagaMessage @event)
+		{
+			_sagaMessages.Add(@event.GetType(), @event);
+			Status = @event.Status;
 		}
 	}
 }

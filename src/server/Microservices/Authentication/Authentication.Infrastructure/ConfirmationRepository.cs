@@ -2,14 +2,15 @@
 using PVDevelop.UCoach.Domain;
 using PVDevelop.UCoach.Domain.Model;
 using PVDevelop.UCoach.Domain.Service;
+using PVDevelop.UCoach.EventStore;
 
 namespace PVDevelop.UCoach.Authentication.Infrastructure
 {
 	public class ConfirmationRepository : IConfirmationRepository
 	{
-		private readonly IEventSourcedAggregateRepository _eventSourcedAggregateRepository;
+		private readonly IEventSourcingRepository _eventSourcedAggregateRepository;
 
-		public ConfirmationRepository(IEventSourcedAggregateRepository eventSourcedAggregateRepository)
+		public ConfirmationRepository(IEventSourcingRepository eventSourcedAggregateRepository)
 		{
 			_eventSourcedAggregateRepository = eventSourcedAggregateRepository;
 			if (eventSourcedAggregateRepository == null)
@@ -18,14 +19,21 @@ namespace PVDevelop.UCoach.Authentication.Infrastructure
 
 		public void SaveConfirmation(Confirmation confirmation)
 		{
-			_eventSourcedAggregateRepository.SaveAggregate(confirmation);
+			_eventSourcedAggregateRepository.SaveEventSourcing(confirmation);
 		}
 
 		public Confirmation GetConfirmation(ConfirmationKey confirmationKey)
 		{
-			return _eventSourcedAggregateRepository.RestoreAggregate(
+			var confirmation = _eventSourcedAggregateRepository.RestoreEventSourcing<ConfirmationKey, IDomainEvent, Confirmation>(
 				confirmationKey,
 				(id, version, events) => new Confirmation(id, version, events));
+
+			if (confirmation == null)
+			{
+				throw new InvalidOperationException($"Confirmation {confirmationKey} not found.");
+			}
+
+			return confirmation;
 		}
 	}
 }

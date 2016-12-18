@@ -6,13 +6,18 @@
 	public enum SagaStatus
 	{
 		/// <summary>
+		/// Новая сага.
+		/// </summary>
+		New = 0,
+
+		/// <summary>
 		/// В процессе выполнения.
 		/// </summary>
-		Progress = 0,
+		Progress = 1,
 
 		/// <summary>
 		/// Выполнение завершено успешно.
 		/// </summary>
-		Succeeded = 1
+		Succeeded = 2
 	}
 }

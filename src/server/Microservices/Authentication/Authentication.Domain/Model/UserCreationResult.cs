@@ -1,13 +1,14 @@
 ﻿using System;
+using PVDevelop.UCoach.Saga;
 
 namespace PVDevelop.UCoach.Domain.Model
 {
 	public class UserCreationResult
 	{
-		public Guid SagaId { get; }
+		public SagaId SagaId { get; }
 		public UserCreationState State { get; }
 
-		public UserCreationResult(Guid sagaId, UserCreationState state)
+		public UserCreationResult(SagaId sagaId, UserCreationState state)
 		{
 			SagaId = sagaId;
 			State = state;

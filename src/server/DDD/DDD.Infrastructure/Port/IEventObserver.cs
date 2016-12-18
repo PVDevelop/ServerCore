@@ -2,6 +2,6 @@
 {
 	public interface IEventObserver
 	{
-		void HandleEvent(object @event);
+		void HandleEvent(string steamId, object @event);
 	}
 }

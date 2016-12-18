@@ -2,14 +2,15 @@
 using PVDevelop.UCoach.Domain;
 using PVDevelop.UCoach.Domain.Model;
 using PVDevelop.UCoach.Domain.Service;
+using PVDevelop.UCoach.EventStore;
 
 namespace PVDevelop.UCoach.Authentication.Infrastructure
 {
 	public class UserRepository : IUserRepository
 	{
-		private readonly IEventSourcedAggregateRepository _eventSourcedAggregateRepository;
+		private readonly IEventSourcingRepository _eventSourcedAggregateRepository;
 
-		public UserRepository(IEventSourcedAggregateRepository eventSourcedAggregateRepository)
+		public UserRepository(IEventSourcingRepository eventSourcedAggregateRepository)
 		{
 			if (eventSourcedAggregateRepository == null)
 				throw new ArgumentNullException(nameof(eventSourcedAggregateRepository));
@@ -18,7 +19,7 @@ namespace PVDevelop.UCoach.Authentication.Infrastructure
 
 		public void AddUser(User user)
 		{
-			_eventSourcedAggregateRepository.SaveAggregate(user);
+			_eventSourcedAggregateRepository.SaveEventSourcing(user);
 		}
 	}
 }

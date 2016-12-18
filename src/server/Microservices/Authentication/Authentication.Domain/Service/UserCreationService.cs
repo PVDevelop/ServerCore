@@ -41,7 +41,7 @@ namespace PVDevelop.UCoach.Domain.Service
 		{
 			var userCreated = new UserCreatedEvent(
 				createUserMessage.SagaId,
-				new UserId(createUserMessage.SagaId),
+				new UserId(createUserMessage.SagaId.Value),
 				createUserMessage.Email,
 				createUserMessage.Password);
 

@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace PVDevelop.UCoach.Saga
+﻿namespace PVDevelop.UCoach.Saga
 {
 	public interface ISagaRepository
 	{
-		Saga GetSaga(Guid sagaId);
+		Saga GetSaga(SagaId id);
 
 		void SaveSaga(Saga saga);
 	}

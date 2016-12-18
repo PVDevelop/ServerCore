@@ -30,7 +30,9 @@ namespace PVDevelop.UCoach.EventStore
 		{
 			lock (_sync)
 			{
-				return _streams[id];
+				InMemoryEventStream eventStream;
+				_streams.TryGetValue(id, out eventStream);
+				return eventStream;
 			}
 		}
 

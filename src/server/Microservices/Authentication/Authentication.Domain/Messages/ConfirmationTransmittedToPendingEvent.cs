@@ -6,13 +6,14 @@ namespace PVDevelop.UCoach.Domain.Messages
 {
 	public class ConfirmationTransmittedToPendingEvent : ISagaMessage, IDomainEvent
 	{
-		public Guid SagaId { get; }
+		public SagaId SagaId { get; }
 		public SagaStatus Status => SagaStatus.Succeeded;
 
 		public ConfirmationKey ConfirmationKey { get; }
 
-		public ConfirmationTransmittedToPendingEvent(Guid sagaId, ConfirmationKey confirmationKey)
+		public ConfirmationTransmittedToPendingEvent(SagaId sagaId, ConfirmationKey confirmationKey)
 		{
+			if (sagaId == null) throw new ArgumentNullException(nameof(sagaId));
 			if (confirmationKey == null) throw new ArgumentNullException(nameof(confirmationKey));
 			SagaId = sagaId;
 			ConfirmationKey = confirmationKey;

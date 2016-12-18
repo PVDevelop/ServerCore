@@ -19,9 +19,11 @@ namespace PVDevelop.UCoach.Saga
 
 		public void Dispatch(ISagaMessage message)
 		{
+			if (message == null) throw new ArgumentNullException(nameof(message));
+
 			var saga = _sagaRepository.GetSaga(message.SagaId) ?? new Saga(message.SagaId);
 
-			saga.AddMessage(message);
+			saga.Mutate(message);
 			_sagaRepository.SaveSaga(saga);
 
 			_sagaMessageConsumer.Consume(message);

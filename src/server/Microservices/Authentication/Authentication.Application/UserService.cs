@@ -1,6 +1,7 @@
 ﻿using System;
 using PVDevelop.UCoach.Domain.Messages;
 using PVDevelop.UCoach.Infrastructure.Port;
+using PVDevelop.UCoach.Saga;
 
 namespace PVDevelop.UCoach.Application
 {
@@ -20,7 +21,7 @@ namespace PVDevelop.UCoach.Application
 		/// <param name="sagaId">Идентификатор саги, по которому можно получить результат исполнения.</param>
 		/// <param name="email">Почтовый адрес пользователя.</param>
 		/// <param name="password">Пароль пользователя.</param>
-		public void CreateUser(Guid sagaId, string email, string password)
+		public void CreateUser(SagaId sagaId, string email, string password)
 		{
 			var message = new CreateUserMessage(sagaId, email, password);
 			_messagePublisher.Publish(message);

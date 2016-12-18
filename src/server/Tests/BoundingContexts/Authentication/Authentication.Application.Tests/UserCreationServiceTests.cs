@@ -19,7 +19,7 @@ namespace PVDevelop.UCoach.Application.Tests
 		{
 			var eventStore = new InMemoryEventStore();
 
-			var eventSourcedRepository = new EventSourcedAggregateRepository(eventStore);
+			var eventSourcedRepository = new EventSourcingRepository(eventStore);
 
 			var userRepository = new UserRepository(eventSourcedRepository);
 
@@ -33,11 +33,14 @@ namespace PVDevelop.UCoach.Application.Tests
 				confirmationKeyGenerator,
 				new FakeConfirmationSender());
 
-			var sagaRepository = new InMemorySagaRepository();
+			var sagaRepository = new SagaRepository(eventSourcedRepository);
 
 			var sagaMessageDispatcher = new SagaMessageDispatcher(userSagaMessageConsumer, sagaRepository);
 
-			var sagaMessageConsumer = new EventConsumerWithSagaRedirection(sagaMessageDispatcher);
+			var sagaFilter = new EventStoreFilter(
+				$"{EventSourcingRepository.GetStreamPrefix(typeof(Saga.Saga))}*");
+
+			var sagaMessageConsumer = new EventConsumerWithSagaRedirection(sagaMessageDispatcher, sagaFilter);
 
 			using (var observable = new EventStoreObservable(eventStore, TimeSpan.FromMilliseconds(100)))
 			{
@@ -50,7 +53,7 @@ namespace PVDevelop.UCoach.Application.Tests
 
 				var userDao = new UserDao(sagaRepository);
 
-				var sagaId = Guid.NewGuid();
+				var sagaId = new SagaId(Guid.NewGuid());
 				userService.CreateUser(sagaId, "some@mail.ru", "P@ssw0rd");
 
 				Thread.Sleep(TimeSpan.FromSeconds(5));
