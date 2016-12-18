@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Threading;
 using NUnit.Framework;
+using PVDevelop.UCoach.Authentication.Infrastructure;
 using PVDevelop.UCoach.Domain;
 using PVDevelop.UCoach.Domain.Model;
-using PVDevelop.UCoach.Domain.Port;
 using PVDevelop.UCoach.Domain.Service;
 using PVDevelop.UCoach.EventStore;
 using PVDevelop.UCoach.Infrastructure.Adapter;
@@ -12,7 +12,7 @@ using PVDevelop.UCoach.Saga;
 namespace PVDevelop.UCoach.Application.Tests
 {
 	[TestFixture]
-	public class UserServiceTests
+	public class UserCreationServiceTests
 	{
 		[Test]
 		public void RegisterUser_UserDaoReturnsExpectedResult()
@@ -29,7 +29,7 @@ namespace PVDevelop.UCoach.Application.Tests
 
 			var userProcessRepository = new InMemoryUserProcessRepository();
 
-			var userSagaMessageConsumer = new Domain.Service.UserService(
+			var userSagaMessageConsumer = new UserCreationService(
 				userRepository,
 				confirmationRepository,
 				confirmationKeyGenerator,

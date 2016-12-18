@@ -1,6 +1,6 @@
 ﻿using System;
 using PVDevelop.UCoach.Domain.Model;
-using PVDevelop.UCoach.Domain.Port;
+using PVDevelop.UCoach.Domain.Service;
 
 namespace PVDevelop.UCoach.Application
 {

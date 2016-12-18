@@ -1,12 +1,14 @@
 ﻿using System;
 using PVDevelop.UCoach.Domain.Messages;
 using PVDevelop.UCoach.Domain.Model;
-using PVDevelop.UCoach.Domain.Port;
 using PVDevelop.UCoach.Saga;
 
 namespace PVDevelop.UCoach.Domain.Service
 {
-	public class UserService : ISagaMessageConsumer
+	/// <summary>
+	/// Сервис создания пользователя.
+	/// </summary>
+	public class UserCreationService : ISagaMessageConsumer
 	{
 		private readonly IUserRepository _userRepository;
 		private readonly IConfirmationRepository _confirmationRepository;
@@ -14,7 +16,7 @@ namespace PVDevelop.UCoach.Domain.Service
 		private readonly IConfirmationSender _confirmationSender;
 		private readonly IUserProcessRepository _userProcessRepository;
 
-		public UserService(
+		public UserCreationService(
 			IUserRepository userRepository,
 			IConfirmationRepository confirmationRepository,
 			IConfirmationKeyGenerator confirmationKeyGenerator,

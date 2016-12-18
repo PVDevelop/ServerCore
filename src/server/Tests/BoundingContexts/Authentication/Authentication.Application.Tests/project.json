@@ -1,12 +1,13 @@
-﻿{
+{
 	"version": "1.0.0-*",
 
-	"dependencies": {
-		"NUnit": "3.5.0",
-		"DDD.Infrastructure": "1.0.0-*",
-		"dotnet-test-nunit": "3.4.0-beta-3",
-		"Authentication.Application": "1.0.0-*"
-	},
+    "dependencies": {
+        "NUnit": "3.5.0",
+        "DDD.Infrastructure": "1.0.0-*",
+        "dotnet-test-nunit": "3.4.0-beta-3",
+        "Authentication.Application": "1.0.0-*",
+        "Authentication.Infrastructure": "1.0.0-*"
+    },
 
 	"testRunner": "nunit",
 
