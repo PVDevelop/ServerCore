@@ -7,6 +7,8 @@ namespace PVDevelop.UCoach.Domain.Messages
 	public class ConfirmationTransmittedToPendingEvent : ISagaMessage, IDomainEvent
 	{
 		public Guid SagaId { get; }
+		public SagaStatus Status => SagaStatus.Succeeded;
+
 		public ConfirmationKey ConfirmationKey { get; }
 
 		public ConfirmationTransmittedToPendingEvent(Guid sagaId, ConfirmationKey confirmationKey)

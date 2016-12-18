@@ -14,25 +14,21 @@ namespace PVDevelop.UCoach.Domain.Service
 		private readonly IConfirmationRepository _confirmationRepository;
 		private readonly IConfirmationKeyGenerator _confirmationKeyGenerator;
 		private readonly IConfirmationSender _confirmationSender;
-		private readonly IUserProcessRepository _userProcessRepository;
 
 		public UserCreationService(
 			IUserRepository userRepository,
 			IConfirmationRepository confirmationRepository,
 			IConfirmationKeyGenerator confirmationKeyGenerator,
-			IConfirmationSender confirmationSender,
-			IUserProcessRepository userProcessRepository)
+			IConfirmationSender confirmationSender)
 		{
 			if (userRepository == null) throw new ArgumentNullException(nameof(userRepository));
 			if (confirmationRepository == null) throw new ArgumentNullException(nameof(confirmationRepository));
 			if (confirmationKeyGenerator == null) throw new ArgumentNullException(nameof(confirmationKeyGenerator));
 			if (confirmationSender == null) throw new ArgumentNullException(nameof(confirmationSender));
-			if (userProcessRepository == null) throw new ArgumentNullException(nameof(userProcessRepository));
 			_userRepository = userRepository;
 			_confirmationRepository = confirmationRepository;
 			_confirmationKeyGenerator = confirmationKeyGenerator;
 			_confirmationSender = confirmationSender;
-			_userProcessRepository = userProcessRepository;
 		}
 
 		public void Consume(ISagaMessage message)
@@ -82,12 +78,7 @@ namespace PVDevelop.UCoach.Domain.Service
 
 		private void When(ConfirmationTransmittedToPendingEvent confirmationTransmittedToPendingEvent)
 		{
-			// процесс регистрации пользовател можно считать завершенным!
-			var userCreationResult = new UserCreationResult(
-				confirmationTransmittedToPendingEvent.SagaId,
-				UserCreationState.Succeeded);
-
-			_userProcessRepository.SetUserCreationResult(userCreationResult);
+			// процесс регистрации пользователя можно считать завершенным!
 		}
 
 		private void When(object message)

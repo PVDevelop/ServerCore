@@ -9,6 +9,8 @@ namespace PVDevelop.UCoach.Saga
 
 		public Guid Id { get; }
 
+		public SagaStatus Status { get; private set; }
+
 		public Saga(Guid id)
 		{
 			Id = id;
@@ -18,6 +20,7 @@ namespace PVDevelop.UCoach.Saga
 		{
 			if (message == null) throw new ArgumentNullException(nameof(message));
 			_sagaMessages.Add(message);
+			Status = message.Status;
 		}
 	}
 }

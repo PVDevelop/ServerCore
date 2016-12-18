@@ -6,6 +6,8 @@ namespace PVDevelop.UCoach.Domain.Messages
 	public class CreateUserMessage : ISagaMessage
 	{
 		public Guid SagaId { get; }
+		public SagaStatus Status => SagaStatus.Progress;
+
 		public string Email { get; }
 		public string Password { get; }
 

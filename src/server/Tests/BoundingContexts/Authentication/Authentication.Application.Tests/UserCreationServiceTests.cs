@@ -27,14 +27,11 @@ namespace PVDevelop.UCoach.Application.Tests
 
 			var confirmationKeyGenerator = new ConfirmationKeyGenerator();
 
-			var userProcessRepository = new InMemoryUserProcessRepository();
-
 			var userSagaMessageConsumer = new UserCreationService(
 				userRepository,
 				confirmationRepository,
 				confirmationKeyGenerator,
-				new FakeConfirmationSender(),
-				userProcessRepository);
+				new FakeConfirmationSender());
 
 			var sagaRepository = new InMemorySagaRepository();
 
@@ -51,7 +48,7 @@ namespace PVDevelop.UCoach.Application.Tests
 
 				var userService = new UserService(messagePublisher);
 
-				var userDao = new UserDao(userProcessRepository);
+				var userDao = new UserDao(sagaRepository);
 
 				var sagaId = Guid.NewGuid();
 				userService.CreateUser(sagaId, "some@mail.ru", "P@ssw0rd");

@@ -7,6 +7,8 @@ namespace PVDevelop.UCoach.Domain.Messages
 	public class ConfirmationCreatedEvent : ISagaMessage, IDomainEvent
 	{
 		public Guid SagaId { get; }
+		public SagaStatus Status => SagaStatus.Progress;
+
 		public ConfirmationKey ConfirmationKey { get; }
 		public UserId UserId { get; }
 

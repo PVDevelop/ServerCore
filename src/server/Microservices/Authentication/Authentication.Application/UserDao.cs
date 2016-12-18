@@ -1,22 +1,27 @@
 ﻿using System;
 using PVDevelop.UCoach.Domain.Model;
-using PVDevelop.UCoach.Domain.Service;
+using PVDevelop.UCoach.Saga;
 
 namespace PVDevelop.UCoach.Application
 {
 	public class UserDao
 	{
-		private readonly IUserProcessRepository _userProcessRepository;
+		private readonly ISagaRepository _sagaRepository;
 
-		public UserDao(IUserProcessRepository userProcessRepository)
+		public UserDao(ISagaRepository sagaRepository)
 		{
-			if (userProcessRepository == null) throw new ArgumentNullException(nameof(userProcessRepository));
-			_userProcessRepository = userProcessRepository;
+			if (sagaRepository == null) throw new ArgumentNullException(nameof(sagaRepository));
+			_sagaRepository = sagaRepository;
 		}
 
 		public UserCreationResult GetUserCreationResult(Guid sagaId)
 		{
-			return _userProcessRepository.GetUserCreationResult(sagaId);
+			var saga = _sagaRepository.GetSaga(sagaId);
+			if (saga != null && saga.Status == SagaStatus.Succeeded)
+			{
+				return new UserCreationResult(sagaId, UserCreationState.Succeeded);
+			}
+			return new UserCreationResult(sagaId, UserCreationState.Pending);
 		}
 	}
 }
