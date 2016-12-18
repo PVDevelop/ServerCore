@@ -1,9 +1,8 @@
 ﻿using System;
 using PVDevelop.UCoach.EventStore;
-using PVDevelop.UCoach.Infrastructure.Port;
 using PVDevelop.UCoach.Saga;
 
-namespace PVDevelop.UCoach.Infrastructure.Adapter
+namespace PVDevelop.UCoach.Infrastructure
 {
 	public class SagaMessagePublisherToEventStore : ISagaEventStoreMessagePublisher
 	{

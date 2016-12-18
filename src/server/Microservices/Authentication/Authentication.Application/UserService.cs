@@ -1,6 +1,6 @@
 ﻿using System;
 using PVDevelop.UCoach.Domain.Messages;
-using PVDevelop.UCoach.Infrastructure.Port;
+using PVDevelop.UCoach.Infrastructure;
 using PVDevelop.UCoach.Saga;
 
 namespace PVDevelop.UCoach.Application

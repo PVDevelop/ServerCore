@@ -6,7 +6,7 @@ using PVDevelop.UCoach.Domain;
 using PVDevelop.UCoach.Domain.Model;
 using PVDevelop.UCoach.Domain.Service;
 using PVDevelop.UCoach.EventStore;
-using PVDevelop.UCoach.Infrastructure.Adapter;
+using PVDevelop.UCoach.Infrastructure;
 using PVDevelop.UCoach.Saga;
 
 namespace PVDevelop.UCoach.Application.Tests
@@ -27,7 +27,7 @@ namespace PVDevelop.UCoach.Application.Tests
 
 			var confirmationKeyGenerator = new ConfirmationKeyGenerator();
 
-			var userSagaMessageConsumer = new UserCreationService(
+			var userCreationService = new UserCreationService(
 				userRepository,
 				confirmationRepository,
 				confirmationKeyGenerator,
@@ -35,16 +35,12 @@ namespace PVDevelop.UCoach.Application.Tests
 
 			var sagaRepository = new SagaRepository(eventSourcedRepository);
 
-			var sagaMessageDispatcher = new SagaMessageDispatcher(userSagaMessageConsumer, sagaRepository);
-
-			var sagaFilter = new EventStoreFilter(
-				$"{EventSourcingRepository.GetStreamPrefix(typeof(Saga.Saga))}*");
-
-			var sagaMessageConsumer = new EventConsumerWithSagaRedirection(sagaMessageDispatcher, sagaFilter);
+			var sagaMessageDispatcher = new SagaMessageDispatcher(sagaRepository);
 
 			using (var observable = new EventStoreObservable(eventStore, TimeSpan.FromMilliseconds(100)))
 			{
-				observable.AddObserver(sagaMessageConsumer);
+				observable.AddObserver(sagaMessageDispatcher);
+				observable.AddObserver(userCreationService);
 				observable.Start();
 
 				var messagePublisher = new SagaMessagePublisherToEventStore(eventStore);

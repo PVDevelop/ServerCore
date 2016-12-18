@@ -4,9 +4,9 @@ using PVDevelop.UCoach.EventStore;
 
 namespace PVDevelop.UCoach.Saga
 {
-	public class Saga : AEventSourcing<SagaId, ISagaMessage>
+	public class Saga : AEventSourcing<SagaId, SagaMessageDispatchedEvent>
 	{
-		private readonly Dictionary<Type, ISagaMessage> _sagaMessages = 
+		private readonly Dictionary<Type, ISagaMessage> _sagaMessages =
 			new Dictionary<Type, ISagaMessage>();
 
 		public SagaStatus Status { get; private set; }
@@ -15,7 +15,7 @@ namespace PVDevelop.UCoach.Saga
 		{
 		}
 
-		public Saga(SagaId id, int initialVersion, IEnumerable<ISagaMessage> messgaes)
+		public Saga(SagaId id, int initialVersion, IEnumerable<SagaMessageDispatchedEvent> messgaes)
 			: base(id, initialVersion, messgaes)
 		{
 
@@ -23,13 +23,16 @@ namespace PVDevelop.UCoach.Saga
 
 		public void Handle(ISagaMessage message)
 		{
-			Mutate(message);
+			if (message == null) throw new ArgumentNullException(nameof(message));
+
+			var @event = new SagaMessageDispatchedEvent(message);
+			Mutate(@event);
 		}
 
-		protected override void When(ISagaMessage message)
+		protected override void When(SagaMessageDispatchedEvent @event)
 		{
-			_sagaMessages.Add(message.GetType(), message);
-			Status = message.Status;
+			_sagaMessages.Add(@event.SagaMessage.GetType(), @event.SagaMessage);
+			Status = @event.SagaMessage.Status;
 		}
 	}
 }

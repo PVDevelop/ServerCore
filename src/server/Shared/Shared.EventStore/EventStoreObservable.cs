@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
-using PVDevelop.UCoach.EventStore;
-using PVDevelop.UCoach.Infrastructure.Port;
 
-namespace PVDevelop.UCoach.Infrastructure.Adapter
+namespace PVDevelop.UCoach.EventStore
 {
-	public class EventStoreObservable : IEventObservervable, IDisposable, IStartable
+	public class EventStoreObservable : IEventObservervable, IDisposable
 	{
 		private readonly Dictionary<string, int> _observedStreams = new Dictionary<string, int>();
-		private readonly List<IEventObserver> _observers = new List<IEventObserver>();
+		private readonly List<object> _observers = new List<object>();
 		private bool _disposed;
 		private readonly IEventStore _eventStore;
 		private readonly TimeSpan _pullingPeriod;
@@ -22,13 +21,13 @@ namespace PVDevelop.UCoach.Infrastructure.Adapter
 			_pullingPeriod = pullingPeriod;
 		}
 
-		public void AddObserver(IEventObserver observer)
+		public void AddObserver<TEvent>(IEventObserver<TEvent> observer)
 		{
 			if (observer == null) throw new ArgumentNullException(nameof(observer));
 			_observers.Add(observer);
 		}
 
-		public void RemoveObserver(IEventObserver observer)
+		public void RemoveObserver<TEvent>(IEventObserver<TEvent> observer)
 		{
 			if (observer == null) throw new ArgumentNullException(nameof(observer));
 			_observers.Remove(observer);
@@ -69,11 +68,25 @@ namespace PVDevelop.UCoach.Infrastructure.Adapter
 				var eventsData = eventStream.GetEvents(eventNumber, int.MaxValue);
 				foreach (var @event in eventsData.Events)
 				foreach (var eventObserver in _observers)
+				foreach (var implementedInterface in eventObserver.GetType().GetTypeInfo().ImplementedInterfaces)
 				{
-					eventObserver.HandleEvent(eventStream.StreamId, @event);
-				}
+					if (implementedInterface.IsConstructedGenericType &&
+					    implementedInterface.GetGenericTypeDefinition() == typeof(IEventObserver<>))
+					{
+						var genericType = implementedInterface.GenericTypeArguments[0];
+						if (@event.GetType() == genericType ||
+						    @event.GetType().GetTypeInfo().GetInterface(genericType.Name) != null ||
+						    genericType.GetTypeInfo().IsSubclassOf(@event.GetType()))
+						{
+							eventObserver.
+								GetType().
+								GetRuntimeMethod("HandleEvent", new[] {genericType}).
+								Invoke(eventObserver, new[] {@event});
+						}
+					}
 
-				_observedStreams[eventStream.StreamId] = eventsData.LatestVersion;
+					_observedStreams[eventStream.StreamId] = eventsData.LatestVersion;
+				}
 			}
 
 			try

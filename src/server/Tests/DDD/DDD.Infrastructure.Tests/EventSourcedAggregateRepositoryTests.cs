@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using PVDevelop.UCoach.Domain;
 using PVDevelop.UCoach.EventStore;
-using PVDevelop.UCoach.Infrastructure.Adapter;
 
 namespace PVDevelop.UCoach.Infrastructure
 {

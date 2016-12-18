@@ -1,6 +1,7 @@
 ﻿using System;
 using PVDevelop.UCoach.Domain.Messages;
 using PVDevelop.UCoach.Domain.Model;
+using PVDevelop.UCoach.EventStore;
 using PVDevelop.UCoach.Saga;
 
 namespace PVDevelop.UCoach.Domain.Service
@@ -8,7 +9,7 @@ namespace PVDevelop.UCoach.Domain.Service
 	/// <summary>
 	/// Сервис создания пользователя.
 	/// </summary>
-	public class UserCreationService : ISagaMessageConsumer
+	public class UserCreationService : IEventObserver<SagaMessageDispatchedEvent>
 	{
 		private readonly IUserRepository _userRepository;
 		private readonly IConfirmationRepository _confirmationRepository;
@@ -31,10 +32,11 @@ namespace PVDevelop.UCoach.Domain.Service
 			_confirmationSender = confirmationSender;
 		}
 
-		public void Consume(ISagaMessage message)
+		public void HandleEvent(SagaMessageDispatchedEvent @event)
 		{
-			if (message == null) throw new ArgumentNullException(nameof(message));
-			When((dynamic) message);
+			if (@event == null) throw new ArgumentNullException(nameof(@event));
+
+			When((dynamic)@event.SagaMessage);
 		}
 
 		private void When(CreateUserMessage createUserMessage)

@@ -1,23 +1,20 @@
 ﻿using System;
+using PVDevelop.UCoach.EventStore;
 
 namespace PVDevelop.UCoach.Saga
 {
-	public class SagaMessageDispatcher : ISagaMessageDispatcher
+	public class SagaMessageDispatcher : IEventObserver<ISagaMessage>
 	{
-		private readonly ISagaMessageConsumer _sagaMessageConsumer;
 		private readonly ISagaRepository _sagaRepository;
 
 		public SagaMessageDispatcher(
-			ISagaMessageConsumer sagaMessageConsumer,
 			ISagaRepository sagaRepository)
 		{
-			if (sagaMessageConsumer == null) throw new ArgumentNullException(nameof(sagaMessageConsumer));
 			if (sagaRepository == null) throw new ArgumentNullException(nameof(sagaRepository));
-			_sagaMessageConsumer = sagaMessageConsumer;
 			_sagaRepository = sagaRepository;
 		}
 
-		public void Dispatch(ISagaMessage message)
+		public void HandleEvent(ISagaMessage message)
 		{
 			if (message == null) throw new ArgumentNullException(nameof(message));
 
@@ -25,8 +22,6 @@ namespace PVDevelop.UCoach.Saga
 
 			saga.Handle(message);
 			_sagaRepository.SaveSaga(saga);
-
-			_sagaMessageConsumer.Consume(message);
 		}
 	}
 }

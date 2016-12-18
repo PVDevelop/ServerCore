@@ -16,7 +16,7 @@ namespace PVDevelop.UCoach.Saga
 		public Saga GetSaga(SagaId id)
 		{
 			if (id == null) throw new ArgumentNullException(nameof(id));
-			return _eventSourcingRepository.RestoreEventSourcing<SagaId, ISagaMessage, Saga>(
+			return _eventSourcingRepository.RestoreEventSourcing<SagaId, SagaMessageDispatchedEvent, Saga>(
 				id,
 				(sagaId, version, events) => new Saga(sagaId, version, events));
 		}
