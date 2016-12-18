@@ -23,7 +23,7 @@ namespace PVDevelop.UCoach.Saga
 
 			var saga = _sagaRepository.GetSaga(message.SagaId) ?? new Saga(message.SagaId);
 
-			saga.Mutate(message);
+			saga.Handle(message);
 			_sagaRepository.SaveSaga(saga);
 
 			_sagaMessageConsumer.Consume(message);

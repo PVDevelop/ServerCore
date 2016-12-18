@@ -68,11 +68,7 @@ namespace PVDevelop.UCoach.Domain.Service
 
 			var confirmation = _confirmationRepository.GetConfirmation(confirmationCreatedEvent.ConfirmationKey);
 
-			var @event = new ConfirmationTransmittedToPendingEvent(
-				confirmationCreatedEvent.SagaId,
-				confirmation.Id);
-
-			confirmation.Mutate(@event);
+			confirmation.TransmitToPending(confirmationCreatedEvent.SagaId);
 			_confirmationRepository.SaveConfirmation(confirmation);
 		}
 

@@ -16,7 +16,7 @@ namespace PVDevelop.UCoach.Infrastructure
 			var eventStore = new InMemoryEventStore();
 
 			var aggregate = Aggregate.New(Guid.NewGuid());
-			aggregate.Mutate(new QttyDomainEvent(55));
+			aggregate.SetQtty(55);
 
 			var repository = new EventSourcingRepository(eventStore);
 			repository.SaveEventSourcing(aggregate);
@@ -48,6 +48,11 @@ namespace PVDevelop.UCoach.Infrastructure
 			private Aggregate(Guid id, int initialVersion, IEnumerable<IDomainEvent> domainEvents) :
 				base(id, initialVersion, domainEvents)
 			{
+			}
+
+			public void SetQtty(int qtty)
+			{
+				Mutate(new QttyDomainEvent(qtty));
 			}
 
 			protected override void When(IDomainEvent @event)

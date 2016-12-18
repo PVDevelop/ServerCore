@@ -15,16 +15,21 @@ namespace PVDevelop.UCoach.Saga
 		{
 		}
 
-		public Saga(SagaId id, int initialVersion, IEnumerable<ISagaMessage> events)
-			: base(id, initialVersion, events)
+		public Saga(SagaId id, int initialVersion, IEnumerable<ISagaMessage> messgaes)
+			: base(id, initialVersion, messgaes)
 		{
 
 		}
 
-		protected override void When(ISagaMessage @event)
+		public void Handle(ISagaMessage message)
 		{
-			_sagaMessages.Add(@event.GetType(), @event);
-			Status = @event.Status;
+			Mutate(message);
+		}
+
+		protected override void When(ISagaMessage message)
+		{
+			_sagaMessages.Add(message.GetType(), message);
+			Status = message.Status;
 		}
 	}
 }

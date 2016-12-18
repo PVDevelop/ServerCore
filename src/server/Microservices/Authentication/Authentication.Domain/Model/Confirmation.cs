@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using PVDevelop.UCoach.Domain.Messages;
+using PVDevelop.UCoach.Saga;
 
 namespace PVDevelop.UCoach.Domain.Model
 {
@@ -33,6 +34,14 @@ namespace PVDevelop.UCoach.Domain.Model
 		protected override void When(IDomainEvent @event)
 		{
 			When((dynamic)@event);
+		}
+
+		public void TransmitToPending(SagaId sagaId)
+		{
+			var @event = new ConfirmationTransmittedToPendingEvent(
+				sagaId,
+				Id);
+			Mutate(@event);
 		}
 
 		private void When(ConfirmationCreatedEvent @event)

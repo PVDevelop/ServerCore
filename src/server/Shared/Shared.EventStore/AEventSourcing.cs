@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace PVDevelop.UCoach.EventStore
 {
 	/// <summary>
-	/// Базовый класс агрегата, прелставленного цепочкой событий.
+	/// Базовый класс объекта, представленного цепочкой событий.
 	/// </summary>
 	public abstract class AEventSourcing<TId, TEvent>
 	{
@@ -59,9 +59,9 @@ namespace PVDevelop.UCoach.EventStore
 		}
 
 		/// <summary>
-		/// Мутировать состояние агрегата при помощи доменного события
+		/// Мутировать состояние объекта при помощи доменного события
 		/// </summary>
-		public void Mutate(TEvent @event)
+		protected void Mutate(TEvent @event)
 		{
 			if (@event == null) throw new ArgumentNullException(nameof(@event));
 
