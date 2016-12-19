@@ -2,7 +2,6 @@ using System;
 using System.Threading;
 using NUnit.Framework;
 using PVDevelop.UCoach.Authentication.Infrastructure;
-using PVDevelop.UCoach.Domain;
 using PVDevelop.UCoach.Domain.Model;
 using PVDevelop.UCoach.Domain.Service;
 using PVDevelop.UCoach.EventStore;
@@ -49,12 +48,12 @@ namespace PVDevelop.UCoach.Application.Tests
 
 				var userDao = new UserDao(sagaRepository);
 
-				var sagaId = new SagaId(Guid.NewGuid());
-				userService.CreateUser(sagaId, "some@mail.ru", "P@ssw0rd");
+				var transacionId = Guid.NewGuid();
+				userService.CreateUser(transacionId, "some@mail.ru", "P@ssw0rd");
 
 				Thread.Sleep(TimeSpan.FromSeconds(5));
 
-				var result = userDao.GetUserCreationResult(sagaId);
+				var result = userDao.GetUserCreationResult(transacionId);
 				Assert.AreEqual(UserCreationState.Succeeded, result.State);
 			}
 		}

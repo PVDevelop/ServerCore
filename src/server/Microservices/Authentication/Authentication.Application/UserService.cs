@@ -18,11 +18,12 @@ namespace PVDevelop.UCoach.Application
 		/// <summary>
 		/// Создает пользователя, отправляя подтверждение регистрации ему на почту.
 		/// </summary>
-		/// <param name="sagaId">Идентификатор саги, по которому можно получить результат исполнения.</param>
+		/// <param name="transactionId">Идентификатор транзакции, по которому можно получить результат исполнения.</param>
 		/// <param name="email">Почтовый адрес пользователя.</param>
 		/// <param name="password">Пароль пользователя.</param>
-		public void CreateUser(SagaId sagaId, string email, string password)
+		public void CreateUser(Guid transactionId, string email, string password)
 		{
+			var sagaId = new SagaId(transactionId);
 			var message = new CreateUserMessage(sagaId, email, password);
 			_messagePublisher.Publish(message);
 		}

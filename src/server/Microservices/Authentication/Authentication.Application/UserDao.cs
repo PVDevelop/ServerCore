@@ -14,10 +14,9 @@ namespace PVDevelop.UCoach.Application
 			_sagaRepository = sagaRepository;
 		}
 
-		public UserCreationResult GetUserCreationResult(SagaId sagaId)
+		public UserCreationResult GetUserCreationResult(Guid transactionId)
 		{
-			if (sagaId == null) throw new ArgumentNullException(nameof(sagaId));
-
+			var sagaId = new SagaId(transactionId);
 			var saga = _sagaRepository.GetSaga(sagaId);
 			if (saga != null && saga.Status == SagaStatus.Succeeded)
 			{

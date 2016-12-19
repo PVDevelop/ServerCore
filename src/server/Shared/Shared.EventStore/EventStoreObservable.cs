@@ -56,38 +56,7 @@ namespace PVDevelop.UCoach.EventStore
 
 		private void Tick(object state)
 		{
-			var streams = _eventStore.GetAllStreams();
-			foreach (var eventStream in streams)
-			{
-				int eventNumber;
-				if (!_observedStreams.TryGetValue(eventStream.StreamId, out eventNumber))
-				{
-					eventNumber = 0;
-				}
-
-				var eventsData = eventStream.GetEvents(eventNumber, int.MaxValue);
-				foreach (var @event in eventsData.Events)
-				foreach (var eventObserver in _observers)
-				foreach (var implementedInterface in eventObserver.GetType().GetTypeInfo().ImplementedInterfaces)
-				{
-					if (implementedInterface.IsConstructedGenericType &&
-					    implementedInterface.GetGenericTypeDefinition() == typeof(IEventObserver<>))
-					{
-						var genericType = implementedInterface.GenericTypeArguments[0];
-						if (@event.GetType() == genericType ||
-						    @event.GetType().GetTypeInfo().GetInterface(genericType.Name) != null ||
-						    genericType.GetTypeInfo().IsSubclassOf(@event.GetType()))
-						{
-							eventObserver.
-								GetType().
-								GetRuntimeMethod("HandleEvent", new[] {genericType}).
-								Invoke(eventObserver, new[] {@event});
-						}
-					}
-
-					_observedStreams[eventStream.StreamId] = eventsData.LatestVersion;
-				}
-			}
+			HandleEvents();
 
 			try
 			{
@@ -99,6 +68,75 @@ namespace PVDevelop.UCoach.EventStore
 			catch (ObjectDisposedException)
 			{
 			}
+		}
+
+		private void HandleEvents()
+		{
+			var streams = _eventStore.GetAllStreams();
+			foreach (var eventStream in streams)
+			{
+				HandleEventsForEventStream(eventStream);
+			}
+		}
+
+		private void HandleEventsForEventStream(IEventStream eventStream)
+		{
+			int eventNumber;
+			if (!_observedStreams.TryGetValue(eventStream.StreamId, out eventNumber))
+			{
+				eventNumber = 0;
+			}
+
+			var eventsData = eventStream.GetEvents(eventNumber, int.MaxValue);
+			foreach (var @event in eventsData.Events)
+			foreach (var eventObserver in _observers)
+			{
+				HandleEventForObserver(
+					observer: eventObserver,
+					@event: @event);
+			}
+			_observedStreams[eventStream.StreamId] = eventsData.LatestVersion;
+		}
+
+		private void HandleEventForObserver(
+			object observer,
+			object @event)
+		{
+			foreach (var implementedInterface in 
+				observer.
+					GetType().
+					GetTypeInfo().
+					ImplementedInterfaces)
+			{
+				var genericType = GetEventGenericTypeForObserver(implementedInterface, @event.GetType());
+
+				if (genericType == null)
+				{
+					continue;
+				}
+
+				observer.
+					GetType().
+					GetRuntimeMethod("HandleEvent", new[] {genericType}).
+					Invoke(observer, new[] {@event});
+			}
+		}
+
+		private Type GetEventGenericTypeForObserver(Type observerType, Type eventType)
+		{
+			if (!observerType.IsConstructedGenericType ||
+			    observerType.GetGenericTypeDefinition() != typeof(IEventObserver<>))
+				return null;
+
+			var genericType = observerType.GenericTypeArguments[0];
+			if (eventType == genericType ||
+			    eventType.GetTypeInfo().GetInterface(genericType.Name) != null ||
+			    genericType.GetTypeInfo().IsSubclassOf(eventType))
+			{
+				return genericType;
+			}
+
+			return null;
 		}
 	}
 }
