@@ -1,4 +1,4 @@
-﻿namespace PVDevelop.UCoach.EventStore
+﻿namespace PVDevelop.UCoach.Shared.Observing
 {
 	public interface IEventObserver<in TEvent>
 	{

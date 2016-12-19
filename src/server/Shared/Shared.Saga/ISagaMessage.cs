@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PVDevelop.UCoach.Saga
+﻿namespace PVDevelop.UCoach.Saga
 {
 	public interface ISagaMessage
 	{

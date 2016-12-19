@@ -7,6 +7,8 @@ using PVDevelop.UCoach.Domain.Service;
 using PVDevelop.UCoach.EventStore;
 using PVDevelop.UCoach.Infrastructure;
 using PVDevelop.UCoach.Saga;
+using PVDevelop.UCoach.Shared.EventSourcing;
+using PVDevelop.UCoach.Shared.Observing;
 
 namespace PVDevelop.UCoach.Application.Tests
 {
@@ -16,7 +18,7 @@ namespace PVDevelop.UCoach.Application.Tests
 		[Test]
 		public void RegisterUser_UserDaoReturnsExpectedResult()
 		{
-			var eventStore = new InMemoryEventStore();
+			var eventStore = new EventStore.EventStore();
 
 			var eventSourcedRepository = new EventSourcingRepository(eventStore);
 
@@ -36,11 +38,13 @@ namespace PVDevelop.UCoach.Application.Tests
 
 			var sagaMessageDispatcher = new SagaMessageDispatcher(sagaRepository);
 
-			using (var observable = new EventStoreObservable(eventStore, TimeSpan.FromMilliseconds(100)))
+			var observable = new EventObservable();
+			observable.AddObserver(sagaMessageDispatcher);
+			observable.AddObserver(userCreationService);
+
+			using (var eventStorePuller = new EventStorePuller(eventStore, observable, TimeSpan.FromMilliseconds(100)))
 			{
-				observable.AddObserver(sagaMessageDispatcher);
-				observable.AddObserver(userCreationService);
-				observable.Start();
+				eventStorePuller.Start();
 
 				var messagePublisher = new SagaMessagePublisherToEventStore(eventStore);
 

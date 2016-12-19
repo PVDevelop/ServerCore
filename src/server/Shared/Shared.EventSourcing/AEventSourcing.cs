@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PVDevelop.UCoach.EventStore
+namespace PVDevelop.UCoach.Shared.EventSourcing
 {
 	/// <summary>
 	/// Базовый класс объекта, представленного цепочкой событий.

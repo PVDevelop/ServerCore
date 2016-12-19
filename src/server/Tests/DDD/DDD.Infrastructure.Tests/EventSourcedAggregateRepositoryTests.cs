@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 using PVDevelop.UCoach.Domain;
-using PVDevelop.UCoach.EventStore;
+using PVDevelop.UCoach.Shared.EventSourcing;
 
 namespace PVDevelop.UCoach.Infrastructure
 {
@@ -12,7 +12,7 @@ namespace PVDevelop.UCoach.Infrastructure
 		[Test]
 		public void SaveAndRestoreAggregate_InMemoryEventStore_RestoresExpectedAggregate()
 		{
-			var eventStore = new InMemoryEventStore();
+			var eventStore = new EventStore.EventStore();
 
 			var aggregate = Aggregate.New(Guid.NewGuid());
 			aggregate.SetQtty(55);

@@ -1,25 +1,26 @@
 {
-	"version": "1.0.0-*",
+    "version": "1.0.0-*",
 
     "dependencies": {
         "NUnit": "3.5.0",
         "DDD.Infrastructure": "1.0.0-*",
         "dotnet-test-nunit": "3.4.0-beta-3",
         "Authentication.Application": "1.0.0-*",
-        "Authentication.Infrastructure": "1.0.0-*"
+        "Authentication.Infrastructure": "1.0.0-*",
+        "Shared.Observing": "1.0.0-*"
     },
 
-	"testRunner": "nunit",
+    "testRunner": "nunit",
 
-	"frameworks": {
-		"netcoreapp1.0": {
-			"imports": "portable-net45+win8",
-			"dependencies": {
-				"Microsoft.NETCore.App": {
-					"version": "1.0.1-*",
-					"type": "platform"
-				}
-			}
-		}
-	}
+    "frameworks": {
+        "netcoreapp1.0": {
+            "imports": "portable-net45+win8",
+            "dependencies": {
+                "Microsoft.NETCore.App": {
+                    "version": "1.0.1-*",
+                    "type": "platform"
+                }
+            }
+        }
+    }
 }

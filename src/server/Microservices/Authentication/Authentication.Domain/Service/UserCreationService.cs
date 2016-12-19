@@ -1,8 +1,8 @@
 ﻿using System;
 using PVDevelop.UCoach.Domain.Messages;
 using PVDevelop.UCoach.Domain.Model;
-using PVDevelop.UCoach.EventStore;
 using PVDevelop.UCoach.Saga;
+using PVDevelop.UCoach.Shared.Observing;
 
 namespace PVDevelop.UCoach.Domain.Service
 {

@@ -3,6 +3,7 @@ using PVDevelop.UCoach.Domain;
 using PVDevelop.UCoach.Domain.Model;
 using PVDevelop.UCoach.Domain.Service;
 using PVDevelop.UCoach.EventStore;
+using PVDevelop.UCoach.Shared.EventSourcing;
 
 namespace PVDevelop.UCoach.Authentication.Infrastructure
 {

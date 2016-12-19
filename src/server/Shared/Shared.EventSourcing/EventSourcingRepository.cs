@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using PVDevelop.UCoach.EventStore;
 
-namespace PVDevelop.UCoach.EventStore
+namespace PVDevelop.UCoach.Shared.EventSourcing
 {
 	public class EventSourcingRepository : IEventSourcingRepository
 	{

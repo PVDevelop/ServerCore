@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace PVDevelop.UCoach.EventStore
 {
-	public class InMemoryEventStore : IEventStore
+	public class EventStore : IEventStore
 	{
 		private readonly object _sync = new object();
 

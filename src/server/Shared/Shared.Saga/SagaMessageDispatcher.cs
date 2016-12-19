@@ -1,5 +1,5 @@
 ﻿using System;
-using PVDevelop.UCoach.EventStore;
+using PVDevelop.UCoach.Shared.Observing;
 
 namespace PVDevelop.UCoach.Saga
 {

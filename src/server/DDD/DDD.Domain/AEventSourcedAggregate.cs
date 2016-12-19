@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using PVDevelop.UCoach.EventStore;
+using PVDevelop.UCoach.Shared.EventSourcing;
 
 namespace PVDevelop.UCoach.Domain
 {
