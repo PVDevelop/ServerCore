@@ -35,20 +35,19 @@ namespace PVDevelop.UCoach.Domain.Service
 		public void HandleEvent(SagaMessageDispatchedEvent @event)
 		{
 			if (@event == null) throw new ArgumentNullException(nameof(@event));
-
 			When((dynamic)@event.SagaMessage);
 		}
 
-		private void When(CreateUserMessage createUserMessage)
+		private void When(CreateUserMessage @event)
 		{
 			var userCreated = new UserCreatedEvent(
-				createUserMessage.SagaId,
-				new UserId(createUserMessage.SagaId.Value),
-				createUserMessage.Email,
-				createUserMessage.Password);
+				@event.SagaId,
+				new UserId(@event.SagaId.Value),
+				@event.Email,
+				@event.Password);
 
 			var user = new User(userCreated);
-			_userRepository.AddUser(user);
+			_userRepository.SaveUser(user);
 		}
 
 		private void When(UserCreatedEvent userCreatedEvent)
@@ -81,7 +80,6 @@ namespace PVDevelop.UCoach.Domain.Service
 
 		private void When(object message)
 		{
-			throw new InvalidOperationException($"Unknown message {message}");
 		}
 	}
 }

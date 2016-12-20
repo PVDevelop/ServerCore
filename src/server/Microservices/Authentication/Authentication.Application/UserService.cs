@@ -1,5 +1,6 @@
 ﻿using System;
 using PVDevelop.UCoach.Domain.Messages;
+using PVDevelop.UCoach.Domain.Model;
 using PVDevelop.UCoach.Infrastructure;
 using PVDevelop.UCoach.Saga;
 
@@ -23,8 +24,15 @@ namespace PVDevelop.UCoach.Application
 		/// <param name="password">Пароль пользователя.</param>
 		public void CreateUser(Guid transactionId, string email, string password)
 		{
-			var sagaId = new SagaId(transactionId);
-			var message = new CreateUserMessage(sagaId, email, password);
+			var message = new CreateUserMessage(new SagaId(transactionId), email, password);
+			_messagePublisher.Publish(message);
+		}
+
+		public void ConfirmUser(Guid transactionId, string confirmaiotKey)
+		{
+			var message = new ConfirmUserMessage(
+				new SagaId(transactionId),
+				new ConfirmationKey(confirmaiotKey));
 			_messagePublisher.Publish(message);
 		}
 	}

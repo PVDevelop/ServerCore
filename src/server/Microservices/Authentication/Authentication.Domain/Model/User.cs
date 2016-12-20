@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using PVDevelop.UCoach.Domain.Exceptions;
 using PVDevelop.UCoach.Domain.Messages;
+using PVDevelop.UCoach.Saga;
 
 namespace PVDevelop.UCoach.Domain.Model
 {
@@ -9,12 +11,18 @@ namespace PVDevelop.UCoach.Domain.Model
 	{
 		public string Email { get; private set; }
 		public string Password { get; private set; }
+		public UserState State { get; private set; }
 
 		public User(UserCreatedEvent userCreated) : base(userCreated.UserId)
 		{
 			ValidateEmail(userCreated.Email);
 			ValidatePassword(userCreated.Password);
 			Mutate(userCreated);
+		}
+
+		public User(UserId userId, int initialVersion, IEnumerable<IDomainEvent> domainEvents)
+			: base(userId, initialVersion, domainEvents)
+		{
 		}
 
 		//private static string EncryptPassword(string plainPassword)
@@ -44,15 +52,28 @@ namespace PVDevelop.UCoach.Domain.Model
 			}
 		}
 
+		public void Confirm(SagaId sagaId)
+		{
+			if (State != UserState.SignedIn)
+			{
+				Mutate(new UserConfirmedEvent(sagaId));
+			}
+		}
+
 		protected override void When(IDomainEvent @event)
 		{
 			When((dynamic) @event);
 		}
 
-		private void When(UserCreatedEvent userCreated)
+		private void When(UserCreatedEvent @event)
 		{
-			Email = userCreated.Email;
-			Password = userCreated.Password;
+			Email = @event.Email;
+			Password = @event.Password;
+		}
+
+		private void When(UserConfirmedEvent @event)
+		{
+			State = UserState.SignedOut;
 		}
 
 		private void When(object @event)

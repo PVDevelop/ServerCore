@@ -25,16 +25,9 @@ namespace PVDevelop.UCoach.Authentication.Infrastructure
 
 		public Confirmation GetConfirmation(ConfirmationKey confirmationKey)
 		{
-			var confirmation = _eventSourcedAggregateRepository.RestoreEventSourcing<ConfirmationKey, IDomainEvent, Confirmation>(
+			return _eventSourcedAggregateRepository.RestoreEventSourcing<ConfirmationKey, IDomainEvent, Confirmation>(
 				confirmationKey,
 				(id, version, events) => new Confirmation(id, version, events));
-
-			if (confirmation == null)
-			{
-				throw new InvalidOperationException($"Confirmation {confirmationKey} not found.");
-			}
-
-			return confirmation;
 		}
 	}
 }

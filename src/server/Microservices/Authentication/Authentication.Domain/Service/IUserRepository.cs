@@ -4,6 +4,8 @@ namespace PVDevelop.UCoach.Domain.Service
 {
 	public interface IUserRepository
 	{
-		void AddUser(User user);
+		void SaveUser(User user);
+
+		User GetUserById(UserId userId);
 	}
 }

@@ -44,6 +44,12 @@ namespace PVDevelop.UCoach.Domain.Model
 			Mutate(@event);
 		}
 
+		public void Confirm(SagaId sagaId)
+		{
+			var @event = new ConfirmationApprovedEvent(sagaId, UserId);
+			Mutate(@event);
+		}
+
 		private void When(ConfirmationCreatedEvent @event)
 		{
 			State = ConfirmationState.New;
@@ -53,6 +59,11 @@ namespace PVDevelop.UCoach.Domain.Model
 		private void When(ConfirmationTransmittedToPendingEvent @event)
 		{
 			State = ConfirmationState.Pending;
+		}
+
+		private void When(ConfirmationApprovedEvent @event)
+		{
+			State = ConfirmationState.Confirmed;
 		}
 
 		private void When(object @event)
