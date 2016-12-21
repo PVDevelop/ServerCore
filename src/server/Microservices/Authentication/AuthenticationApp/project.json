@@ -8,7 +8,6 @@
         "BCrypt.Net-Core": "1.1.0",
         "Shared.Configuration": "1.0.0-*",
         "DDD.Domain": "1.0.0-*",
-        "DDD.Infrastructure": "1.0.0-*",
         "Shared.Logging": "1.0.0-*",
         "MailKit": "1.8.1",
         "Shared.Microservice": "1.0.0-*",

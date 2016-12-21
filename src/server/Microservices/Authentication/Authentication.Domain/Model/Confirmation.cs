@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using PVDevelop.UCoach.Domain.Events;
-using PVDevelop.UCoach.Saga;
 
 namespace PVDevelop.UCoach.Domain.Model
 {
@@ -20,10 +19,10 @@ namespace PVDevelop.UCoach.Domain.Model
 		/// </summary>
 		public ConfirmationState State { get; private set; }
 
-		public Confirmation(SagaId sagaId, ConfirmationKey confirmationKey, UserId userId) 
+		public Confirmation(ConfirmationKey confirmationKey, UserId userId) 
 			: base(confirmationKey)
 		{
-			var confirmationCreated = new ConfirmationCreated(sagaId, confirmationKey, userId);
+			var confirmationCreated = new ConfirmationCreated(confirmationKey, userId);
 
 			Mutate(confirmationCreated);
 		}
@@ -38,19 +37,15 @@ namespace PVDevelop.UCoach.Domain.Model
 			When((dynamic)@event);
 		}
 
-		public void TransmitToPending(SagaId sagaId)
+		public void TransmitToPending()
 		{
-			var @event = new ConfirmationTransmittedToPending(
-				sagaId,
-				Id);
+			var @event = new ConfirmationTransmittedToPending(Id, UserId);
 			Mutate(@event);
 		}
 
-		public void Confirm(SagaId sagaId)
+		public void Confirm()
 		{
-			var @event = new ConfirmationApproved(
-				sagaId, 
-				UserId);
+			var @event = new ConfirmationApproved(UserId);
 			Mutate(@event);
 		}
 

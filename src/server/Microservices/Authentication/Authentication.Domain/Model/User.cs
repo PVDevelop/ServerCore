@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using PVDevelop.UCoach.Domain.Events;
 using PVDevelop.UCoach.Domain.Exceptions;
-using PVDevelop.UCoach.Saga;
 
 namespace PVDevelop.UCoach.Domain.Model
 {
@@ -13,12 +12,12 @@ namespace PVDevelop.UCoach.Domain.Model
 		public string Password { get; private set; }
 		public UserState State { get; private set; }
 
-		public User(SagaId sagaId, UserId userId, string email, string password) : base(userId)
+		public User(UserId userId, string email, string password) : base(userId)
 		{
 			ValidateEmail(email);
 			ValidatePassword(password);
 
-			var userCreated = new UserCreated(sagaId, userId, email, password);
+			var userCreated = new UserCreated(userId, email, password);
 
 			Mutate(userCreated);
 		}
@@ -55,11 +54,11 @@ namespace PVDevelop.UCoach.Domain.Model
 			}
 		}
 
-		public void Confirm(SagaId sagaId)
+		public void Confirm()
 		{
 			if (State != UserState.SignedIn)
 			{
-				Mutate(new UserConfirmed(sagaId));
+				Mutate(new UserConfirmed());
 			}
 		}
 

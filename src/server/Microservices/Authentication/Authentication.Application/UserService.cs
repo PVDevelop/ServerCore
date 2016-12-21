@@ -1,42 +1,32 @@
 ﻿using System;
+using PVDevelop.UCoach.Domain;
 using PVDevelop.UCoach.Domain.Events;
 using PVDevelop.UCoach.Domain.Model;
-using PVDevelop.UCoach.Saga;
 using PVDevelop.UCoach.Shared.Observing;
 
 namespace PVDevelop.UCoach.Application
 {
 	public class UserService
 	{
-		private readonly IEventObserver<ISagaEvent> _sagaObserver;
+		private readonly IEventObserver<CreateUserRequested> _createUserObserver;
 
-		public UserService(IEventObserver<ISagaEvent> sagaObserver)
+		public UserService(IEventObserver<CreateUserRequested> createUserObserver)
 		{
-			if (sagaObserver == null) throw new ArgumentNullException(nameof(sagaObserver));
-			_sagaObserver = sagaObserver;
+			if (createUserObserver == null) throw new ArgumentNullException(nameof(createUserObserver));
+
+			_createUserObserver = createUserObserver;
 		}
 
 		/// <summary>
 		/// Создает пользователя, отправляя подтверждение регистрации ему на почту.
 		/// </summary>
-		/// <param name="sagaId">Идентификатор транзакции, по которому можно получить результат исполнения.</param>
+		/// <param name="userId">Идентификатор транзакции, по которому можно получить результат исполнения.</param>
 		/// <param name="email">Почтовый адрес пользователя.</param>
 		/// <param name="password">Пароль пользователя.</param>
-		public void CreateUser(SagaId sagaId, string email, string password)
+		public void CreateUser(UserId userId, string email, string password)
 		{
-			var message = new CreateUserRequested(
-				sagaId, 
-				email, 
-				password);
-			_sagaObserver.HandleEvent(message);
-		}
-
-		public void ConfirmUser(SagaId sagaId, ConfirmationKey confirmaiotKey)
-		{
-			var message = new ConfirmUserRequested(
-				sagaId,
-				confirmaiotKey);
-			_sagaObserver.HandleEvent(message);
+			var @event = new CreateUserRequested(userId, email, password);
+			_createUserObserver.HandleEvent(@event);
 		}
 	}
 }

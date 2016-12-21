@@ -1,14 +1,11 @@
 using System;
-using System.Text.RegularExpressions;
 using System.Threading;
 using NUnit.Framework;
 using PVDevelop.UCoach.Authentication.Infrastructure;
 using PVDevelop.UCoach.Domain;
-using PVDevelop.UCoach.Domain.Events;
 using PVDevelop.UCoach.Domain.Model;
 using PVDevelop.UCoach.Domain.Service;
 using PVDevelop.UCoach.EventStore;
-using PVDevelop.UCoach.Saga;
 using PVDevelop.UCoach.Shared.EventSourcing;
 using PVDevelop.UCoach.Shared.Observing;
 
@@ -30,37 +27,34 @@ namespace PVDevelop.UCoach.Application.Tests
 
 			var confirmationKeyGenerator = new ConfirmationKeyGenerator();
 
-			var userCreationService = new UserCreationService(
+			var userCreationService = new UserRegistrationService(
 				userRepository,
 				confirmationRepository,
 				confirmationKeyGenerator,
 				new FakeConfirmationSender());
 
-			var sagaRepository = new SagaRepository(eventSourcedRepository, SagaHelper.StreamIdPrefix);
-
-			var sagaManager = new SagaManager(sagaRepository);
+			var userDao = new UserDao();
 
 			var observable = new EventObservable();
-			observable.AddObserver(AggregateHelper.BuildObservableFilter(), sagaManager);
-			observable.AddObserver(SagaHelper.BuildObservableFilter(), userCreationService);
+
+			observable.AddObserver(userCreationService, new ObservableFilter(null));
+			observable.AddObserver(userDao, new ObservableFilter(null));
 
 			using (var eventStorePuller = new EventStorePuller(eventStore, observable, TimeSpan.FromMilliseconds(100)))
 			{
 				eventStorePuller.Start();
 
-				var userService = new UserService(sagaManager);
+				var userService = new UserService(userCreationService);
 
-				var userDao = new UserDao(sagaManager);
-
-				var sagaId = new SagaId(Guid.NewGuid());
-				userService.CreateUser(sagaId, "some@mail.ru", "P@ssw0rd");
+				var userId = new UserId(Guid.NewGuid());
+				userService.CreateUser(userId, "some@mail.ru", "P@ssw0rd");
 
 				Thread.Sleep(TimeSpan.FromSeconds(5));
 
-				var result = userDao.GetUserCreationResult(sagaId);
-				Assert.AreEqual(SagaStatus.Success, result);
-			}
+				var status = userDao.GetUserCreationStatus(userId);
 
+				Assert.AreEqual(UserRegistrationStatus.Registered, status);
+			}
 		}
 
 		//[Test]
@@ -109,7 +103,7 @@ namespace PVDevelop.UCoach.Application.Tests
 		//		var userDao = new UserDao(sagaManager);
 
 		//		var result = userDao.GetUserConfirmationResult(sagaId);
-		//		Assert.AreEqual(SagaStatus.Success, result);
+		//		Assert.AreEqual(SagaStatus.Registered, result);
 		//	}
 		//}
 

@@ -1,26 +1,26 @@
-﻿using System;
-using PVDevelop.UCoach.Saga;
+﻿using System.Collections.Concurrent;
+using System.Linq;
+using PVDevelop.UCoach.Domain.Events;
+using PVDevelop.UCoach.Domain.Model;
+using PVDevelop.UCoach.Shared.Observing;
 
 namespace PVDevelop.UCoach.Application
 {
-	public class UserDao
+	public class UserDao : IEventObserver<ConfirmationTransmittedToPending>
 	{
-		private readonly ISagaProgressProvider _sagaProgressProvider;
+		private readonly ConcurrentBag<UserId> _registeredUsers = new ConcurrentBag<UserId>();
 
-		public UserDao(ISagaProgressProvider sagaProgressProvider)
+		public UserRegistrationStatus GetUserCreationStatus(UserId userId)
 		{
-			if (sagaProgressProvider == null) throw new ArgumentNullException(nameof(sagaProgressProvider));
-			_sagaProgressProvider = sagaProgressProvider;
+			return
+				_registeredUsers.Contains(userId)
+					? UserRegistrationStatus.Registered
+					: UserRegistrationStatus.Pending;
 		}
 
-		public SagaStatus GetUserCreationResult(SagaId sagaId)
+		public void HandleEvent(ConfirmationTransmittedToPending @event)
 		{
-			return _sagaProgressProvider.GetProgress(sagaId);
-		}
-
-		public SagaStatus GetUserConfirmationResult(SagaId sagaId)
-		{
-			return _sagaProgressProvider.GetProgress(sagaId);
+			_registeredUsers.Add(@event.UserId);
 		}
 	}
 }

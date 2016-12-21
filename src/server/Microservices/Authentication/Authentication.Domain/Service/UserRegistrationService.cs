@@ -1,22 +1,25 @@
 ﻿using System;
 using PVDevelop.UCoach.Domain.Events;
 using PVDevelop.UCoach.Domain.Model;
-using PVDevelop.UCoach.Saga;
 using PVDevelop.UCoach.Shared.Observing;
 
 namespace PVDevelop.UCoach.Domain.Service
 {
 	/// <summary>
-	/// Сервис создания пользователя.
+	/// Сервис регистрации пользователя.
 	/// </summary>
-	public class UserCreationService : IEventObserver<ISagaEvent>
+	public class UserRegistrationService : 
+		IEventObserver<CreateUserRequested>,
+		IEventObserver<UserCreated>,
+		IEventObserver<ConfirmationCreated>,
+		IEventObserver<ConfirmationTransmittedToPending>
 	{
 		private readonly IUserRepository _userRepository;
 		private readonly IConfirmationRepository _confirmationRepository;
 		private readonly IConfirmationKeyGenerator _confirmationKeyGenerator;
 		private readonly IConfirmationSender _confirmationSender;
 
-		public UserCreationService(
+		public UserRegistrationService(
 			IUserRepository userRepository,
 			IConfirmationRepository confirmationRepository,
 			IConfirmationKeyGenerator confirmationKeyGenerator,
@@ -32,38 +35,31 @@ namespace PVDevelop.UCoach.Domain.Service
 			_confirmationSender = confirmationSender;
 		}
 
-		public void HandleEvent(ISagaEvent @event)
+		public void HandleEvent(CreateUserRequested @event)
 		{
-			if (@event == null) throw new ArgumentNullException(nameof(@event));
-			When((dynamic)@event);
-		}
-
-		private void When(CreateUserRequested @event)
-		{
-			var user = new User(@event.Id, new UserId(Guid.NewGuid()), @event.Email, @event.Password);
+			var user = new User(@event.UserId, @event.Email, @event.Password);
 			_userRepository.SaveUser(user);
 		}
 
-		private void When(UserCreated userCreatedEvent)
+		public void HandleEvent(UserCreated @event)
 		{
 			var confirmationKey = _confirmationKeyGenerator.Generate();
 
-			var confirmation = new Confirmation(userCreatedEvent.Id, confirmationKey, userCreatedEvent.UserId);
+			var confirmation = new Confirmation(confirmationKey, @event.UserId);
 			_confirmationRepository.SaveConfirmation(confirmation);
 		}
 
-		private void When(ConfirmationCreated confirmationCreatedEvent)
+		public void HandleEvent(ConfirmationCreated @event)
 		{
-			_confirmationSender.Send(confirmationCreatedEvent.ConfirmationKey);
+			var confirmation = _confirmationRepository.GetConfirmation(@event.ConfirmationKey);
 
-			var confirmation = _confirmationRepository.GetConfirmation(confirmationCreatedEvent.ConfirmationKey);
-
-			confirmation.TransmitToPending(confirmationCreatedEvent.Id);
+			confirmation.TransmitToPending();
 			_confirmationRepository.SaveConfirmation(confirmation);
 		}
 
-		private void When(object message)
+		public void HandleEvent(ConfirmationTransmittedToPending @event)
 		{
+			_confirmationSender.Send(@event.ConfirmationKey);
 		}
 	}
 }

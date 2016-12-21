@@ -9,8 +9,6 @@ namespace PVDevelop.UCoach.Shared.Observing
 
 		public ObservableFilter(Regex filterRegEx)
 		{
-			if (filterRegEx == null) throw new ArgumentNullException(nameof(filterRegEx));
-
 			FilterRegEx = filterRegEx;
 		}
 

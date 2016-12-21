@@ -10,16 +10,18 @@ namespace PVDevelop.UCoach.Shared.Observing
 		private readonly List<Tuple<ObservableFilter, object>> _observers = 
 			new List<Tuple<ObservableFilter, object>>();
 
-		public void AddObserver<TEvent>(ObservableFilter filter, IEventObserver<TEvent> observer)
+		public void AddObserver(object observer, ObservableFilter filter)
 		{
-			if (filter == null) throw new ArgumentNullException(nameof(filter));
 			if (observer == null) throw new ArgumentNullException(nameof(observer));
+			if (filter == null) throw new ArgumentNullException(nameof(filter));
+
 			_observers.Add(new Tuple<ObservableFilter, object>(filter, observer));
 		}
 
-		public void RemoveObserver<TEvent>(IEventObserver<TEvent> observer)
+		public void RemoveObserver(object observer)
 		{
 			if (observer == null) throw new ArgumentNullException(nameof(observer));
+
 			var item = _observers.Single(t=>t.Item2 == observer);
 			_observers.Remove(item);
 		}

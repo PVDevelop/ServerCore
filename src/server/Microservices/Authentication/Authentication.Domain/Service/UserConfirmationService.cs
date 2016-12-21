@@ -1,7 +1,6 @@
 ﻿using System;
 using PVDevelop.UCoach.Domain.Events;
 using PVDevelop.UCoach.Domain.Model;
-using PVDevelop.UCoach.Saga;
 using PVDevelop.UCoach.Shared.Observing;
 
 namespace PVDevelop.UCoach.Domain.Service
@@ -9,7 +8,7 @@ namespace PVDevelop.UCoach.Domain.Service
 	/// <summary>
 	/// Сервис подтверждения пользователя.
 	/// </summary>
-	public class UserConfirmationService : IEventObserver<ISagaEvent>
+	public class UserConfirmationService : IEventObserver<IDomainEvent>
 	{
 		private readonly IUserRepository _userRepository;
 		private readonly IConfirmationRepository _confirmationRepository;
@@ -28,26 +27,26 @@ namespace PVDevelop.UCoach.Domain.Service
 			_userSessionRepository = userSessionRepository;
 		}
 
-		public void HandleEvent(ISagaEvent @event)
+		public void ConfirmUser(ConfirmationKey confirmationKey)
+		{
+			var confirmation = _confirmationRepository.GetConfirmation(confirmationKey);
+
+			confirmation.Confirm();
+
+			_confirmationRepository.SaveConfirmation(confirmation);
+		}
+
+		public void HandleEvent(IDomainEvent @event)
 		{
 			if (@event == null) throw new ArgumentNullException(nameof(@event));
 			When((dynamic)@event);
-		}
-
-		private void When(ConfirmUserRequested @event)
-		{
-			var confirmation = _confirmationRepository.GetConfirmation(@event.ConfirmationKey);
-
-			confirmation.Confirm(@event.Id);
-
-			_confirmationRepository.SaveConfirmation(confirmation);
 		}
 
 		private void When(ConfirmationApproved @event)
 		{
 			var user = _userRepository.GetUserById(@event.UserId);
 
-			user.Confirm(@event.Id);
+			user.Confirm();
 
 			_userRepository.SaveUser(user);
 		}
