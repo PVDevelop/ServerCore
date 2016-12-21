@@ -9,7 +9,7 @@ namespace PVDevelop.UCoach.Saga
 		private readonly List<ISagaEvent> _sagaEvents =
 			new List<ISagaEvent>();
 
-		public object Progress { get; private set; }
+		public SagaStatus Status { get; private set; }
 
 		public Saga(SagaId id) : base(id)
 		{
@@ -18,7 +18,6 @@ namespace PVDevelop.UCoach.Saga
 		public Saga(SagaId id, int initialVersion, IEnumerable<ISagaEvent> events)
 			: base(id, initialVersion, events)
 		{
-
 		}
 
 		public void Handle(ISagaEvent @event)
@@ -31,7 +30,7 @@ namespace PVDevelop.UCoach.Saga
 		protected override void When(ISagaEvent @event)
 		{
 			_sagaEvents.Add(@event);
-			Progress = @event.Progress;
+			Status = @event.Status;
 		}
 	}
 }

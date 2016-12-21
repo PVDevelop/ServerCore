@@ -1,5 +1,4 @@
 ﻿using System;
-using PVDevelop.UCoach.Domain.SagaProgress;
 using PVDevelop.UCoach.Saga;
 
 namespace PVDevelop.UCoach.Application
@@ -14,14 +13,14 @@ namespace PVDevelop.UCoach.Application
 			_sagaProgressProvider = sagaProgressProvider;
 		}
 
-		public UserCreationProgress GetUserCreationResult(SagaId sagaId)
+		public SagaStatus GetUserCreationResult(SagaId sagaId)
 		{
-			return (UserCreationProgress) _sagaProgressProvider.GetProgress(sagaId);
+			return _sagaProgressProvider.GetProgress(sagaId);
 		}
 
-		public UserConfirmationProgress GetUserConfirmationResult(SagaId sagaId)
+		public SagaStatus GetUserConfirmationResult(SagaId sagaId)
 		{
-			return (UserConfirmationProgress) _sagaProgressProvider.GetProgress(sagaId);
+			return _sagaProgressProvider.GetProgress(sagaId);
 		}
 	}
 }

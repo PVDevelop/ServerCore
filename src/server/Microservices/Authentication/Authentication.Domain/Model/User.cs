@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using PVDevelop.UCoach.Domain.Events;
 using PVDevelop.UCoach.Domain.Exceptions;
-using PVDevelop.UCoach.Domain.Messages;
-using PVDevelop.UCoach.Domain.SagaProgress;
 using PVDevelop.UCoach.Saga;
 
 namespace PVDevelop.UCoach.Domain.Model
@@ -14,10 +13,13 @@ namespace PVDevelop.UCoach.Domain.Model
 		public string Password { get; private set; }
 		public UserState State { get; private set; }
 
-		public User(UserCreatedEvent userCreated) : base(userCreated.UserId)
+		public User(SagaId sagaId, UserId userId, string email, string password) : base(userId)
 		{
-			ValidateEmail(userCreated.Email);
-			ValidatePassword(userCreated.Password);
+			ValidateEmail(email);
+			ValidatePassword(password);
+
+			var userCreated = new UserCreated(sagaId, userId, email, password);
+
 			Mutate(userCreated);
 		}
 
@@ -57,9 +59,7 @@ namespace PVDevelop.UCoach.Domain.Model
 		{
 			if (State != UserState.SignedIn)
 			{
-				Mutate(new UserConfirmedEvent(
-					sagaId, 
-					new UserConfirmationProgress(UserConfirmationStatus.Pending)));
+				Mutate(new UserConfirmed(sagaId));
 			}
 		}
 
@@ -68,13 +68,13 @@ namespace PVDevelop.UCoach.Domain.Model
 			When((dynamic) @event);
 		}
 
-		private void When(UserCreatedEvent @event)
+		private void When(UserCreated @event)
 		{
 			Email = @event.Email;
 			Password = @event.Password;
 		}
 
-		private void When(UserConfirmedEvent @event)
+		private void When(UserConfirmed @event)
 		{
 			State = UserState.SignedOut;
 		}

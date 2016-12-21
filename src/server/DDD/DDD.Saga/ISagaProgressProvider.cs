@@ -2,6 +2,6 @@
 {
 	public interface ISagaProgressProvider
 	{
-		object GetProgress(SagaId sagaId);
+		SagaStatus GetProgress(SagaId sagaId);
 	}
 }

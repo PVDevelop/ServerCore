@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using PVDevelop.UCoach.Domain.Messages;
-using PVDevelop.UCoach.Domain.SagaProgress;
+using PVDevelop.UCoach.Domain.Events;
 using PVDevelop.UCoach.Saga;
 
 namespace PVDevelop.UCoach.Domain.Model
@@ -21,10 +20,12 @@ namespace PVDevelop.UCoach.Domain.Model
 		/// </summary>
 		public ConfirmationState State { get; private set; }
 
-		public Confirmation(ConfirmationCreatedEvent confirmationCreatedEvent) 
-			: base(confirmationCreatedEvent.ConfirmationKey)
+		public Confirmation(SagaId sagaId, ConfirmationKey confirmationKey, UserId userId) 
+			: base(confirmationKey)
 		{
-			Mutate(confirmationCreatedEvent);
+			var confirmationCreated = new ConfirmationCreated(sagaId, confirmationKey, userId);
+
+			Mutate(confirmationCreated);
 		}
 
 		public Confirmation(ConfirmationKey confirmationKey, int initialVersion, IEnumerable<IDomainEvent> domainEvents)
@@ -39,34 +40,32 @@ namespace PVDevelop.UCoach.Domain.Model
 
 		public void TransmitToPending(SagaId sagaId)
 		{
-			var @event = new ConfirmationTransmittedToPendingEvent(
+			var @event = new ConfirmationTransmittedToPending(
 				sagaId,
-				new UserCreationProgress(UserCreationStatus.Pending), 
 				Id);
 			Mutate(@event);
 		}
 
 		public void Confirm(SagaId sagaId)
 		{
-			var @event = new ConfirmationApprovedEvent(
+			var @event = new ConfirmationApproved(
 				sagaId, 
-				new UserCreationProgress(UserCreationStatus.Created), 
 				UserId);
 			Mutate(@event);
 		}
 
-		private void When(ConfirmationCreatedEvent @event)
+		private void When(ConfirmationCreated @event)
 		{
 			State = ConfirmationState.New;
 			UserId = @event.UserId;
 		}
 
-		private void When(ConfirmationTransmittedToPendingEvent @event)
+		private void When(ConfirmationTransmittedToPending @event)
 		{
 			State = ConfirmationState.Pending;
 		}
 
-		private void When(ConfirmationApprovedEvent @event)
+		private void When(ConfirmationApproved @event)
 		{
 			State = ConfirmationState.Confirmed;
 		}

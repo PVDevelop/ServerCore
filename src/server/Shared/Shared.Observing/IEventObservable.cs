@@ -2,6 +2,6 @@
 {
 	public interface IEventObservable
 	{
-		void HandleEvent(object @event);
+		void HandleEvent(string eventCategory, object @event);
 	}
 }

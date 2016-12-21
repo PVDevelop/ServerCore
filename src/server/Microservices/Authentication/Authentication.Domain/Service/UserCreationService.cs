@@ -1,7 +1,6 @@
 ﻿using System;
-using PVDevelop.UCoach.Domain.Messages;
+using PVDevelop.UCoach.Domain.Events;
 using PVDevelop.UCoach.Domain.Model;
-using PVDevelop.UCoach.Domain.SagaProgress;
 using PVDevelop.UCoach.Saga;
 using PVDevelop.UCoach.Shared.Observing;
 
@@ -39,34 +38,21 @@ namespace PVDevelop.UCoach.Domain.Service
 			When((dynamic)@event);
 		}
 
-		private void When(CreateUserMessage @event)
+		private void When(CreateUserRequested @event)
 		{
-			var userCreated = new UserCreatedEvent(
-				@event.Id,
-				new UserCreationProgress(UserCreationStatus.Pending), 
-				new UserId(Guid.NewGuid()),
-				@event.Email,
-				@event.Password);
-
-			var user = new User(userCreated);
+			var user = new User(@event.Id, new UserId(Guid.NewGuid()), @event.Email, @event.Password);
 			_userRepository.SaveUser(user);
 		}
 
-		private void When(UserCreatedEvent userCreatedEvent)
+		private void When(UserCreated userCreatedEvent)
 		{
 			var confirmationKey = _confirmationKeyGenerator.Generate();
 
-			var confirmationCreated = new ConfirmationCreatedEvent(
-				userCreatedEvent.Id,
-				new UserCreationProgress(UserCreationStatus.Pending), 
-				confirmationKey, 
-				userCreatedEvent.UserId);
-
-			var confirmation = new Confirmation(confirmationCreated);
+			var confirmation = new Confirmation(userCreatedEvent.Id, confirmationKey, userCreatedEvent.UserId);
 			_confirmationRepository.SaveConfirmation(confirmation);
 		}
 
-		private void When(ConfirmationCreatedEvent confirmationCreatedEvent)
+		private void When(ConfirmationCreated confirmationCreatedEvent)
 		{
 			_confirmationSender.Send(confirmationCreatedEvent.ConfirmationKey);
 

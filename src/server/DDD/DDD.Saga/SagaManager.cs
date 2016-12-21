@@ -24,9 +24,9 @@ namespace PVDevelop.UCoach.Saga
 			_sagaRepository.SaveSaga(saga);
 		}
 
-		public object GetProgress(SagaId sagaId)
+		public SagaStatus GetProgress(SagaId sagaId)
 		{
-			return _sagaRepository.GetSaga(sagaId).Progress;
+			return _sagaRepository.GetSaga(sagaId).Status;
 		}
 	}
 }

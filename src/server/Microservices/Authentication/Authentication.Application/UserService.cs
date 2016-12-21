@@ -1,7 +1,6 @@
 ﻿using System;
-using PVDevelop.UCoach.Domain.Messages;
+using PVDevelop.UCoach.Domain.Events;
 using PVDevelop.UCoach.Domain.Model;
-using PVDevelop.UCoach.Domain.SagaProgress;
 using PVDevelop.UCoach.Saga;
 using PVDevelop.UCoach.Shared.Observing;
 
@@ -25,9 +24,8 @@ namespace PVDevelop.UCoach.Application
 		/// <param name="password">Пароль пользователя.</param>
 		public void CreateUser(SagaId sagaId, string email, string password)
 		{
-			var message = new CreateUserMessage(
+			var message = new CreateUserRequested(
 				sagaId, 
-				new UserCreationProgress(UserCreationStatus.Pending),  
 				email, 
 				password);
 			_sagaObserver.HandleEvent(message);
@@ -35,9 +33,8 @@ namespace PVDevelop.UCoach.Application
 
 		public void ConfirmUser(SagaId sagaId, ConfirmationKey confirmaiotKey)
 		{
-			var message = new ConfirmUserMessage(
+			var message = new ConfirmUserRequested(
 				sagaId,
-				new UserConfirmationProgress(UserConfirmationStatus.Pending), 
 				confirmaiotKey);
 			_sagaObserver.HandleEvent(message);
 		}

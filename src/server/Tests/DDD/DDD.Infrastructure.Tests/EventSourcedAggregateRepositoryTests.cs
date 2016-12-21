@@ -18,8 +18,10 @@ namespace PVDevelop.UCoach.Infrastructure
 			aggregate.SetQtty(55);
 
 			var repository = new EventSourcingRepository(eventStore);
-			repository.SaveEventSourcing(aggregate);
-			var restoredAggregate = repository.RestoreEventSourcing<Guid, IDomainEvent, Aggregate>(aggregate.Id, Aggregate.Restore);
+			repository.SaveEventSourcing("Aggregate", aggregate);
+			var restoredAggregate = repository.RestoreEventSourcing<Guid, IDomainEvent, Aggregate>(
+				"Aggregate",
+				aggregate.Id, Aggregate.Restore);
 
 			Assert.NotNull(restoredAggregate.Events);
 			Assert.AreEqual(aggregate.Id, restoredAggregate.Id);

@@ -10,8 +10,8 @@ namespace PVDevelop.UCoach.Saga
 		SagaId Id { get; }
 
 		/// <summary>
-		/// Объект, выражающий состояние саги.
+		/// Состояние саги.
 		/// </summary>
-		object Progress { get; }
+		SagaStatus Status { get; }
 	}
 }

@@ -9,16 +9,6 @@ namespace PVDevelop.UCoach.Shared.EventSourcing
 	{
 		private readonly IEventStore _eventStore;
 
-		public static string GetStreamPrefix(Type eventSourcingType)
-		{
-			return $"{eventSourcingType}.";
-		}
-
-		private static string GetStreamName<TId>(TId id, Type eventSourcingType)
-		{
-			return $"{GetStreamPrefix(eventSourcingType)}{id}";
-		}
-
 		public EventSourcingRepository(IEventStore eventStore)
 		{
 			if (eventStore == null) throw new ArgumentNullException(nameof(eventStore));
@@ -26,24 +16,27 @@ namespace PVDevelop.UCoach.Shared.EventSourcing
 			_eventStore = eventStore;
 		}
 
-		public void SaveEventSourcing<TId, TEvent>(AEventSourcing<TId, TEvent> eventSourcing)
+		public void SaveEventSourcing<TId, TEvent>(
+			string streamIdPrefix,
+			AEventSourcing<TId, TEvent> eventSourcing)
 			where TEvent : class
 		{
-			var streamName = GetStreamName(eventSourcing.Id, eventSourcing.GetType());
-			var stream = _eventStore.GetOrCreateStream(streamName);
+			var streamId = GetStreamId(streamIdPrefix, eventSourcing.Id);
+			var stream = _eventStore.GetOrCreateStream(streamId);
 			stream.SaveEvents(eventSourcing.Events);
 		}
 
 		public TEventSourcing RestoreEventSourcing<TId, TEvent, TEventSourcing>(
-			TId eventSourcingId,
+			string streamIdPrefix,
+			TId id,
 			Func<TId, int, IEnumerable<TEvent>, TEventSourcing> restoreAggregateCallback)
 			where TEventSourcing : AEventSourcing<TId, TEvent>
 			where TEvent : class
 		{
 			if (restoreAggregateCallback == null) throw new ArgumentNullException(nameof(restoreAggregateCallback));
 
-			var streamName = GetStreamName(eventSourcingId, typeof(TEventSourcing));
-			var stream = _eventStore.GetStream(streamName);
+			var streamId = GetStreamId(streamIdPrefix, id);
+			var stream = _eventStore.GetStream(streamId);
 
 			if (stream == null)
 			{
@@ -55,9 +48,17 @@ namespace PVDevelop.UCoach.Shared.EventSourcing
 			var initialVersion = eventsData.LatestVersion;
 
 			return restoreAggregateCallback(
-				eventSourcingId,
+				id,
 				initialVersion,
 				eventsData.Events.Cast<TEvent>());
+		}
+
+		private static string GetStreamId<TId>(string streamIdPrefix, TId id)
+		{
+			if (string.IsNullOrWhiteSpace(streamIdPrefix))
+				throw new ArgumentException("Not set", nameof(streamIdPrefix));
+
+			return $"{streamIdPrefix}.{id}";
 		}
 	}
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Threading;
 using PVDevelop.UCoach.Shared.Observing;
 
@@ -84,7 +83,7 @@ namespace PVDevelop.UCoach.EventStore
 			var eventsData = eventStream.GetEvents(eventNumber, int.MaxValue);
 			foreach (var @event in eventsData.Events)
 			{
-				_observable.HandleEvent(@event);
+				_observable.HandleEvent(eventStream.StreamId, @event);
 			}
 
 			_observedStreams[eventStream.StreamId] = eventsData.LatestVersion;
