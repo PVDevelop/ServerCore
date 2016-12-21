@@ -58,7 +58,7 @@ namespace PVDevelop.UCoach.Domain.Model
 		{
 			if (State != UserState.SignedIn)
 			{
-				Mutate(new UserConfirmed());
+				Mutate(new UserConfirmed(Id));
 			}
 		}
 

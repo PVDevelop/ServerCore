@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PVDevelop.UCoach.Domain.Model
 {
@@ -6,17 +7,31 @@ namespace PVDevelop.UCoach.Domain.Model
 	{
 		public SessionState State { get; private set; }
 
-		public UserSession(UserSessionId id) : base(id)
+		public UserId UserId { get; private set; }
+
+		public UserSession(UserSessionId sessionId, UserId userId) : base(sessionId)
 		{
+			Mutate(new UserSessionCreated(sessionId, userId));
 		}
 
-		public UserSession(UserSessionId id, int initialVersion, IEnumerable<IDomainEvent> events) : base(id, initialVersion, events)
+		public UserSession(UserSessionId sessionId, int initialVersion, IEnumerable<IDomainEvent> events) : 
+			base(sessionId, initialVersion, events)
 		{
 		}
 
 		protected override void When(IDomainEvent @event)
 		{
-			throw new System.NotImplementedException();
+			When((dynamic) @event);
+		}
+
+		private void When(UserSessionCreated @event)
+		{
+			UserId = @event.UserId;
+		}
+
+		private void When(object @event)
+		{
+			throw new InvalidOperationException();
 		}
 	}
 }

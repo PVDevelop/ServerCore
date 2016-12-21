@@ -1,6 +1,6 @@
 ﻿using PVDevelop.UCoach.Domain.Model;
 
-namespace PVDevelop.UCoach.Domain.Service
+namespace PVDevelop.UCoach.Domain.Port
 {
 	public interface IConfirmationSender
 	{

@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using PVDevelop.UCoach.Domain.Model;
-using PVDevelop.UCoach.Domain.Service;
+using PVDevelop.UCoach.Domain.Port;
 
-namespace PVDevelop.UCoach.Authentication.Infrastructure
+namespace PVDevelop.UCoach.Authentication.Infrastructure.Adapter
 {
 	public class ConfirmationKeyGenerator : IConfirmationKeyGenerator
 	{

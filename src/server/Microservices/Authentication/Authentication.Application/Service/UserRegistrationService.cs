@@ -1,20 +1,18 @@
 ﻿using System;
-using PVDevelop.UCoach.Domain;
-using PVDevelop.UCoach.Domain.Events;
 using PVDevelop.UCoach.Domain.Model;
-using PVDevelop.UCoach.Shared.Observing;
+using PVDevelop.UCoach.Domain.Port;
 
-namespace PVDevelop.UCoach.Application
+namespace PVDevelop.UCoach.Application.Service
 {
-	public class UserService
+	public class UserRegistrationService
 	{
-		private readonly IEventObserver<CreateUserRequested> _createUserObserver;
+		private readonly IUserRepository _userRepository;
 
-		public UserService(IEventObserver<CreateUserRequested> createUserObserver)
+		public UserRegistrationService(IUserRepository userRepository)
 		{
-			if (createUserObserver == null) throw new ArgumentNullException(nameof(createUserObserver));
+			if (userRepository == null) throw new ArgumentNullException(nameof(userRepository));
 
-			_createUserObserver = createUserObserver;
+			_userRepository = userRepository;
 		}
 
 		/// <summary>
@@ -25,8 +23,8 @@ namespace PVDevelop.UCoach.Application
 		/// <param name="password">Пароль пользователя.</param>
 		public void CreateUser(UserId userId, string email, string password)
 		{
-			var @event = new CreateUserRequested(userId, email, password);
-			_createUserObserver.HandleEvent(@event);
+			var user = new User(userId, email, password);
+			_userRepository.SaveUser(user);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using PVDevelop.UCoach.Domain.Events;
 using PVDevelop.UCoach.Domain.Model;
+using PVDevelop.UCoach.Domain.Port;
 using PVDevelop.UCoach.Shared.Observing;
 
 namespace PVDevelop.UCoach.Domain.Service
@@ -8,41 +9,25 @@ namespace PVDevelop.UCoach.Domain.Service
 	/// <summary>
 	/// Сервис подтверждения пользователя.
 	/// </summary>
-	public class UserConfirmationService : IEventObserver<IDomainEvent>
+	public class UserConfirmationService : 
+		IEventObserver<UserConfirmed>,
+		IEventObserver<ConfirmationApproved>
 	{
 		private readonly IUserRepository _userRepository;
-		private readonly IConfirmationRepository _confirmationRepository;
 		private readonly IUserSessionRepository _userSessionRepository;
 
 		public UserConfirmationService(
 			IUserRepository userRepository,
-			IConfirmationRepository confirmationRepository,
 			IUserSessionRepository userSessionRepository)
 		{
 			if (userRepository == null) throw new ArgumentNullException(nameof(userRepository));
-			if (confirmationRepository == null) throw new ArgumentNullException(nameof(confirmationRepository));
 			if (userSessionRepository == null) throw new ArgumentNullException(nameof(userSessionRepository));
+
 			_userRepository = userRepository;
-			_confirmationRepository = confirmationRepository;
 			_userSessionRepository = userSessionRepository;
 		}
 
-		public void ConfirmUser(ConfirmationKey confirmationKey)
-		{
-			var confirmation = _confirmationRepository.GetConfirmation(confirmationKey);
-
-			confirmation.Confirm();
-
-			_confirmationRepository.SaveConfirmation(confirmation);
-		}
-
-		public void HandleEvent(IDomainEvent @event)
-		{
-			if (@event == null) throw new ArgumentNullException(nameof(@event));
-			When((dynamic)@event);
-		}
-
-		private void When(ConfirmationApproved @event)
+		public void HandleEvent(ConfirmationApproved @event)
 		{
 			var user = _userRepository.GetUserById(@event.UserId);
 
@@ -51,13 +36,13 @@ namespace PVDevelop.UCoach.Domain.Service
 			_userRepository.SaveUser(user);
 		}
 
-		private void When(UserConfirmed @event)
+		public void HandleEvent(UserConfirmed @event)
 		{
-			throw new NotImplementedException();
-		}
+			var userSessionId = new UserSessionId(Guid.NewGuid());
 
-		private void When(object @event)
-		{
+			var session = new UserSession(userSessionId, @event.UserId);
+			
+			_userSessionRepository.SaveSession(session);
 		}
 	}
 }

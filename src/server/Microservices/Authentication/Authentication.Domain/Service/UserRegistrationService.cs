@@ -1,20 +1,19 @@
 ﻿using System;
 using PVDevelop.UCoach.Domain.Events;
 using PVDevelop.UCoach.Domain.Model;
+using PVDevelop.UCoach.Domain.Port;
 using PVDevelop.UCoach.Shared.Observing;
 
 namespace PVDevelop.UCoach.Domain.Service
 {
 	/// <summary>
-	/// Сервис регистрации пользователя.
+	/// Доменный сервис регистрации пользователя.
 	/// </summary>
 	public class UserRegistrationService : 
-		IEventObserver<CreateUserRequested>,
 		IEventObserver<UserCreated>,
 		IEventObserver<ConfirmationCreated>,
 		IEventObserver<ConfirmationTransmittedToPending>
 	{
-		private readonly IUserRepository _userRepository;
 		private readonly IConfirmationRepository _confirmationRepository;
 		private readonly IConfirmationKeyGenerator _confirmationKeyGenerator;
 		private readonly IConfirmationSender _confirmationSender;
@@ -29,16 +28,10 @@ namespace PVDevelop.UCoach.Domain.Service
 			if (confirmationRepository == null) throw new ArgumentNullException(nameof(confirmationRepository));
 			if (confirmationKeyGenerator == null) throw new ArgumentNullException(nameof(confirmationKeyGenerator));
 			if (confirmationSender == null) throw new ArgumentNullException(nameof(confirmationSender));
-			_userRepository = userRepository;
+
 			_confirmationRepository = confirmationRepository;
 			_confirmationKeyGenerator = confirmationKeyGenerator;
 			_confirmationSender = confirmationSender;
-		}
-
-		public void HandleEvent(CreateUserRequested @event)
-		{
-			var user = new User(@event.UserId, @event.Email, @event.Password);
-			_userRepository.SaveUser(user);
 		}
 
 		public void HandleEvent(UserCreated @event)

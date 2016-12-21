@@ -1,4 +1,4 @@
-﻿namespace PVDevelop.UCoach.Application
+﻿namespace PVDevelop.UCoach.Application.Service
 {
 	public enum UserRegistrationStatus
 	{

@@ -1,40 +1,36 @@
 ﻿using System;
 using PVDevelop.UCoach.Domain;
 using PVDevelop.UCoach.Domain.Model;
-using PVDevelop.UCoach.Domain.Service;
+using PVDevelop.UCoach.Domain.Port;
 using PVDevelop.UCoach.Shared.EventSourcing;
 
-namespace PVDevelop.UCoach.Authentication.Infrastructure
+namespace PVDevelop.UCoach.Authentication.Infrastructure.Adapter
 {
 	public class UserRepository : IUserRepository
 	{
-		private readonly IEventSourcingRepository _eventSourcedAggregateRepository;
-		private readonly string _userStreamIdPrefix;
+		public const string StreamIdPrefix = "Aggregate.User";
 
-		public UserRepository(
-			IEventSourcingRepository eventSourcedAggregateRepository,
-			string userStreamIdPrefix)
+		private readonly IEventSourcingRepository _eventSourcedAggregateRepository;
+
+		public UserRepository(IEventSourcingRepository eventSourcedAggregateRepository)
 		{
 			if (eventSourcedAggregateRepository == null)
 				throw new ArgumentNullException(nameof(eventSourcedAggregateRepository));
-			if(string.IsNullOrWhiteSpace(userStreamIdPrefix))
-				throw new ArgumentException("Not set", nameof(_userStreamIdPrefix));
 
 			_eventSourcedAggregateRepository = eventSourcedAggregateRepository;
-			_userStreamIdPrefix = userStreamIdPrefix;
 		}
 
 		public void SaveUser(User user)
 		{
 			if (user == null) throw new ArgumentNullException(nameof(user));
-			_eventSourcedAggregateRepository.SaveEventSourcing(_userStreamIdPrefix, user);
+			_eventSourcedAggregateRepository.SaveEventSourcing(StreamIdPrefix, user);
 		}
 
 		public User GetUserById(UserId id)
 		{
 			if (id == null) throw new ArgumentNullException(nameof(id));
 			return _eventSourcedAggregateRepository.RestoreEventSourcing<UserId, IDomainEvent, User>(
-				_userStreamIdPrefix,
+				StreamIdPrefix,
 				id,
 				(userId, version, events) => new User(userId, version, events));
 		}

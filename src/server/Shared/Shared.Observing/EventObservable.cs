@@ -1,39 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace PVDevelop.UCoach.Shared.Observing
 {
 	public class EventObservable : IEventObservable
 	{
-		private readonly List<Tuple<ObservableFilter, object>> _observers = 
-			new List<Tuple<ObservableFilter, object>>();
+		private readonly List<object> _observers = 
+			new List<object>();
 
-		public void AddObserver(object observer, ObservableFilter filter)
+		public void AddObserver(object observer)
 		{
 			if (observer == null) throw new ArgumentNullException(nameof(observer));
-			if (filter == null) throw new ArgumentNullException(nameof(filter));
 
-			_observers.Add(new Tuple<ObservableFilter, object>(filter, observer));
+			_observers.Add(observer);
 		}
 
 		public void RemoveObserver(object observer)
 		{
 			if (observer == null) throw new ArgumentNullException(nameof(observer));
 
-			var item = _observers.Single(t=>t.Item2 == observer);
-			_observers.Remove(item);
+			_observers.Remove(observer);
 		}
 
 		public void HandleEvent(string eventCategory, object @event)
 		{
 			if (@event == null) throw new ArgumentNullException(nameof(@event));
 
-			foreach (var tuple in _observers.Where(t=>t.Item1.Match(eventCategory)))
+			foreach (var observer in _observers)
 			{
 				HandleEventForObserver(
-					observer: tuple.Item2,
+					observer: observer,
 					@event: @event);
 			}
 		}

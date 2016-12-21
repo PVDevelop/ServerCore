@@ -45,7 +45,7 @@ namespace PVDevelop.UCoach.Domain.Model
 
 		public void Confirm()
 		{
-			var @event = new ConfirmationApproved(UserId);
+			var @event = new ConfirmationApproved(Id, UserId);
 			Mutate(@event);
 		}
 
