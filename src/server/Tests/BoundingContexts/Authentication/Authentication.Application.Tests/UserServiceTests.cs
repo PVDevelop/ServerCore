@@ -4,9 +4,9 @@ using NUnit.Framework;
 using PVDevelop.UCoach.Authentication.Infrastructure;
 using PVDevelop.UCoach.Domain.Messages;
 using PVDevelop.UCoach.Domain.Model;
+using PVDevelop.UCoach.Domain.SagaProgress;
 using PVDevelop.UCoach.Domain.Service;
 using PVDevelop.UCoach.EventStore;
-using PVDevelop.UCoach.Infrastructure;
 using PVDevelop.UCoach.Saga;
 using PVDevelop.UCoach.Shared.EventSourcing;
 using PVDevelop.UCoach.Shared.Observing;
@@ -37,29 +37,27 @@ namespace PVDevelop.UCoach.Application.Tests
 
 			var sagaRepository = new SagaRepository(eventSourcedRepository);
 
-			var sagaMessageDispatcher = new SagaMessageDispatcher(sagaRepository);
+			var sagaManager = new SagaManager(sagaRepository);
 
 			var observable = new EventObservable();
-			observable.AddObserver(sagaMessageDispatcher);
+			observable.AddObserver(sagaManager);
 			observable.AddObserver(userCreationService);
 
 			using (var eventStorePuller = new EventStorePuller(eventStore, observable, TimeSpan.FromMilliseconds(100)))
 			{
 				eventStorePuller.Start();
 
-				var messagePublisher = new SagaMessagePublisherToEventStore(eventStore);
+				var userService = new UserService(sagaManager);
 
-				var userService = new UserService(messagePublisher);
+				var userDao = new UserDao(sagaManager);
 
-				var userDao = new TransactionDao(sagaRepository);
-
-				var transacionId = Guid.NewGuid();
-				userService.CreateUser(transacionId, "some@mail.ru", "P@ssw0rd");
+				var sagaId = new SagaId(Guid.NewGuid());
+				userService.CreateUser(sagaId, "some@mail.ru", "P@ssw0rd");
 
 				Thread.Sleep(TimeSpan.FromSeconds(5));
 
-				var result = userDao.GetStatus(transacionId);
-				Assert.AreEqual(TransactionStatus.Succeeded, result);
+				var result = userDao.GetUserCreationResult(sagaId);
+				Assert.AreEqual(UserCreationStatus.Created, result.Status);
 			}
 
 		}
@@ -78,43 +76,49 @@ namespace PVDevelop.UCoach.Application.Tests
 
 			var sagaRepository = new SagaRepository(eventSourcedRepository);
 
-			var sagaMessageDispatcher = new SagaMessageDispatcher(sagaRepository);
+			var sagaManager = new SagaManager(sagaRepository);
 
 			var observable = new EventObservable();
-			observable.AddObserver(sagaMessageDispatcher);
+			observable.AddObserver(sagaManager);
 			observable.AddObserver(userConfirmationService);
 
 			using (var eventStorePuller = new EventStorePuller(eventStore, observable, TimeSpan.FromMilliseconds(100)))
 			{
 				eventStorePuller.Start();
 
-				var confirmationTransactionId = Guid.NewGuid();
-				var sagaId = new SagaId(confirmationTransactionId);
+				var sagaId = new SagaId(Guid.NewGuid());
 
 				var userId = new UserId(Guid.NewGuid());
-				var userCreatedEvent = new UserCreatedEvent(sagaId, userId, "some@mail.ru", "P@ssw0rd");
+				var userCreatedEvent = new UserCreatedEvent(
+					sagaId,
+					new UserCreationProgress(UserCreationStatus.Pending),  
+					userId, 
+					"some@mail.ru", 
+					"P@ssw0rd");
 				var user = new User(userCreatedEvent);
 
 				userRepository.SaveUser(user);
 
 				var confirmationKey = new ConfirmationKey("confirmationKey");
-				var confirmationCreatedEvent = new ConfirmationCreatedEvent(sagaId, confirmationKey, userId);
+				var confirmationCreatedEvent = new ConfirmationCreatedEvent(
+					sagaId, 
+					new UserCreationProgress(UserCreationStatus.Pending), 
+					confirmationKey, 
+					userId);
 				var confirmation = new Confirmation(confirmationCreatedEvent);
 
 				confirmationRepository.SaveConfirmation(confirmation);
 
-				var messagePublisher = new SagaMessagePublisherToEventStore(eventStore);
+				var userService = new UserService(sagaManager);
 
-				var userService = new UserService(messagePublisher);
-
-				userService.ConfirmUser(confirmationTransactionId, confirmationKey.Value);
+				userService.ConfirmUser(sagaId, confirmationKey);
 
 				Thread.Sleep(TimeSpan.FromSeconds(5));
 
-				var userDao = new TransactionDao(sagaRepository);
+				var userDao = new UserDao(sagaManager);
 
-				var result = userDao.GetStatus(confirmationTransactionId);
-				Assert.AreEqual(TransactionStatus.Succeeded, result);
+				var result = userDao.GetUserConfirmationResult(sagaId);
+				Assert.AreEqual(UserConfirmationStatus.Confirmed, result.Status);
 			}
 		}
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using PVDevelop.UCoach.EventStore;
 using PVDevelop.UCoach.Shared.EventSourcing;
 
 namespace PVDevelop.UCoach.Saga
@@ -17,7 +16,7 @@ namespace PVDevelop.UCoach.Saga
 		public Saga GetSaga(SagaId id)
 		{
 			if (id == null) throw new ArgumentNullException(nameof(id));
-			return _eventSourcingRepository.RestoreEventSourcing<SagaId, SagaMessageDispatchedEvent, Saga>(
+			return _eventSourcingRepository.RestoreEventSourcing<SagaId, ISagaEvent, Saga>(
 				id,
 				(sagaId, version, events) => new Saga(sagaId, version, events));
 		}

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using PVDevelop.UCoach.Domain.Messages;
+using PVDevelop.UCoach.Domain.SagaProgress;
 using PVDevelop.UCoach.Saga;
 
 namespace PVDevelop.UCoach.Domain.Model
@@ -40,13 +41,17 @@ namespace PVDevelop.UCoach.Domain.Model
 		{
 			var @event = new ConfirmationTransmittedToPendingEvent(
 				sagaId,
+				new UserCreationProgress(UserCreationStatus.Pending), 
 				Id);
 			Mutate(@event);
 		}
 
 		public void Confirm(SagaId sagaId)
 		{
-			var @event = new ConfirmationApprovedEvent(sagaId, UserId);
+			var @event = new ConfirmationApprovedEvent(
+				sagaId, 
+				new UserCreationProgress(UserCreationStatus.Created), 
+				UserId);
 			Mutate(@event);
 		}
 

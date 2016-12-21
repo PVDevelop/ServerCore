@@ -1,6 +1,7 @@
 ﻿using System;
 using PVDevelop.UCoach.Domain.Messages;
 using PVDevelop.UCoach.Domain.Model;
+using PVDevelop.UCoach.Domain.SagaProgress;
 using PVDevelop.UCoach.Saga;
 using PVDevelop.UCoach.Shared.Observing;
 
@@ -9,7 +10,7 @@ namespace PVDevelop.UCoach.Domain.Service
 	/// <summary>
 	/// Сервис создания пользователя.
 	/// </summary>
-	public class UserCreationService : IEventObserver<SagaMessageDispatchedEvent>
+	public class UserCreationService : IEventObserver<ISagaEvent>
 	{
 		private readonly IUserRepository _userRepository;
 		private readonly IConfirmationRepository _confirmationRepository;
@@ -32,17 +33,18 @@ namespace PVDevelop.UCoach.Domain.Service
 			_confirmationSender = confirmationSender;
 		}
 
-		public void HandleEvent(SagaMessageDispatchedEvent @event)
+		public void HandleEvent(ISagaEvent @event)
 		{
 			if (@event == null) throw new ArgumentNullException(nameof(@event));
-			When((dynamic)@event.SagaMessage);
+			When((dynamic)@event);
 		}
 
 		private void When(CreateUserMessage @event)
 		{
 			var userCreated = new UserCreatedEvent(
-				@event.SagaId,
-				new UserId(@event.SagaId.Value),
+				@event.Id,
+				new UserCreationProgress(UserCreationStatus.Pending), 
+				new UserId(Guid.NewGuid()),
 				@event.Email,
 				@event.Password);
 
@@ -55,7 +57,8 @@ namespace PVDevelop.UCoach.Domain.Service
 			var confirmationKey = _confirmationKeyGenerator.Generate();
 
 			var confirmationCreated = new ConfirmationCreatedEvent(
-				userCreatedEvent.SagaId,
+				userCreatedEvent.Id,
+				new UserCreationProgress(UserCreationStatus.Pending), 
 				confirmationKey, 
 				userCreatedEvent.UserId);
 
@@ -69,13 +72,8 @@ namespace PVDevelop.UCoach.Domain.Service
 
 			var confirmation = _confirmationRepository.GetConfirmation(confirmationCreatedEvent.ConfirmationKey);
 
-			confirmation.TransmitToPending(confirmationCreatedEvent.SagaId);
+			confirmation.TransmitToPending(confirmationCreatedEvent.Id);
 			_confirmationRepository.SaveConfirmation(confirmation);
-		}
-
-		private void When(ConfirmationTransmittedToPendingEvent confirmationTransmittedToPendingEvent)
-		{
-			// процесс регистрации пользователя можно считать завершенным!
 		}
 
 		private void When(object message)

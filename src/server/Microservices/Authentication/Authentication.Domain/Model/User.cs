@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using PVDevelop.UCoach.Domain.Exceptions;
 using PVDevelop.UCoach.Domain.Messages;
+using PVDevelop.UCoach.Domain.SagaProgress;
 using PVDevelop.UCoach.Saga;
 
 namespace PVDevelop.UCoach.Domain.Model
@@ -56,7 +57,9 @@ namespace PVDevelop.UCoach.Domain.Model
 		{
 			if (State != UserState.SignedIn)
 			{
-				Mutate(new UserConfirmedEvent(sagaId));
+				Mutate(new UserConfirmedEvent(
+					sagaId, 
+					new UserConfirmationProgress(UserConfirmationStatus.Pending)));
 			}
 		}
 

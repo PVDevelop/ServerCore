@@ -8,7 +8,7 @@ namespace PVDevelop.UCoach.Domain.Service
 	/// <summary>
 	/// Сервис подтверждения пользователя.
 	/// </summary>
-	public class UserConfirmationService : IEventObserver<SagaMessageDispatchedEvent>
+	public class UserConfirmationService : IEventObserver<ISagaEvent>
 	{
 		private readonly IUserRepository _userRepository;
 		private readonly IConfirmationRepository _confirmationRepository;
@@ -23,17 +23,17 @@ namespace PVDevelop.UCoach.Domain.Service
 			_confirmationRepository = confirmationRepository;
 		}
 
-		public void HandleEvent(SagaMessageDispatchedEvent @event)
+		public void HandleEvent(ISagaEvent @event)
 		{
 			if (@event == null) throw new ArgumentNullException(nameof(@event));
-			When((dynamic)@event.SagaMessage);
+			When((dynamic)@event);
 		}
 
 		private void When(ConfirmUserMessage @event)
 		{
 			var confirmation = _confirmationRepository.GetConfirmation(@event.ConfirmationKey);
 
-			confirmation.Confirm(@event.SagaId);
+			confirmation.Confirm(@event.Id);
 
 			_confirmationRepository.SaveConfirmation(confirmation);
 		}
@@ -42,7 +42,7 @@ namespace PVDevelop.UCoach.Domain.Service
 		{
 			var user = _userRepository.GetUserById(@event.UserId);
 
-			user.Confirm(@event.SagaId);
+			user.Confirm(@event.Id);
 
 			_userRepository.SaveUser(user);
 		}
