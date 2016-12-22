@@ -32,9 +32,8 @@ namespace PVDevelop.UCoach.Application.Tests.Service
 				var confirmation = new Confirmation(new ConfirmationKey("SomeConfirmationKey"), user.Id);
 				authContext.ConfirmationRepository.SaveConfirmation(confirmation);
 
-				var userConfirmationAppService = new UserConfirmationService(authContext.ConfirmationRepository);
-
-				userConfirmationAppService.ConfirmUser(confirmation.Id);
+				new UserConfirmationService(authContext.ConfirmationRepository).
+					ConfirmUser(confirmation.Id);
 
 				Thread.Sleep(TimeSpan.FromSeconds(5));
 

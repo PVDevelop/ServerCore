@@ -16,13 +16,6 @@ namespace PVDevelop.UCoach.Shared.Observing
 			_observers.Add(observer);
 		}
 
-		public void RemoveObserver(object observer)
-		{
-			if (observer == null) throw new ArgumentNullException(nameof(observer));
-
-			_observers.Remove(observer);
-		}
-
 		public void HandleEvent(string eventCategory, object @event)
 		{
 			if (@event == null) throw new ArgumentNullException(nameof(@event));

@@ -25,10 +25,9 @@ namespace PVDevelop.UCoach.Application.Tests.Service
 			{
 				authContext.Start();
 
-				var userRegistrationAppService = new UserRegistrationService(authContext.UserRepository);
-
 				var userId = new UserId(Guid.NewGuid());
-				userRegistrationAppService.CreateUser(userId, "some@mail.ru", "P@ssw0rd");
+				new UserRegistrationService(authContext.UserRepository).
+					CreateUser(userId, "some@mail.ru", "P@ssw0rd");
 
 				Thread.Sleep(TimeSpan.FromSeconds(5));
 
