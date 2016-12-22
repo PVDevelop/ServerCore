@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using PVDevelop.UCoach.Domain.Events;
 using PVDevelop.UCoach.Domain.Model;
@@ -37,6 +38,11 @@ namespace PVDevelop.UCoach.Application.Service
 				_confiremdUsers.Contains(userId)
 					? UserConfirmationStatus.Confirmed
 					: UserConfirmationStatus.Pending;
+		}
+
+		public UserSignInResult GetUserSignInResult(Guid transactionId)
+		{
+			return new UserSignInResult(UserSignInStatus.Pending);
 		}
 
 		public void HandleEvent(ConfirmationTransmittedToPending @event)

@@ -16,12 +16,12 @@ namespace PVDevelop.UCoach.Application.Service
 		}
 
 		/// <summary>
-		/// Создает пользователя, отправляя подтверждение регистрации ему на почту.
+		/// Регистрирует пользователя, отправляя подтверждение регистрации ему на почту.
 		/// </summary>
 		/// <param name="userId">Идентификатор транзакции, по которому можно получить результат исполнения.</param>
 		/// <param name="email">Почтовый адрес пользователя.</param>
 		/// <param name="password">Пароль пользователя.</param>
-		public void CreateUser(UserId userId, string email, string password)
+		public void RegisterUser(UserId userId, string email, string password)
 		{
 			var user = new User(userId, email, password);
 			_userRepository.SaveUser(user);
