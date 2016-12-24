@@ -31,7 +31,7 @@ namespace PVDevelop.UCoach.Shared.EventSourcing
 			string streamIdPrefix,
 			TId id,
 			Func<TId, int, IEnumerable<TEvent>, TEventSourcing> restoreAggregateCallback)
-			where TEventSourcing : AEventSourcing<TId, TEvent>
-			where TEvent : class;
+			where TEvent : class
+			where TEventSourcing : AEventSourcing<TId, TEvent>;
 	}
 }
