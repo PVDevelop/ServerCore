@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using Polly;
 using PVDevelop.UCoach.Shared.EventSourcing;
 
 namespace PVDevelop.UCoach.Shared.ProcessManagement.Tests
@@ -31,11 +32,12 @@ namespace PVDevelop.UCoach.Shared.ProcessManagement.Tests
 			var processId = processManager.StartProcess(GetProcessStateDescriptions().ToList());
 			processManager.HandleEvent(new RegisterUserRequested(processId));
 
-			Thread.Sleep(TimeSpan.FromSeconds(2));
+			var processStatus = Policy<ProcessStatus>.
+				HandleResult(ps => ps != ProcessStatus.Success).
+				WaitAndRetry(20, i => TimeSpan.FromMilliseconds(100)).
+				Execute(() => repository.GetProcess(processId).Status);
 
-			var process = repository.GetProcess(processId);
-
-			Assert.AreEqual(ProcessStatus.Success, process.Status);
+			Assert.AreEqual(ProcessStatus.Success, processStatus);
 		}
 
 		private static IEnumerable<ProcessStateDescription> GetProcessStateDescriptions()

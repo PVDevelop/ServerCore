@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using NUnit.Framework;
+using Polly;
 using PVDevelop.UCoach.Application.Service;
 using PVDevelop.UCoach.Authentication.Infrastructure.Adapter;
 using PVDevelop.UCoach.Domain.ProcessStates;
@@ -20,10 +21,12 @@ namespace PVDevelop.UCoach.Application.Tests.Service
 				var userRegistrationService = new UserRegistrationService(authContext.ProcessManager);
 				var processId = userRegistrationService.RegisterUser("some@mail.ru", "P@ssw0rd");
 
-				Thread.Sleep(TimeSpan.FromSeconds(5));
-
 				var userDao = new UserDao(authContext.ProcessManager);
-				var state = userDao.GetUserCreationState(processId);
+
+				var state = Policy<UserRegistrationProcessState>.
+					HandleResult(s => s != UserRegistrationProcessState.ConfirmationCreated).
+					WaitAndRetry(50, i => TimeSpan.FromMilliseconds(100)).
+					Execute(() => userDao.GetUserRegisrationState(processId));
 
 				Assert.AreEqual(UserRegistrationProcessState.ConfirmationCreated, state);
 			}

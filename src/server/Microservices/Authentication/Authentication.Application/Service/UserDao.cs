@@ -15,7 +15,7 @@ namespace PVDevelop.UCoach.Application.Service
 			_processManager = processManager;
 		}
 
-		public UserRegistrationProcessState GetUserCreationState(ProcessId processId)
+		public UserRegistrationProcessState GetUserRegisrationState(ProcessId processId)
 		{
 			return (UserRegistrationProcessState) _processManager.GetProcessState(processId);
 		}

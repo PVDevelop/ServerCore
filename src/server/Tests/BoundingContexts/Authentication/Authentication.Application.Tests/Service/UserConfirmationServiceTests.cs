@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using NUnit.Framework;
+using Polly;
 using PVDevelop.UCoach.Application.Service;
 using PVDevelop.UCoach.Authentication.Infrastructure.Adapter;
 using PVDevelop.UCoach.Domain.Model;
@@ -42,11 +43,13 @@ namespace PVDevelop.UCoach.Application.Tests.Service
 
 				var processId = userConfirmationService.ConfirmUser(confirmationKey);
 
-				Thread.Sleep(TimeSpan.FromSeconds(5));
-
 				var userDao = new UserDao(authContext.ProcessManager);
 
-				var state = userDao.GetUserConfirmationState(processId);
+				var state = Policy<UserConfirmationProcessState>.
+					HandleResult(s => s != UserConfirmationProcessState.UserConfirmed).
+					WaitAndRetry(50, i => TimeSpan.FromMilliseconds(100)).
+					Execute(() => userDao.GetUserConfirmationState(processId));
+
 				Assert.AreEqual(UserConfirmationProcessState.UserConfirmed, state);
 			}
 		}
