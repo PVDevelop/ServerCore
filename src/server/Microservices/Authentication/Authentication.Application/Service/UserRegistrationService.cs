@@ -1,30 +1,38 @@
 ﻿using System;
-using PVDevelop.UCoach.Domain.Model;
-using PVDevelop.UCoach.Domain.Port;
+using System.Linq;
+using PVDevelop.UCoach.Domain.Events;
+using PVDevelop.UCoach.Domain.Service;
+using PVDevelop.UCoach.Shared.ProcessManagement;
 
 namespace PVDevelop.UCoach.Application.Service
 {
 	public class UserRegistrationService
 	{
-		private readonly IUserRepository _userRepository;
+		private readonly IProcessManager _processManager;
 
-		public UserRegistrationService(IUserRepository userRepository)
+		public UserRegistrationService(IProcessManager processManager)
 		{
-			if (userRepository == null) throw new ArgumentNullException(nameof(userRepository));
-
-			_userRepository = userRepository;
+			if (processManager == null) throw new ArgumentNullException(nameof(processManager));
+			_processManager = processManager;
 		}
 
 		/// <summary>
 		/// Регистрирует пользователя, отправляя подтверждение регистрации ему на почту.
 		/// </summary>
-		/// <param name="userId">Идентификатор транзакции, по которому можно получить результат исполнения.</param>
 		/// <param name="email">Почтовый адрес пользователя.</param>
 		/// <param name="password">Пароль пользователя.</param>
-		public void RegisterUser(UserId userId, string email, string password)
+		public ProcessId RegisterUser(string email, string password)
 		{
-			var user = new User(userId, email, password);
-			_userRepository.SaveUser(user);
+			var processId = _processManager.StartProcess(
+				AuthProcessStateDescriptionFactory.
+				GetUserRegistrationProcessStateDescriptions().
+				ToList());
+
+			var @startEvent = new RegisterUserRequested(processId, email, password);
+
+			_processManager.HandleEvent(startEvent);
+
+			return processId;
 		}
 	}
 }

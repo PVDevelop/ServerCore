@@ -6,11 +6,15 @@ namespace PVDevelop.UCoach.Shared.ProcessManagement
 	{
 		public ProcessId ProcessId { get; }
 
-		protected AProcessEvent(ProcessId processId)
+		public object State { get; }
+
+		protected AProcessEvent(ProcessId processId, object state)
 		{
 			if (processId == null) throw new ArgumentNullException(nameof(processId));
+			if (state == null) throw new ArgumentNullException(nameof(state));
 
 			ProcessId = processId;
+			State = state;
 		}
 	}
 }

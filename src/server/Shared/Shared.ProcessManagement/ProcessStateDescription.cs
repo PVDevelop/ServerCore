@@ -10,10 +10,11 @@ namespace PVDevelop.UCoach.Shared.ProcessManagement
 		/// <summary>
 		/// Создать описание состояния начала процесса.
 		/// </summary>
-		public static ProcessStateDescription Start<TCommand>()
+		public static ProcessStateDescription Start<TEvent, TCommand>()
+			where TEvent : IProcessEvent
 			where TCommand : IProcessCommand
 		{
-			return new ProcessStateDescription(null, typeof(TCommand));
+			return new ProcessStateDescription(typeof(TEvent), typeof(TCommand));
 		}
 
 		/// <summary>
@@ -36,7 +37,7 @@ namespace PVDevelop.UCoach.Shared.ProcessManagement
 		}
 
 		/// <summary>
-		/// Тип события, на которое реагирует менеджер процессов. Если не задан, то это начало процесса.
+		/// Тип события, на которое реагирует менеджер процессов.
 		/// </summary>
 		public Type EventType { get; }
 

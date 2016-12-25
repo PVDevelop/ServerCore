@@ -6,18 +6,13 @@
 	public enum ConfirmationState
 	{
 		/// <summary>
-		/// Подтверждение создано, но еще не отправлено.
-		/// </summary>
-		New = 0,
-
-		/// <summary>
 		/// В ожидании подтверждения.
 		/// </summary>
-		Pending = 1,
+		Pending = 0,
 
 		/// <summary>
 		/// Подтвержден.
 		/// </summary>
-		Confirmed = 2
+		Approved = 1
 	}
 }

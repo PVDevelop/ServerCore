@@ -5,24 +5,18 @@ using PVDevelop.UCoach.Shared.ProcessManagement;
 
 namespace PVDevelop.UCoach.Domain.Events
 {
-	public class ConfirmationApproved : 
-		AProcessEvent, 
-		IDomainEvent
+	public class ConfirmUserRequested : AProcessEvent
 	{
 		public ConfirmationKey ConfirmationKey { get; }
-		public UserId UserId { get; }
 
-		public ConfirmationApproved(
+		public ConfirmUserRequested(
 			ProcessId processId,
-			ConfirmationKey confirmationKey,
-			UserId userId) :
-			base(processId, UserConfirmationProcessState.ConfirmationApproved)
+			ConfirmationKey confirmationKey)
+			: base(processId, UserConfirmationProcessState.ConfirmationRequested)
 		{
 			if (confirmationKey == null) throw new ArgumentNullException(nameof(confirmationKey));
-			if (userId == null) throw new ArgumentNullException(nameof(userId));
 
 			ConfirmationKey = confirmationKey;
-			UserId = userId;
 		}
 	}
 }

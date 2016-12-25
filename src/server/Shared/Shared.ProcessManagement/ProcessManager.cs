@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 namespace PVDevelop.UCoach.Shared.ProcessManagement
 {
-	public class ProcessManager
+	public class ProcessManager :
+		IProcessManager
 	{
 		private readonly IProcessRepository _repository;
 		private readonly IProcessCommandExecutor _commandExecutor;
@@ -34,28 +35,40 @@ namespace PVDevelop.UCoach.Shared.ProcessManagement
 			var processId = new ProcessId(Guid.NewGuid());
 			var process = new Process(processId, processStateDescriptions);
 
-			var processStartDescription = process.GetStartProcessStateDescription();
-
-			var command = _processCommandFactory.CreateStartCommand(processId, processStartDescription);
-
 			lock (_sync)
 			{
-				PublishCommand(command);
-
 				_repository.SaveProcess(process);
 			}
 
 			return processId;
 		}
 
-		public void HandleEvent(
-			IProcessEvent @event)
+		public object GetProcessState(ProcessId processId)
 		{
-			var process = _repository.GetProcess(@event.ProcessId);
-			process.AddEvent(@event);
+			if (processId == null) throw new ArgumentNullException(nameof(processId));
 
 			lock (_sync)
 			{
+				var process = _repository.GetProcess(processId);
+				return process.State;
+			}
+		}
+
+		public void HandleEvent(
+			IProcessEvent @event)
+		{
+			lock (_sync)
+			{
+				var process = _repository.GetProcess(@event.ProcessId);
+
+				if (process == null)
+				{
+					// todo: не проходит тест, когда создается агрегат без участия процесса!
+					return;
+				}
+
+				process.AddEvent(@event);
+
 				ProcessPendingEvents(process);
 
 				_repository.SaveProcess(process);
@@ -72,14 +85,9 @@ namespace PVDevelop.UCoach.Shared.ProcessManagement
 					continue;
 				}
 
-				var command = _processCommandFactory.CreateContinuedCommand(pendingEvent);
-				PublishCommand(command);
+				var command = _processCommandFactory.CreateCommand(pendingEvent);
+				_commandExecutor.Execute(command);
 			}
-		}
-
-		private void PublishCommand(IProcessCommand command)
-		{
-			_commandExecutor.Execute(command);
 		}
 	}
 }

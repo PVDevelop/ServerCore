@@ -83,7 +83,7 @@ namespace PVDevelop.UCoach.EventStore
 			var eventsData = eventStream.GetEvents(eventNumber, int.MaxValue);
 			foreach (var @event in eventsData.Events)
 			{
-				_observable.HandleEvent(eventStream.StreamId, @event);
+				_observable.HandleEvent(@event);
 			}
 
 			_observedStreams[eventStream.StreamId] = eventsData.LatestVersion;

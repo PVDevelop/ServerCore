@@ -4,6 +4,8 @@ using NUnit.Framework;
 using PVDevelop.UCoach.Application.Service;
 using PVDevelop.UCoach.Authentication.Infrastructure.Adapter;
 using PVDevelop.UCoach.Domain.Model;
+using PVDevelop.UCoach.Domain.ProcessStates;
+using PVDevelop.UCoach.Shared.ProcessManagement;
 
 namespace PVDevelop.UCoach.Application.Tests.Service
 {
@@ -13,33 +15,39 @@ namespace PVDevelop.UCoach.Application.Tests.Service
 		[Test]
 		public void ConfirmUser_UserDaoReturnsExpectedResult()
 		{
-			var userDao = new UserDao();
-
-			using (var authContext =
-				new AuthenticationContextBuiler().
-					WithUserRepository().
-					WithConfirmationRepository().
-					WithUserSessionRepository().
-					WithUserConfirmationService().
-					WithEventObserver(userDao).
-					Build())
+			using (var authContext = new AuthenticationContextBuilder().Build())
 			{
 				authContext.Start();
 
-				var user = new User(new UserId(Guid.NewGuid()), "some@mail.ru", "P@ssw0rd");
+				var createUserProcessId = new ProcessId(Guid.NewGuid());
+
+				var user = new User(
+					createUserProcessId,
+					new UserId(Guid.NewGuid()),
+					"some@mail.ru",
+					"P@ssw0rd");
+
 				authContext.UserRepository.SaveUser(user);
 
-				var confirmation = new Confirmation(new ConfirmationKey("SomeConfirmationKey"), user.Id);
+				var confirmationKey = new ConfirmationKey("SomeConfirmationKey");
+
+				var confirmation = new Confirmation(
+					createUserProcessId,
+					confirmationKey,
+					user.Id);
+
 				authContext.ConfirmationRepository.SaveConfirmation(confirmation);
 
-				new UserConfirmationService(authContext.ConfirmationRepository).
-					ConfirmUser(confirmation.Id);
+				var userConfirmationService = new UserConfirmationService(authContext.ProcessManager);
+
+				var processId = userConfirmationService.ConfirmUser(confirmationKey);
 
 				Thread.Sleep(TimeSpan.FromSeconds(5));
 
-				var status = userDao.GetUserConfirmationStatus(confirmation.Id);
+				var userDao = new UserDao(authContext.ProcessManager);
 
-				Assert.AreEqual(UserConfirmationStatus.Confirmed, status);
+				var state = userDao.GetUserConfirmationState(processId);
+				Assert.AreEqual(UserConfirmationProcessState.UserConfirmed, state);
 			}
 		}
 	}

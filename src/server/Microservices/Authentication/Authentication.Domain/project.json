@@ -6,7 +6,8 @@
         "DDD.Domain": "1.0.0-*",
         "Microsoft.CSharp": "4.3.0",
         "NETStandard.Library": "1.6.0",
-        "Shared.Observing": "1.0.0-*"
+        "Shared.Observing": "1.0.0-*",
+        "Shared.ProcessManagement": "1.0.0-*"
     },
 
     "frameworks": {

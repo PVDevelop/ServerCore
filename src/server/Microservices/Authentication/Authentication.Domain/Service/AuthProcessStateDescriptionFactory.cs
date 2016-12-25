@@ -1,0 +1,25 @@
+﻿using System;
+using System.Collections.Generic;
+using PVDevelop.UCoach.Domain.Commands;
+using PVDevelop.UCoach.Domain.Events;
+using PVDevelop.UCoach.Shared.ProcessManagement;
+
+namespace PVDevelop.UCoach.Domain.Service
+{
+	public static class AuthProcessStateDescriptionFactory
+	{
+		public static IEnumerable<ProcessStateDescription> GetUserRegistrationProcessStateDescriptions()
+		{
+			yield return ProcessStateDescription.Start<RegisterUserRequested, CreateUser>();
+			yield return ProcessStateDescription.Continue<UserCreated, CreateConfrimation>();
+			yield return ProcessStateDescription.Complete<ConfirmationCreated>();
+		}
+
+		public static IEnumerable<ProcessStateDescription> GetUserConfirmationProcessStateDescriptions()
+		{
+			yield return ProcessStateDescription.Start<ConfirmUserRequested, ApproveConfirmation>();
+			yield return ProcessStateDescription.Continue<ConfirmationApproved, ConfirmUser>();
+			yield return ProcessStateDescription.Complete<UserConfirmed>();
+		}
+	}
+}

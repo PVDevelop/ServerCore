@@ -28,5 +28,10 @@ namespace PVDevelop.UCoach.Shared.ProcessManagement
 		{
 			return Value.GetHashCode();
 		}
+
+		public override string ToString()
+		{
+			return Value.ToString();
+		}
 	}
 }

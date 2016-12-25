@@ -1,16 +1,22 @@
 ﻿using System;
 using PVDevelop.UCoach.Domain.Model;
+using PVDevelop.UCoach.Domain.ProcessStates;
+using PVDevelop.UCoach.Shared.ProcessManagement;
 
 namespace PVDevelop.UCoach.Domain.Events
 {
-	public class ConfirmationCreated : IDomainEvent
+	public class ConfirmationCreated :
+		AProcessEvent,
+		IDomainEvent
 	{
 		public ConfirmationKey ConfirmationKey { get; }
 		public UserId UserId { get; }
 
 		public ConfirmationCreated(
-			ConfirmationKey confirmationKey, 
-			UserId userId)
+			ProcessId processId,
+			ConfirmationKey confirmationKey,
+			UserId userId) :
+			base(processId, UserRegistrationProcessState.ConfirmationCreated)
 		{
 			if (confirmationKey == null) throw new ArgumentNullException(nameof(confirmationKey));
 			if (userId == null) throw new ArgumentNullException(nameof(userId));

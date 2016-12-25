@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
@@ -28,6 +29,7 @@ namespace PVDevelop.UCoach.Shared.ProcessManagement.Tests
 				new TestProcessCommandFactory());
 
 			var processId = processManager.StartProcess(GetProcessStateDescriptions().ToList());
+			processManager.HandleEvent(new RegisterUserRequested(processId));
 
 			Thread.Sleep(TimeSpan.FromSeconds(2));
 
@@ -38,7 +40,7 @@ namespace PVDevelop.UCoach.Shared.ProcessManagement.Tests
 
 		private static IEnumerable<ProcessStateDescription> GetProcessStateDescriptions()
 		{
-			yield return ProcessStateDescription.Start<CreateUser>();
+			yield return ProcessStateDescription.Start<RegisterUserRequested, CreateUser>();
 			yield return ProcessStateDescription.Continue<UserCreated, CreateConfirmation>();
 			yield return ProcessStateDescription.Complete<ConfirmationCreated>();
 		}
@@ -55,6 +57,11 @@ namespace PVDevelop.UCoach.Shared.ProcessManagement.Tests
 			public void Execute(IProcessCommand command)
 			{
 				Task.Run(new Action(() => Execute((dynamic) command)));
+			}
+
+			private void Exexute(RegisterUserRequested command)
+			{
+				_processManager().HandleEvent(new RegisterUserRequested(command.ProcessId));
 			}
 
 			private void Execute(CreateUser command)
@@ -75,14 +82,14 @@ namespace PVDevelop.UCoach.Shared.ProcessManagement.Tests
 
 		private class TestProcessCommandFactory : IProcessCommandFactory
 		{
-			public IProcessCommand CreateStartCommand(ProcessId processId, ProcessStateDescription description)
-			{
-				return new CreateUser(processId);
-			}
-
-			public IProcessCommand CreateContinuedCommand(IProcessEvent @event)
+			public IProcessCommand CreateCommand(IProcessEvent @event)
 			{
 				return Create((dynamic) @event);
+			}
+
+			private IProcessCommand Create(RegisterUserRequested @event)
+			{
+				return new CreateUser(@event.ProcessId);
 			}
 
 			private IProcessCommand Create(UserCreated @event)
@@ -110,16 +117,24 @@ namespace PVDevelop.UCoach.Shared.ProcessManagement.Tests
 			}
 		}
 
+		private class RegisterUserRequested : AProcessEvent
+		{
+			public RegisterUserRequested(ProcessId processId)
+				: base(processId, new object())
+			{
+			}
+		}
+
 		private class UserCreated : AProcessEvent
 		{
-			public UserCreated(ProcessId processId) : base(processId)
+			public UserCreated(ProcessId processId) : base(processId, new object())
 			{
 			}
 		}
 
 		private class ConfirmationCreated : AProcessEvent
 		{
-			public ConfirmationCreated(ProcessId processId) : base(processId)
+			public ConfirmationCreated(ProcessId processId) : base(processId, new object())
 			{
 			}
 		}

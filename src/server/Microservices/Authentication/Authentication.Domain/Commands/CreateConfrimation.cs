@@ -1,20 +1,17 @@
-using System;
+﻿using System;
 using PVDevelop.UCoach.Domain.Model;
-using PVDevelop.UCoach.Domain.ProcessStates;
 using PVDevelop.UCoach.Shared.ProcessManagement;
 
-namespace PVDevelop.UCoach.Domain.Events
+namespace PVDevelop.UCoach.Domain.Commands
 {
-	public class UserConfirmed : 
-		AProcessEvent,
-		IDomainEvent
+	public class CreateConfrimation : AProcessCommand
 	{
 		public UserId UserId { get; }
 
-		public UserConfirmed(
+		public CreateConfrimation(
 			ProcessId processId,
 			UserId userId) 
-			: base(processId, UserConfirmationProcessState.UserConfirmed)
+			: base(processId)
 		{
 			if (userId == null) throw new ArgumentNullException(nameof(userId));
 

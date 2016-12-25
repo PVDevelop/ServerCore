@@ -9,14 +9,14 @@ namespace PVDevelop.UCoach.Shared.Observing
 		private readonly List<object> _observers = 
 			new List<object>();
 
-		public void AddObserver(object observer)
+		public void AddObserver<TObserver>(IEventObserver<TObserver> observer)
 		{
 			if (observer == null) throw new ArgumentNullException(nameof(observer));
 
 			_observers.Add(observer);
 		}
 
-		public void HandleEvent(string eventCategory, object @event)
+		public void HandleEvent(object @event)
 		{
 			if (@event == null) throw new ArgumentNullException(nameof(@event));
 

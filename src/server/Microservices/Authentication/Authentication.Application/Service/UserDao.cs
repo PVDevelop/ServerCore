@@ -1,63 +1,28 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Linq;
-using PVDevelop.UCoach.Domain.Events;
-using PVDevelop.UCoach.Domain.Model;
-using PVDevelop.UCoach.Shared.Observing;
+using PVDevelop.UCoach.Domain.ProcessStates;
+using PVDevelop.UCoach.Shared.ProcessManagement;
 
 namespace PVDevelop.UCoach.Application.Service
 {
-	public class UserDao :
-		IEventObserver<ConfirmationTransmittedToPending>,
-		IEventObserver<ConfirmationApproved>,
-		IEventObserver<UserSessionCreated>
+	public class UserDao
 	{
-		private readonly ConcurrentBag<UserId> _registeredUsers = new ConcurrentBag<UserId>();
-		private readonly ConcurrentBag<UserId> _confiremdUsers = new ConcurrentBag<UserId>();
+		private readonly IProcessManager _processManager;
 
-		private readonly ConcurrentDictionary<ConfirmationKey, UserId> _userConfirmations =
-			new ConcurrentDictionary<ConfirmationKey, UserId>();
-
-		public UserRegistrationStatus GetUserCreationStatus(UserId userId)
+		public UserDao(IProcessManager processManager)
 		{
-			return
-				_registeredUsers.Contains(userId)
-					? UserRegistrationStatus.Registered
-					: UserRegistrationStatus.Pending;
+			if (processManager == null) throw new ArgumentNullException(nameof(processManager));
+
+			_processManager = processManager;
 		}
 
-		public UserConfirmationStatus GetUserConfirmationStatus(ConfirmationKey confirmationKey)
+		public UserRegistrationProcessState GetUserCreationState(ProcessId processId)
 		{
-			UserId userId;
-			if (!_userConfirmations.TryGetValue(confirmationKey, out userId))
-			{
-				return UserConfirmationStatus.Pending;
-			}
-
-			return
-				_confiremdUsers.Contains(userId)
-					? UserConfirmationStatus.Confirmed
-					: UserConfirmationStatus.Pending;
+			return (UserRegistrationProcessState) _processManager.GetProcessState(processId);
 		}
 
-		public UserSignInResult GetUserSignInResult(Guid transactionId)
+		public UserConfirmationProcessState GetUserConfirmationState(ProcessId processId)
 		{
-			return new UserSignInResult(UserSignInStatus.Pending);
-		}
-
-		public void HandleEvent(ConfirmationTransmittedToPending @event)
-		{
-			_registeredUsers.Add(@event.UserId);
-		}
-
-		public void HandleEvent(ConfirmationApproved @event)
-		{
-			_userConfirmations[@event.ConfirmationKey] = @event.UserId;
-		}
-
-		public void HandleEvent(UserSessionCreated @event)
-		{
-			_confiremdUsers.Add(@event.UserId);
+			return (UserConfirmationProcessState) _processManager.GetProcessState(processId);
 		}
 	}
 }

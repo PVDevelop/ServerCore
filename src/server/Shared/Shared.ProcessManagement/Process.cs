@@ -10,6 +10,8 @@ namespace PVDevelop.UCoach.Shared.ProcessManagement
 	{
 		public ProcessStatus Status { get; private set; }
 
+		public object State { get; private set; }
+
 		private List<ProcessStateDescription> _descriptions;
 
 		private List<IProcessEvent> _handledEvents;
@@ -45,10 +47,13 @@ namespace PVDevelop.UCoach.Shared.ProcessManagement
 
 			Mutate(new ProcessEventsTaken(pendingEvents)); // создаем копию
 
-			if (GetProcessStateDescriptionByEvent(pendingEvents.LastOrDefault()).IsCompletion)
+			var lastEvent = pendingEvents.Last();
+			if (GetProcessStateDescriptionByEvent(lastEvent).IsCompletion)
 			{
 				Mutate(new StatusChanged(ProcessStatus.Success));
 			}
+
+			Mutate(new StateChanged(lastEvent.State));
 
 			return pendingEvents;
 		}
@@ -94,6 +99,11 @@ namespace PVDevelop.UCoach.Shared.ProcessManagement
 		private void When(StatusChanged @event)
 		{
 			Status = @event.Status;
+		}
+
+		private void When(StateChanged @event)
+		{
+			State = @event.State;
 		}
 
 		private void When(object @event)

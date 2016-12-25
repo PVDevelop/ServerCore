@@ -2,8 +2,8 @@
 {
 	public interface IEventObservable
 	{
-		void AddObserver(object observer);
+		void AddObserver<TObserver>(IEventObserver<TObserver> observer);
 
-		void HandleEvent(string eventCategory, object @event);
+		void HandleEvent(object @event);
 	}
 }
