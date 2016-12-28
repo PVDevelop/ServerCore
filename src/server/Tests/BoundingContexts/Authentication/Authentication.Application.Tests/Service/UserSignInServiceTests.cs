@@ -4,6 +4,8 @@ using Polly;
 using PVDevelop.UCoach.Application.Service;
 using PVDevelop.UCoach.Authentication.Infrastructure.Adapter;
 using PVDevelop.UCoach.Domain.Model;
+using PVDevelop.UCoach.Domain.Model.User;
+using PVDevelop.UCoach.Domain.Model.UserSession;
 using PVDevelop.UCoach.Shared.ProcessManagement;
 using PVDevelop.UCoach.Timing;
 
@@ -23,7 +25,7 @@ namespace PVDevelop.UCoach.Application.Tests.Service
 
 				var userRepository = authContext.UserRepository;
 
-				var user = new User(
+				var user = new UserAggregate(
 					new ProcessId(Guid.NewGuid()),
 					new UserId(Guid.NewGuid()),
 					"mail@mail.ru",
@@ -35,7 +37,7 @@ namespace PVDevelop.UCoach.Application.Tests.Service
 
 				var sessionReposiory = authContext.UserSessionRepository;
 
-				var session = new UserSession(
+				var session = new UserSessionAggregate(
 					new ProcessId(Guid.NewGuid()),
 					new UserSessionId(Guid.NewGuid()),
 					user.Id);

@@ -1,4 +1,4 @@
-﻿namespace PVDevelop.UCoach.Domain.Model
+﻿namespace PVDevelop.UCoach.Domain.Model.User
 {
 	public enum UserState
 	{

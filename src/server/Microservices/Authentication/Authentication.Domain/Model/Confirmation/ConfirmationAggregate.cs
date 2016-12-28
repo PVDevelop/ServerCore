@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using PVDevelop.UCoach.Domain.Events;
+using PVDevelop.UCoach.Domain.Model.User;
 using PVDevelop.UCoach.Shared.ProcessManagement;
 
-namespace PVDevelop.UCoach.Domain.Model
+namespace PVDevelop.UCoach.Domain.Model.Confirmation
 {
 	/// <summary>
 	/// Доменная модель - подтверждение
 	/// </summary>
-	public sealed class Confirmation : AEventSourcedAggregate<ConfirmationKey>
+	public sealed class ConfirmationAggregate : AEventSourcedAggregate<ConfirmationKey>
 	{
 		/// <summary>
 		/// Идентификатор пользователя.
@@ -20,7 +21,7 @@ namespace PVDevelop.UCoach.Domain.Model
 		/// </summary>
 		public ConfirmationState State { get; private set; }
 
-		public Confirmation(ProcessId processId, ConfirmationKey confirmationKey, UserId userId) 
+		public ConfirmationAggregate(ProcessId processId, ConfirmationKey confirmationKey, UserId userId) 
 			: base(confirmationKey)
 		{
 			var confirmationCreated = new ConfirmationCreated(processId, confirmationKey, userId);
@@ -28,7 +29,7 @@ namespace PVDevelop.UCoach.Domain.Model
 			Mutate(confirmationCreated);
 		}
 
-		public Confirmation(ConfirmationKey confirmationKey, int initialVersion, IEnumerable<IDomainEvent> domainEvents)
+		public ConfirmationAggregate(ConfirmationKey confirmationKey, int initialVersion, IEnumerable<IDomainEvent> domainEvents)
 			: base(confirmationKey, initialVersion, domainEvents)
 		{
 		}

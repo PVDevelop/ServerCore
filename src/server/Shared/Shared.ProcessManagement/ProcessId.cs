@@ -3,12 +3,8 @@ using PVDevelop.UCoach.Shared.EventSourcing;
 
 namespace PVDevelop.UCoach.Shared.ProcessManagement
 {
-	public class ProcessId : GuidBasedIdentifier
+	public class ProcessId : AGuidBasedIdentifier
 	{
-		public ProcessId()
-		{
-		}
-
 		public ProcessId(Guid value) : base(value)
 		{
 		}

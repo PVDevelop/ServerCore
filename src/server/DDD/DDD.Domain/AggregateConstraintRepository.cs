@@ -5,8 +5,6 @@ namespace PVDevelop.UCoach.Domain
 {
 	public class AggregateConstraintRepository : IAggregateConstraintRepository
 	{
-		public const string StreamIdPrefix = "Aggregate.Constraint";
-
 		private readonly IEventSourcingRepository _eventSourcingRepository;
 
 		public AggregateConstraintRepository(IEventSourcingRepository eventSourcingRepository)
@@ -18,26 +16,24 @@ namespace PVDevelop.UCoach.Domain
 
 		public AggregateConstraint<TAggregateId> GetConstraint<TAggregateId>(
 			string aggregateName,
-			AggregateConstraintId key)
+			AggregateConstraintId id)
 		{
-			return 
-				_eventSourcingRepository
-				.RestoreEventSourcing<AggregateConstraintId, IConstraintEvent, AggregateConstraint<TAggregateId>>(
-					GetStreamIdPrefix(aggregateName),
-					key,
-					(k, ver, events) => new AggregateConstraint<TAggregateId>(k, ver, events));
+			return _eventSourcingRepository.RestoreEventSourcing<
+				AggregateConstraintHelper<TAggregateId>,
+				AggregateConstraintId,
+				IConstraintEvent,
+				AggregateConstraint<TAggregateId>>(id);
 		}
 
 		public void SaveConstraint<TAggregateId>(
 			string aggregateName,
 			AggregateConstraint<TAggregateId> constraint)
 		{
-			_eventSourcingRepository.SaveEventSourcing(GetStreamIdPrefix(aggregateName), constraint);
-		}
-
-		private static string GetStreamIdPrefix(string aggregateName)
-		{
-			return $"{StreamIdPrefix}.{aggregateName}";
+			_eventSourcingRepository.SaveEventSourcing<
+				AggregateConstraintHelper<TAggregateId>,
+				AggregateConstraintId,
+				IConstraintEvent,
+				AggregateConstraint<TAggregateId>>(constraint);
 		}
 	}
 }

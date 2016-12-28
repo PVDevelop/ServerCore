@@ -5,8 +5,6 @@ namespace PVDevelop.UCoach.Shared.ProcessManagement
 {
 	public class ProcessRepository : IProcessRepository
 	{
-		public const string StreamIdPrefix = "Process";
-
 		private readonly IEventSourcingRepository _eventSourcingRepository;
 
 		public ProcessRepository(IEventSourcingRepository eventSourcingRepository)
@@ -18,15 +16,13 @@ namespace PVDevelop.UCoach.Shared.ProcessManagement
 
 		public Process GetProcess(ProcessId processId)
 		{
-			return _eventSourcingRepository.RestoreEventSourcing<ProcessId, IProcessSourcingEvent, Process>(
-				StreamIdPrefix,
-				processId,
-				(id, version, events) => new Process(id, version, events));
+			return
+				_eventSourcingRepository.RestoreEventSourcing<ProcessHelper, ProcessId, IProcessSourcingEvent, Process>(processId);
 		}
 
 		public void SaveProcess(Process process)
 		{
-			_eventSourcingRepository.SaveEventSourcing(StreamIdPrefix, process);
+			_eventSourcingRepository.SaveEventSourcing<ProcessHelper, ProcessId, IProcessSourcingEvent, Process>(process);
 		}
 	}
 }

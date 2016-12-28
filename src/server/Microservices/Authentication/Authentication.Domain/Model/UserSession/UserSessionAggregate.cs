@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using PVDevelop.UCoach.Domain.Events;
-using PVDevelop.UCoach.Domain.ProcessStates;
+using PVDevelop.UCoach.Domain.Model.User;
 using PVDevelop.UCoach.Shared.ProcessManagement;
 
-namespace PVDevelop.UCoach.Domain.Model
+namespace PVDevelop.UCoach.Domain.Model.UserSession
 {
-	public class UserSession : AEventSourcedAggregate<UserSessionId>
+	public class UserSessionAggregate : AEventSourcedAggregate<UserSessionId>
 	{
 		internal static readonly TimeSpan TokenExpirationPeriod = TimeSpan.FromDays(1);
 
-		public SessionState State { get; private set; }
+		public UserSessionState State { get; private set; }
 
 		public UserId UserId { get; private set; }
 
 		public List<UserAccessToken> GeneratedTokens { get; private set; }
 
-		public UserSession(
+		public UserSessionAggregate(
 			ProcessId processId,
 			UserSessionId sessionId,
 			UserId userId) : base(sessionId)
@@ -24,7 +24,7 @@ namespace PVDevelop.UCoach.Domain.Model
 			Mutate(new SessionStarted(processId, sessionId, userId));
 		}
 
-		public UserSession(UserSessionId sessionId, int initialVersion, IEnumerable<IDomainEvent> events) :
+		public UserSessionAggregate(UserSessionId sessionId, int initialVersion, IEnumerable<IDomainEvent> events) :
 			base(sessionId, initialVersion, events)
 		{
 		}
@@ -48,7 +48,7 @@ namespace PVDevelop.UCoach.Domain.Model
 		private void ApplyEvent(SessionStarted @event)
 		{
 			UserId = @event.UserId;
-			State = SessionState.Inactive;
+			State = UserSessionState.Inactive;
 			GeneratedTokens = new List<UserAccessToken>();
 		}
 

@@ -1,13 +1,13 @@
-﻿using PVDevelop.UCoach.Domain.Model;
+﻿using PVDevelop.UCoach.Domain.Model.User;
 
 namespace PVDevelop.UCoach.Domain.Port
 {
 	public interface IUserRepository
 	{
-		void SaveUser(User user);
+		void SaveUser(UserAggregate user);
 
-		User GetUserById(UserId userId);
+		UserAggregate GetUserById(UserId userId);
 
-		User GetUserByEmail(string email);
+		UserAggregate GetUserByEmail(string email);
 	}
 }

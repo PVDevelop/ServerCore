@@ -1,4 +1,4 @@
-﻿namespace PVDevelop.UCoach.Domain.Model
+﻿namespace PVDevelop.UCoach.Domain.Model.Confirmation
 {
 	/// <summary>
 	/// Состояние подтверждения.

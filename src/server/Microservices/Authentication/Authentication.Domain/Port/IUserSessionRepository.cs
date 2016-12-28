@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using PVDevelop.UCoach.Domain.Model;
+using PVDevelop.UCoach.Domain.Model.User;
+using PVDevelop.UCoach.Domain.Model.UserSession;
 
 namespace PVDevelop.UCoach.Domain.Port
 {
 	public interface IUserSessionRepository
 	{
-		void SaveSession(UserSession session);
+		void SaveSession(UserSessionAggregate session);
 
-		IReadOnlyCollection<UserSession> GetSessions(UserId userId);
+		IReadOnlyCollection<UserSessionAggregate> GetSessions(UserId userId);
 	}
 }

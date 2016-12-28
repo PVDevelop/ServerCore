@@ -1,5 +1,6 @@
 ﻿using System;
 using PVDevelop.UCoach.Domain.Model;
+using PVDevelop.UCoach.Domain.Model.User;
 using PVDevelop.UCoach.Shared.ProcessManagement;
 
 namespace PVDevelop.UCoach.Domain.Commands

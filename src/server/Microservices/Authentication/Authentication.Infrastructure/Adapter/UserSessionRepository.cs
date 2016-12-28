@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using PVDevelop.UCoach.Domain;
-using PVDevelop.UCoach.Domain.Model;
+using PVDevelop.UCoach.Domain.Model.User;
+using PVDevelop.UCoach.Domain.Model.UserSession;
 using PVDevelop.UCoach.Domain.Port;
 using PVDevelop.UCoach.Shared.EventSourcing;
 
@@ -9,8 +11,6 @@ namespace PVDevelop.UCoach.Authentication.Infrastructure.Adapter
 {
 	public class UserSessionRepository : IUserSessionRepository
 	{
-		public const string StreamIdPrefix = "Aggregate.UserSession";
-
 		private readonly IEventSourcingRepository _eventSourcedAggregateRepository;
 
 		public UserSessionRepository(IEventSourcingRepository eventSourcedAggregateRepository)
@@ -21,20 +21,28 @@ namespace PVDevelop.UCoach.Authentication.Infrastructure.Adapter
 			_eventSourcedAggregateRepository = eventSourcedAggregateRepository;
 		}
 
-		public void SaveSession(UserSession session)
+		public void SaveSession(UserSessionAggregate session)
 		{
 			if (session == null) throw new ArgumentNullException(nameof(session));
 
-			_eventSourcedAggregateRepository.SaveEventSourcing(StreamIdPrefix, session);
+			_eventSourcedAggregateRepository.SaveEventSourcing<
+				UserSessionHelper,
+				UserSessionId,
+				IDomainEvent,
+				UserSessionAggregate>(session);
 		}
 
-		public IReadOnlyCollection<UserSession> GetSessions(UserId userId)
+		public IReadOnlyCollection<UserSessionAggregate> GetSessions(UserId userId)
 		{
 			if (userId == null) throw new ArgumentNullException(nameof(userId));
 
-			return _eventSourcedAggregateRepository.RestoreAllEventSourcing<UserSessionId, IDomainEvent, UserSession>(
-				StreamIdPrefix,
-				(id, version, events) => new UserSession(id, version, events));
+			var allSessions = _eventSourcedAggregateRepository.RestoreAllEventSourcings<
+				UserSessionHelper,
+				UserSessionId,
+				IDomainEvent,
+				UserSessionAggregate>();
+
+			return allSessions.Where(s=>s.UserId == userId).ToArray();
 		}
 	}
 }

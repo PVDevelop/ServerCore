@@ -1,11 +1,12 @@
 ﻿using PVDevelop.UCoach.Domain.Model;
+using PVDevelop.UCoach.Domain.Model.Confirmation;
 
 namespace PVDevelop.UCoach.Domain.Port
 {
 	public interface IConfirmationRepository
 	{
-		void SaveConfirmation(Confirmation confirmation);
+		void SaveConfirmation(ConfirmationAggregate confirmation);
 
-		Confirmation GetConfirmation(ConfirmationKey confirmationKey);
+		ConfirmationAggregate GetConfirmation(ConfirmationKey confirmationKey);
 	}
 }

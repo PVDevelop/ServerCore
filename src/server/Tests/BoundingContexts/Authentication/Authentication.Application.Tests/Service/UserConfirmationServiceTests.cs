@@ -5,6 +5,8 @@ using Polly;
 using PVDevelop.UCoach.Application.Service;
 using PVDevelop.UCoach.Authentication.Infrastructure.Adapter;
 using PVDevelop.UCoach.Domain.Model;
+using PVDevelop.UCoach.Domain.Model.Confirmation;
+using PVDevelop.UCoach.Domain.Model.User;
 using PVDevelop.UCoach.Domain.ProcessStates;
 using PVDevelop.UCoach.Shared.ProcessManagement;
 using PVDevelop.UCoach.Timing;
@@ -25,7 +27,7 @@ namespace PVDevelop.UCoach.Application.Tests.Service
 
 				var createUserProcessId = new ProcessId(Guid.NewGuid());
 
-				var user = new User(
+				var user = new UserAggregate(
 					createUserProcessId,
 					new UserId(Guid.NewGuid()),
 					"some@mail.ru",
@@ -35,7 +37,7 @@ namespace PVDevelop.UCoach.Application.Tests.Service
 
 				var confirmationKey = new ConfirmationKey("SomeConfirmationKey");
 
-				var confirmation = new Confirmation(
+				var confirmation = new ConfirmationAggregate(
 					createUserProcessId,
 					confirmationKey,
 					user.Id);

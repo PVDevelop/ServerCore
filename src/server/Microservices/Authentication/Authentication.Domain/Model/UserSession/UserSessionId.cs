@@ -1,14 +1,10 @@
 ﻿using System;
 using PVDevelop.UCoach.Shared.EventSourcing;
 
-namespace PVDevelop.UCoach.Domain.Model
+namespace PVDevelop.UCoach.Domain.Model.UserSession
 {
-	public class UserSessionId : GuidBasedIdentifier
+	public class UserSessionId : AGuidBasedIdentifier
 	{
-		public UserSessionId()
-		{
-		}
-
 		public UserSessionId(Guid value) :
 			base(value)
 		{

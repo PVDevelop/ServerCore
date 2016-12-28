@@ -17,28 +17,33 @@ namespace PVDevelop.UCoach.Shared.EventSourcing
 			_eventStore = eventStore;
 		}
 
-		public void SaveEventSourcing<TId, TEvent>(
-			string streamIdPrefix,
-			AEventSourcing<TId, TEvent> eventSourcing)
-			where TEvent : class
-			where TId : IEventSourcingIdentifier, new()
+		public void SaveEventSourcing<THelper, TId, TEvent, TEventSourcing>(TEventSourcing eventSourcing)
+			where THelper : IEventSourcingHelper<TId, TEvent, TEventSourcing>, new()
+			where TEventSourcing : AEventSourcing<TId, TEvent>
 		{
-			var streamId = GetStreamId(streamIdPrefix, eventSourcing.Id);
+			if (eventSourcing == null) throw new ArgumentNullException(nameof(eventSourcing));
+
+			var helper = new THelper();
+
+			var streamId = GetStreamId(
+				streamName: helper.GetStreamName(),
+				eventSourcingId: helper.GetStringId(eventSourcing.Id));
+
 			var stream = _eventStore.GetOrCreateStream(streamId);
-			stream.SaveEvents(eventSourcing.Events);
+
+			stream.SaveEvents(eventSourcing.Events.Cast<object>().ToArray());
 		}
 
-		public TEventSourcing RestoreEventSourcing<TId, TEvent, TEventSourcing>(
-			string streamIdPrefix,
-			TId id,
-			Func<TId, int, IEnumerable<TEvent>, TEventSourcing> restoreAggregateCallback)
+		public TEventSourcing RestoreEventSourcing<THelper, TId, TEvent, TEventSourcing>(TId eventSourcingId)
+			where THelper : IEventSourcingHelper<TId, TEvent, TEventSourcing>, new()
 			where TEventSourcing : AEventSourcing<TId, TEvent>
-			where TEvent : class
-			where TId : IEventSourcingIdentifier, new()
 		{
-			if (restoreAggregateCallback == null) throw new ArgumentNullException(nameof(restoreAggregateCallback));
+			var helper = new THelper();
 
-			var streamId = GetStreamId(streamIdPrefix, id);
+			var streamId = GetStreamId(
+				streamName: helper.GetStreamName(),
+				eventSourcingId: helper.GetStringId(eventSourcingId));
+
 			var stream = _eventStore.GetStream(streamId);
 
 			if (stream == null)
@@ -50,20 +55,21 @@ namespace PVDevelop.UCoach.Shared.EventSourcing
 
 			var initialVersion = eventsData.LatestVersion;
 
-			return restoreAggregateCallback(
-				id,
+			return helper.CreateEventSourcing(
+				eventSourcingId,
 				initialVersion,
 				eventsData.Events.Cast<TEvent>());
 		}
 
-		public IReadOnlyCollection<TEventSourcing> RestoreAllEventSourcing<TId, TEvent, TEventSourcing>(
-			string streamIdPrefix,
-			Func<TId, int, IEnumerable<TEvent>, TEventSourcing> restoreAggregateCallback)
-			where TEvent : class
+		public IReadOnlyCollection<TEventSourcing> RestoreAllEventSourcings<THelper, TId, TEvent, TEventSourcing>()
+			where THelper : IEventSourcingHelper<TId, TEvent, TEventSourcing>, new()
 			where TEventSourcing : AEventSourcing<TId, TEvent>
-			where TId : IEventSourcingIdentifier, new()
 		{
-			var regex = new Regex(streamIdPrefix);
+			var helper = new THelper();
+
+			var streamName = helper.GetStreamName();
+			var regex = new Regex(streamName);
+
 			return
 				_eventStore.
 					GetStreams(regex).
@@ -73,30 +79,29 @@ namespace PVDevelop.UCoach.Shared.EventSourcing
 
 						var initialVersion = eventsData.LatestVersion;
 
-						var id = GetEventSourcingId<TId>(stream.StreamId, streamIdPrefix);
-						return restoreAggregateCallback(
-							id,
-							initialVersion,
+						var id = GetEventSourcingId(
+							streamId: stream.StreamId, 
+							streamName: streamName);
+
+						var eventSourcingId = helper.ParseId(id);
+
+						return helper.CreateEventSourcing(
+							eventSourcingId, 
+							initialVersion, 
 							eventsData.Events.Cast<TEvent>());
 					}).
 					ToArray();
 		}
 
-		private static string GetStreamId<TId>(string streamName, TId eventSourcingId)
-			where TId : IEventSourcingIdentifier
-		{
-			return $"{streamName}.{eventSourcingId.GetIdString()}";
-		}
-
-		private static TId GetEventSourcingId<TId>(string streamId, string streamName)
-			where TId : IEventSourcingIdentifier, new()
+		private static string GetEventSourcingId(string streamId, string streamName)
 		{
 			var idString = streamId.Substring(streamName.Length + 1);
+			return idString;
+		}
 
-			var eventSourcingId = new TId();
-			eventSourcingId.ParseId(idString);
-
-			return eventSourcingId;
+		private static string GetStreamId(string streamName, string eventSourcingId)
+		{
+			return $"{streamName}.{eventSourcingId}";
 		}
 	}
 }

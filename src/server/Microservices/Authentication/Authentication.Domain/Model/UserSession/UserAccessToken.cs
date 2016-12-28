@@ -1,6 +1,7 @@
 ﻿using System;
+using PVDevelop.UCoach.Domain.Model.User;
 
-namespace PVDevelop.UCoach.Domain.Model
+namespace PVDevelop.UCoach.Domain.Model.UserSession
 {
 	/// <summary>
 	/// Токен доступа пользователя.

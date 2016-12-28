@@ -1,6 +1,6 @@
 ﻿using System;
 using PVDevelop.UCoach.Domain;
-using PVDevelop.UCoach.Domain.Model;
+using PVDevelop.UCoach.Domain.Model.User;
 using PVDevelop.UCoach.Domain.Port;
 using PVDevelop.UCoach.Shared.EventSourcing;
 
@@ -8,7 +8,6 @@ namespace PVDevelop.UCoach.Authentication.Infrastructure.Adapter
 {
 	public class UserRepository : IUserRepository
 	{
-		public const string StreamIdPrefix = "Aggregate.User";
 		public const string AggregateName = "User";
 		public const string EmailKeyName = "Email";
 
@@ -26,7 +25,7 @@ namespace PVDevelop.UCoach.Authentication.Infrastructure.Adapter
 			_constraintRepository = constraintRepository;
 		}
 
-		public void SaveUser(User user)
+		public void SaveUser(UserAggregate user)
 		{
 			if (user == null) throw new ArgumentNullException(nameof(user));
 
@@ -34,20 +33,25 @@ namespace PVDevelop.UCoach.Authentication.Infrastructure.Adapter
 			var constraint = new AggregateConstraint<UserId>(constraintId, user.Id);
 			
 			_constraintRepository.SaveConstraint(AggregateName, constraint);
-			_eventSourcedAggregateRepository.SaveEventSourcing(StreamIdPrefix, user);
+			_eventSourcedAggregateRepository.SaveEventSourcing<
+				UserHelper,
+				UserId,
+				IDomainEvent,
+				UserAggregate>(user);
 		}
 
-		public User GetUserById(UserId id)
+		public UserAggregate GetUserById(UserId id)
 		{
 			if (id == null) throw new ArgumentNullException(nameof(id));
 
-			return _eventSourcedAggregateRepository.RestoreEventSourcing<UserId, IDomainEvent, User>(
-				StreamIdPrefix,
-				id,
-				(userId, version, events) => new User(userId, version, events));
+			return _eventSourcedAggregateRepository.RestoreEventSourcing<
+				UserHelper,
+				UserId,
+				IDomainEvent,
+				UserAggregate>(id);
 		}
 
-		public User GetUserByEmail(string email)
+		public UserAggregate GetUserByEmail(string email)
 		{
 			if(string.IsNullOrWhiteSpace(email)) throw new ArgumentException("Not set.", nameof(email));
 

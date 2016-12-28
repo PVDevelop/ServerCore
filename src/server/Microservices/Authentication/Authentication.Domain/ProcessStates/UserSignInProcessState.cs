@@ -1,5 +1,6 @@
 ﻿using System;
 using PVDevelop.UCoach.Domain.Model;
+using PVDevelop.UCoach.Domain.Model.UserSession;
 
 namespace PVDevelop.UCoach.Domain.ProcessStates
 {

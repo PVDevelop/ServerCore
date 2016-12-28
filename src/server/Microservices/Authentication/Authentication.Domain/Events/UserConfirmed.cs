@@ -1,5 +1,5 @@
 using System;
-using PVDevelop.UCoach.Domain.Model;
+using PVDevelop.UCoach.Domain.Model.User;
 using PVDevelop.UCoach.Domain.ProcessStates;
 using PVDevelop.UCoach.Shared.ProcessManagement;
 

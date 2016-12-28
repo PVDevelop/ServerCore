@@ -5,15 +5,15 @@ using PVDevelop.UCoach.Domain.Events;
 using PVDevelop.UCoach.Domain.Exceptions;
 using PVDevelop.UCoach.Shared.ProcessManagement;
 
-namespace PVDevelop.UCoach.Domain.Model
+namespace PVDevelop.UCoach.Domain.Model.User
 {
-	public sealed class User : AEventSourcedAggregate<UserId>
+	public sealed class UserAggregate : AEventSourcedAggregate<UserId>
 	{
 		public string Email { get; private set; }
 		public string Password { get; private set; }
 		public UserState State { get; private set; }
 
-		public User(ProcessId processId, UserId userId, string email, string password) : base(userId)
+		public UserAggregate(ProcessId processId, UserId userId, string email, string password) : base(userId)
 		{
 			ValidateEmail(email);
 			ValidatePassword(password);
@@ -23,7 +23,7 @@ namespace PVDevelop.UCoach.Domain.Model
 			Mutate(userCreated);
 		}
 
-		public User(UserId userId, int initialVersion, IEnumerable<IDomainEvent> domainEvents)
+		public UserAggregate(UserId userId, int initialVersion, IEnumerable<IDomainEvent> domainEvents)
 			: base(userId, initialVersion, domainEvents)
 		{
 		}

@@ -2,6 +2,9 @@
 using System.Linq;
 using PVDevelop.UCoach.Domain.Commands;
 using PVDevelop.UCoach.Domain.Model;
+using PVDevelop.UCoach.Domain.Model.Confirmation;
+using PVDevelop.UCoach.Domain.Model.User;
+using PVDevelop.UCoach.Domain.Model.UserSession;
 using PVDevelop.UCoach.Domain.Port;
 using PVDevelop.UCoach.Shared.ProcessManagement;
 using PVDevelop.UCoach.Timing;
@@ -40,14 +43,14 @@ namespace PVDevelop.UCoach.Domain.Service
 		private void DoExecute(CreateUser command)
 		{
 			var userId = new UserId(Guid.NewGuid());
-			var user = new User(command.ProcessId, userId, command.Email, command.Password);
+			var user = new UserAggregate(command.ProcessId, userId, command.Email, command.Password);
 			_userRepository.SaveUser(user);
 		}
 
 		private void DoExecute(CreateConfrimation command)
 		{
 			var confirmationKey = new ConfirmationKey(Guid.NewGuid().ToString());
-			var confirmation = new Confirmation(command.ProcessId, confirmationKey, command.UserId);
+			var confirmation = new ConfirmationAggregate(command.ProcessId, confirmationKey, command.UserId);
 			_confirmationRepository.SaveConfirmation(confirmation);
 		}
 
@@ -68,7 +71,7 @@ namespace PVDevelop.UCoach.Domain.Service
 		private void DoExecute(StartSession command)
 		{
 			var userSessionId = new UserSessionId(Guid.NewGuid());
-			var userSession = new UserSession(command.ProcessId, userSessionId, command.UserId);
+			var userSession = new UserSessionAggregate(command.ProcessId, userSessionId, command.UserId);
 			_userSessionRepository.SaveSession(userSession);
 		}
 

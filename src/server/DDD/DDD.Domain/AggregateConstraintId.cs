@@ -1,16 +1,11 @@
 ﻿using System;
-using PVDevelop.UCoach.Shared.EventSourcing;
 
 namespace PVDevelop.UCoach.Domain
 {
-	public class AggregateConstraintId : IEventSourcingIdentifier
+	public class AggregateConstraintId
 	{
-		public string Key { get; private set; }
-		public string Value { get; private set; }
-
-		public AggregateConstraintId()
-		{
-		}
+		public string Key { get; }
+		public string Value { get; }
 
 		public AggregateConstraintId(string key, string value)
 		{
@@ -40,20 +35,6 @@ namespace PVDevelop.UCoach.Domain
 			{
 				return ((Key != null ? Key.GetHashCode() : 0) * 397) ^ (Value != null ? Value.GetHashCode() : 0);
 			}
-		}
-
-		public string GetIdString()
-		{
-			return $"{Key}#{Value}";
-		}
-
-		public void ParseId(string id)
-		{
-			if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("Not set.", nameof(id));
-
-			var substrings = id.Split('#');
-			Key = substrings[0];
-			Value = substrings[1];
 		}
 	}
 }

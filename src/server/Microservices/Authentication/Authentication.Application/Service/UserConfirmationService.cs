@@ -2,6 +2,7 @@
 using System.Linq;
 using PVDevelop.UCoach.Domain.Events;
 using PVDevelop.UCoach.Domain.Model;
+using PVDevelop.UCoach.Domain.Model.Confirmation;
 using PVDevelop.UCoach.Domain.Port;
 using PVDevelop.UCoach.Domain.Service;
 using PVDevelop.UCoach.Shared.ProcessManagement;

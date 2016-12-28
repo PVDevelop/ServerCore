@@ -1,9 +1,9 @@
-﻿namespace PVDevelop.UCoach.Domain.Model
+﻿namespace PVDevelop.UCoach.Domain.Model.UserSession
 {
 	/// <summary>
 	/// Состояние активности сессии пользователя (синхронизировано с пользовательским состоянием).
 	/// </summary>
-	public enum SessionState
+	public enum UserSessionState
 	{
 		/// <summary>
 		/// Сессия неактивна (пользователь не в сети).
