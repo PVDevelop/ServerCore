@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace PVDevelop.UCoach.EventStore
 {
@@ -32,6 +33,18 @@ namespace PVDevelop.UCoach.EventStore
 				InMemoryEventStream eventStream;
 				_streams.TryGetValue(id, out eventStream);
 				return eventStream;
+			}
+		}
+
+		public IEventStream[] GetStreams(Regex streamIdRegex)
+		{
+			lock (_sync)
+			{
+				return 
+					_streams.
+					Where(kvp => streamIdRegex.IsMatch(kvp.Key)).
+					Select(kvp => kvp.Value).
+					ToArray();
 			}
 		}
 

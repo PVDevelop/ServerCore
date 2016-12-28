@@ -7,7 +7,8 @@
         "Authentication.Application": "1.0.0-*",
         "Authentication.Infrastructure": "1.0.0-*",
         "Shared.Observing": "1.0.0-*",
-        "Polly": "4.3.0"
+        "Polly": "4.3.0",
+        "Shared.Timing": "1.0.0-*"
     },
 
     "testRunner": "nunit",

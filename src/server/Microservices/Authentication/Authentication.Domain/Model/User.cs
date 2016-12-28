@@ -65,23 +65,36 @@ namespace PVDevelop.UCoach.Domain.Model
 			}
 		}
 
-		protected override void When(IDomainEvent @event)
+		public void SignIn(ProcessId processId, string password)
 		{
-			When((dynamic) @event);
+			if (processId == null) throw new ArgumentNullException(nameof(processId));
+			if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Not set.", nameof(password));
+
+			Mutate(new SignInApproved(processId, Id));
 		}
 
-		private void When(UserCreated @event)
+		protected override void When(IDomainEvent @event)
+		{
+			ApplyEvent((dynamic) @event);
+		}
+
+		private void ApplyEvent(UserCreated @event)
 		{
 			Email = @event.Email;
 			Password = @event.Password;
 		}
 
-		private void When(UserConfirmed @event)
+		private void ApplyEvent(UserConfirmed @event)
 		{
 			State = UserState.SignedOut;
 		}
 
-		private void When(object @event)
+		private void ApplyEvent(SignInApproved @event)
+		{
+			State = UserState.SignedIn;
+		}
+
+		private void ApplyEvent(object @event)
 		{
 			throw new InvalidOperationException($"Unknown event {@event}.");
 		}

@@ -15,7 +15,9 @@ namespace PVDevelop.UCoach.Shared.EventSourcing
 		/// <param name="eventSourcing">Сохраняемый объект.</param>
 		void SaveEventSourcing<TId, TEvent>(
 			string streamIdPrefix,
-			AEventSourcing<TId, TEvent> eventSourcing) where TEvent : class;
+			AEventSourcing<TId, TEvent> eventSourcing)
+			where TEvent : class
+			where TId : IEventSourcingIdentifier, new();
 
 		/// <summary>
 		/// Восстанавливает объект по событиям из хранилища.
@@ -32,6 +34,23 @@ namespace PVDevelop.UCoach.Shared.EventSourcing
 			TId id,
 			Func<TId, int, IEnumerable<TEvent>, TEventSourcing> restoreAggregateCallback)
 			where TEvent : class
-			where TEventSourcing : AEventSourcing<TId, TEvent>;
+			where TEventSourcing : AEventSourcing<TId, TEvent>
+			where TId : IEventSourcingIdentifier, new();
+
+		/// <summary>
+		/// Восстанавлиает все оъекты определенного типа.
+		/// </summary>
+		/// <typeparam name="TId">Тип идентификатора объекта.</typeparam>
+		/// <typeparam name="TEvent">Тип событий.</typeparam>
+		/// <typeparam name="TEventSourcing">Тип объекта.</typeparam>
+		/// <param name="streamIdPrefix">Имя стрима, из которого восстанавлиаются обекты.</param>
+		/// <param name="restoreAggregateCallback">Делегат инстанцирования объекта.</param>
+		/// <returns>Коллекция восстановленных оъектов.</returns>
+		IReadOnlyCollection<TEventSourcing> RestoreAllEventSourcing<TId, TEvent, TEventSourcing>(
+			string streamIdPrefix,
+			Func<TId, int, IEnumerable<TEvent>, TEventSourcing> restoreAggregateCallback)
+			where TEvent : class
+			where TEventSourcing : AEventSourcing<TId, TEvent>
+			where TId : IEventSourcingIdentifier, new();
 	}
 }

@@ -7,5 +7,7 @@ namespace PVDevelop.UCoach.Domain.Port
 		void SaveUser(User user);
 
 		User GetUserById(UserId userId);
+
+		User GetUserByEmail(string email);
 	}
 }

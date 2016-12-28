@@ -19,7 +19,15 @@ namespace PVDevelop.UCoach.Domain.Service
 		{
 			yield return ProcessStateDescription.Start<ConfirmUserRequested, ApproveConfirmation>();
 			yield return ProcessStateDescription.Continue<ConfirmationApproved, ConfirmUser>();
-			yield return ProcessStateDescription.Complete<UserConfirmed>();
+			yield return ProcessStateDescription.Continue<UserConfirmed, StartSession>();
+			yield return ProcessStateDescription.Complete<SessionStarted>();
+		}
+
+		public static IEnumerable<ProcessStateDescription> GetUserSignInProcessStateDescriptions()
+		{
+			yield return ProcessStateDescription.Start<UserSignInRequested, SignIn>();
+			yield return ProcessStateDescription.Continue<SignInApproved, GenerateToken>();
+			yield return ProcessStateDescription.Complete<TokenGenerated>();
 		}
 	}
 }

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using PVDevelop.UCoach.Domain.Commands;
 using PVDevelop.UCoach.Domain.Model;
 using PVDevelop.UCoach.Domain.Port;
 using PVDevelop.UCoach.Shared.ProcessManagement;
+using PVDevelop.UCoach.Timing;
 
 namespace PVDevelop.UCoach.Domain.Service
 {
@@ -10,16 +12,24 @@ namespace PVDevelop.UCoach.Domain.Service
 	{
 		private readonly IUserRepository _userRepository;
 		private readonly IConfirmationRepository _confirmationRepository;
+		private readonly IUserSessionRepository _userSessionRepository;
+		private readonly IUtcTimeProvider _utcTimeProvider;
 
 		public AuthProcessCommandExecutor(
 			IUserRepository userRepository,
-			IConfirmationRepository confirmationRepository)
+			IConfirmationRepository confirmationRepository,
+			IUserSessionRepository userSessionRepository,
+			IUtcTimeProvider utcTimeProvider)
 		{
 			if (userRepository == null) throw new ArgumentNullException(nameof(userRepository));
 			if (confirmationRepository == null) throw new ArgumentNullException(nameof(confirmationRepository));
+			if (userSessionRepository == null) throw new ArgumentNullException(nameof(userSessionRepository));
+			if (utcTimeProvider == null) throw new ArgumentNullException(nameof(utcTimeProvider));
 
 			_userRepository = userRepository;
 			_confirmationRepository = confirmationRepository;
+			_userSessionRepository = userSessionRepository;
+			_utcTimeProvider = utcTimeProvider;
 		}
 
 		public void Execute(IProcessCommand command)
@@ -53,6 +63,27 @@ namespace PVDevelop.UCoach.Domain.Service
 			var user = _userRepository.GetUserById(command.UserId);
 			user.Confirm(command.ProcessId);
 			_userRepository.SaveUser(user);
+		}
+
+		private void DoExecute(StartSession command)
+		{
+			var userSessionId = new UserSessionId(Guid.NewGuid());
+			var userSession = new UserSession(command.ProcessId, userSessionId, command.UserId);
+			_userSessionRepository.SaveSession(userSession);
+		}
+
+		private void DoExecute(SignIn command)
+		{
+			var user = _userRepository.GetUserByEmail(command.Email);
+			user.SignIn(command.ProcessId, command.Password);
+			_userRepository.SaveUser(user);
+		}
+
+		private void DoExecute(GenerateToken command)
+		{
+			var session = _userSessionRepository.GetSessions(command.UserId).Single();
+			session.GenerateToken(command.ProcessId, _utcTimeProvider.UtcNow);
+			_userSessionRepository.SaveSession(session);
 		}
 
 		private void DoExecute(object command)

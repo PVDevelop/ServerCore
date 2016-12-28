@@ -1,37 +1,16 @@
 ﻿using System;
+using PVDevelop.UCoach.Shared.EventSourcing;
 
 namespace PVDevelop.UCoach.Shared.ProcessManagement
 {
-	public class ProcessId
+	public class ProcessId : GuidBasedIdentifier
 	{
-		public Guid Value { get; }
-
-		public ProcessId(Guid value)
+		public ProcessId()
 		{
-			Value = value;
 		}
 
-		protected bool Equals(ProcessId other)
+		public ProcessId(Guid value) : base(value)
 		{
-			return Value.Equals(other.Value);
-		}
-
-		public override bool Equals(object obj)
-		{
-			if (ReferenceEquals(null, obj)) return false;
-			if (ReferenceEquals(this, obj)) return true;
-			if (obj.GetType() != this.GetType()) return false;
-			return Equals((ProcessId) obj);
-		}
-
-		public override int GetHashCode()
-		{
-			return Value.GetHashCode();
-		}
-
-		public override string ToString()
-		{
-			return Value.ToString();
 		}
 	}
 }

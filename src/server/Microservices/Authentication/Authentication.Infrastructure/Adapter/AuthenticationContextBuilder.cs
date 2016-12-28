@@ -1,4 +1,5 @@
 ﻿using System;
+using PVDevelop.UCoach.Domain;
 using PVDevelop.UCoach.Domain.Model;
 using PVDevelop.UCoach.Domain.Port;
 using PVDevelop.UCoach.Domain.Service;
@@ -6,6 +7,7 @@ using PVDevelop.UCoach.EventStore;
 using PVDevelop.UCoach.Shared.EventSourcing;
 using PVDevelop.UCoach.Shared.Observing;
 using PVDevelop.UCoach.Shared.ProcessManagement;
+using PVDevelop.UCoach.Timing;
 
 namespace PVDevelop.UCoach.Authentication.Infrastructure.Adapter
 {
@@ -18,14 +20,16 @@ namespace PVDevelop.UCoach.Authentication.Infrastructure.Adapter
 		private readonly IConfirmationRepository _confirmationRepository;
 		private readonly IUserSessionRepository _userSessionRepository;
 
-		public AuthenticationContextBuilder()
+		public AuthenticationContextBuilder(IUtcTimeProvider utcTimeProvider)
 		{
 			_eventStore = new EventStore.EventStore();
 			_eventObservable = new EventObservable();
 
 			var eventSourcingRepository = new EventSourcingRepository(_eventStore);
 
-			_userRepository = new UserRepository(eventSourcingRepository);
+			var constraintRepository = new AggregateConstraintRepository(eventSourcingRepository);
+
+			_userRepository = new UserRepository(eventSourcingRepository, constraintRepository);
 			_confirmationRepository = new ConfirmationRepository(eventSourcingRepository);
 			_userSessionRepository = new UserSessionRepository(eventSourcingRepository);
 
@@ -33,7 +37,9 @@ namespace PVDevelop.UCoach.Authentication.Infrastructure.Adapter
 
 			var processCommandExecutor = new AuthProcessCommandExecutor(
 				_userRepository,
-				_confirmationRepository);
+				_confirmationRepository,
+				_userSessionRepository,
+				utcTimeProvider);
 
 			var processCommandFactory = new AuthProcessCommandFactory();
 			_processManager = new ProcessManager(processRepository, processCommandExecutor, processCommandFactory);

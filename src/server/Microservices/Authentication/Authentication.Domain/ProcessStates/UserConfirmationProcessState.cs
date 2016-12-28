@@ -13,8 +13,13 @@
 		ConfirmationApproved = 1,
 
 		/// <summary>
-		/// Пользователь подтвержден. Конец процесса.
+		/// Пользователь подтвержден.
 		/// </summary>
-		UserConfirmed = 2
+		UserConfirmed = 2,
+
+		/// <summary>
+		/// Сессия пользователя начата. Конец процесса.
+		/// </summary>
+		SessionStarted = 3
 	}
 }

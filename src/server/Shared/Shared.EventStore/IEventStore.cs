@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace PVDevelop.UCoach.EventStore
 {
@@ -20,6 +21,11 @@ namespace PVDevelop.UCoach.EventStore
 		/// <param name="id">Идентификатор искомого потока.</param>
 		/// <returns>Поток событий.</returns>
 		IEventStream GetStream(string id);
+
+		/// <summary>
+		/// Возвращает потоки, идентификатор которых удовлетворяет регулярному выражению.
+		/// </summary>
+		IEventStream[] GetStreams(Regex streamIdRegex);
 
 		/// <summary>
 		/// Возваращает все доступные стримы.

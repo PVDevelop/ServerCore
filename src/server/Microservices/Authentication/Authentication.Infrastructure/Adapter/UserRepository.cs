@@ -9,30 +9,52 @@ namespace PVDevelop.UCoach.Authentication.Infrastructure.Adapter
 	public class UserRepository : IUserRepository
 	{
 		public const string StreamIdPrefix = "Aggregate.User";
+		public const string AggregateName = "User";
+		public const string EmailKeyName = "Email";
 
 		private readonly IEventSourcingRepository _eventSourcedAggregateRepository;
+		private readonly IAggregateConstraintRepository _constraintRepository;
 
-		public UserRepository(IEventSourcingRepository eventSourcedAggregateRepository)
+		public UserRepository(
+			IEventSourcingRepository eventSourcedAggregateRepository,
+			IAggregateConstraintRepository constraintRepository)
 		{
-			if (eventSourcedAggregateRepository == null)
-				throw new ArgumentNullException(nameof(eventSourcedAggregateRepository));
+			if (eventSourcedAggregateRepository == null) throw new ArgumentNullException(nameof(eventSourcedAggregateRepository));
+			if (constraintRepository == null) throw new ArgumentNullException(nameof(constraintRepository));
 
 			_eventSourcedAggregateRepository = eventSourcedAggregateRepository;
+			_constraintRepository = constraintRepository;
 		}
 
 		public void SaveUser(User user)
 		{
 			if (user == null) throw new ArgumentNullException(nameof(user));
+
+			var constraintId = new AggregateConstraintId(EmailKeyName, user.Email);
+			var constraint = new AggregateConstraint<UserId>(constraintId, user.Id);
+			
+			_constraintRepository.SaveConstraint(AggregateName, constraint);
 			_eventSourcedAggregateRepository.SaveEventSourcing(StreamIdPrefix, user);
 		}
 
 		public User GetUserById(UserId id)
 		{
 			if (id == null) throw new ArgumentNullException(nameof(id));
+
 			return _eventSourcedAggregateRepository.RestoreEventSourcing<UserId, IDomainEvent, User>(
 				StreamIdPrefix,
 				id,
 				(userId, version, events) => new User(userId, version, events));
+		}
+
+		public User GetUserByEmail(string email)
+		{
+			if(string.IsNullOrWhiteSpace(email)) throw new ArgumentException("Not set.", nameof(email));
+
+			var constraintKey = new AggregateConstraintId(EmailKeyName, email);
+			var constraint = _constraintRepository.GetConstraint<UserId>(AggregateName, constraintKey);
+
+			return GetUserById(constraint.AggregateId);
 		}
 	}
 }

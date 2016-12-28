@@ -7,6 +7,7 @@ using PVDevelop.UCoach.Authentication.Infrastructure.Adapter;
 using PVDevelop.UCoach.Domain.Model;
 using PVDevelop.UCoach.Domain.ProcessStates;
 using PVDevelop.UCoach.Shared.ProcessManagement;
+using PVDevelop.UCoach.Timing;
 
 namespace PVDevelop.UCoach.Application.Tests.Service
 {
@@ -16,7 +17,9 @@ namespace PVDevelop.UCoach.Application.Tests.Service
 		[Test]
 		public void ConfirmUser_UserDaoReturnsExpectedResult()
 		{
-			using (var authContext = new AuthenticationContextBuilder().Build())
+			using (var authContext = 
+				new AuthenticationContextBuilder(new UtcTimeProvider()).
+				Build())
 			{
 				authContext.Start();
 
@@ -46,11 +49,11 @@ namespace PVDevelop.UCoach.Application.Tests.Service
 				var userDao = new UserDao(authContext.ProcessManager);
 
 				var state = Policy<UserConfirmationProcessState>.
-					HandleResult(s => s != UserConfirmationProcessState.UserConfirmed).
+					HandleResult(s => s != UserConfirmationProcessState.SessionStarted).
 					WaitAndRetry(50, i => TimeSpan.FromMilliseconds(100)).
 					Execute(() => userDao.GetUserConfirmationState(processId));
 
-				Assert.AreEqual(UserConfirmationProcessState.UserConfirmed, state);
+				Assert.AreEqual(UserConfirmationProcessState.SessionStarted, state);
 			}
 		}
 	}

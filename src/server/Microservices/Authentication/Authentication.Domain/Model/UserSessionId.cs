@@ -1,37 +1,17 @@
 ﻿using System;
+using PVDevelop.UCoach.Shared.EventSourcing;
 
 namespace PVDevelop.UCoach.Domain.Model
 {
-	public class UserSessionId
+	public class UserSessionId : GuidBasedIdentifier
 	{
-		public Guid Value { get; }
-
-		public UserSessionId(Guid value)
+		public UserSessionId()
 		{
-			Value = value;
 		}
 
-		protected bool Equals(UserSessionId other)
+		public UserSessionId(Guid value) :
+			base(value)
 		{
-			return Value.Equals(other.Value);
-		}
-
-		public override bool Equals(object obj)
-		{
-			if (ReferenceEquals(null, obj)) return false;
-			if (ReferenceEquals(this, obj)) return true;
-			if (obj.GetType() != this.GetType()) return false;
-			return Equals((UserSessionId) obj);
-		}
-
-		public override int GetHashCode()
-		{
-			return Value.GetHashCode();
-		}
-
-		public override string ToString()
-		{
-			return Value.ToString();
 		}
 	}
 }

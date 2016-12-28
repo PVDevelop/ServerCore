@@ -5,6 +5,7 @@ using Polly;
 using PVDevelop.UCoach.Application.Service;
 using PVDevelop.UCoach.Authentication.Infrastructure.Adapter;
 using PVDevelop.UCoach.Domain.ProcessStates;
+using PVDevelop.UCoach.Timing;
 
 namespace PVDevelop.UCoach.Application.Tests.Service
 {
@@ -14,7 +15,9 @@ namespace PVDevelop.UCoach.Application.Tests.Service
 		[Test]
 		public void RegisterUser_UserDaoReturnsExpectedResult()
 		{
-			using (var authContext = new AuthenticationContextBuilder().Build())
+			using (var authContext = 
+				new AuthenticationContextBuilder(new UtcTimeProvider()).
+				Build())
 			{
 				authContext.Start();
 

@@ -32,6 +32,21 @@ namespace PVDevelop.UCoach.Domain.Service
 			return new ConfirmUser(@event.ProcessId, @event.UserId);
 		}
 
+		private IProcessCommand DoCreateCommand(UserConfirmed @event)
+		{
+			return new StartSession(@event.ProcessId, @event.UserId);
+		}
+
+		private IProcessCommand DoCreateCommand(UserSignInRequested @event)
+		{
+			return new SignIn(@event.ProcessId, @event.Email, @event.Password);
+		}
+
+		private IProcessCommand DoCreateCommand(SignInApproved @event)
+		{
+			return new GenerateToken(@event.ProcessId, @event.UserId);
+		}
+
 		private IProcessCommand DoCreateCommand(object @event)
 		{
 			throw new InvalidOperationException($"Unknown event '{@event}'.");
