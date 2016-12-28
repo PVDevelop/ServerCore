@@ -29,5 +29,18 @@ namespace PVDevelop.UCoach.Domain.Service
 			yield return ProcessStateDescription.Continue<SignInApproved, GenerateToken>();
 			yield return ProcessStateDescription.Complete<TokenGenerated>();
 		}
+
+		public static IEnumerable<ProcessStateDescription> GetUserSignOutProcessStateDescriptions()
+		{
+			yield return ProcessStateDescription.Start<UserSignOutRequested, SignOut>();
+			yield return ProcessStateDescription.Continue<UserSignedOut, DeactivateSession>();
+			yield return ProcessStateDescription.Complete<SessionDeactivated>();
+		}
+
+		public static IEnumerable<ProcessStateDescription> GetTokenValidationStateDescriptions()
+		{
+			yield return ProcessStateDescription.Start<TokenValidationRequested, ValidateToken>();
+			yield return ProcessStateDescription.Complete<TokenValidated>();
+		}
 	}
 }

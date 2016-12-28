@@ -73,9 +73,16 @@ namespace PVDevelop.UCoach.Domain.Model.User
 			Mutate(new SignInApproved(processId, Id));
 		}
 
+		public void SignOut(ProcessId processId)
+		{
+			if (processId == null) throw new ArgumentNullException(nameof(processId));
+
+			Mutate(new UserSignedOut(processId, Id));
+		}
+
 		protected override void When(IDomainEvent @event)
 		{
-			ApplyEvent((dynamic) @event);
+			ApplyEvent((dynamic)@event);
 		}
 
 		private void ApplyEvent(UserCreated @event)
@@ -92,6 +99,11 @@ namespace PVDevelop.UCoach.Domain.Model.User
 		private void ApplyEvent(SignInApproved @event)
 		{
 			State = UserState.SignedIn;
+		}
+
+		private void ApplyEvent(UserSignedOut @evvent)
+		{
+			State = UserState.SignedOut;
 		}
 
 		private void ApplyEvent(object @event)

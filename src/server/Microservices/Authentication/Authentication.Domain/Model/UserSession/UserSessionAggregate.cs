@@ -37,12 +37,23 @@ namespace PVDevelop.UCoach.Domain.Model.UserSession
 			var token = BCrypt.Net.BCrypt.HashPassword(Id.ToString(), salt);
 
 			var accessToken = new UserAccessToken(UserId, token, utcNow + TokenExpirationPeriod);
+
 			Mutate(new TokenGenerated(processId, accessToken));
+		}
+
+		public void ValidateToken(ProcessId processId, UserAccessToken token)
+		{
+			Mutate(new TokenValidated(processId));
+		}
+
+		public void Deactivate(ProcessId processId)
+		{
+			Mutate(new SessionDeactivated(processId));
 		}
 
 		protected override void When(IDomainEvent @event)
 		{
-			ApplyEvent((dynamic) @event);
+			ApplyEvent((dynamic)@event);
 		}
 
 		private void ApplyEvent(SessionStarted @event)
@@ -55,6 +66,15 @@ namespace PVDevelop.UCoach.Domain.Model.UserSession
 		private void ApplyEvent(TokenGenerated @event)
 		{
 			GeneratedTokens.Add(@event.Token);
+		}
+
+		private void ApplyEvent(TokenValidated @event)
+		{
+		}
+
+		private void ApplyEvent(SessionDeactivated @event)
+		{
+			State = UserSessionState.Inactive;
 		}
 
 		private void ApplyEvent(object @event)

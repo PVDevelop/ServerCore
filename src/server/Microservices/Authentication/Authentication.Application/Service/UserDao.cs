@@ -32,5 +32,15 @@ namespace PVDevelop.UCoach.Application.Service
 			var state = (UserSignInProcessState) _processManager.GetProcessState(processId);
 			return state.Token;
 		}
+
+		public UserSignOutProcessState GetUserSignOutProcessState(ProcessId processId)
+		{
+			return (UserSignOutProcessState) _processManager.GetProcessState(processId);
+		}
+
+		public AccessTokenValidationProcessState GetAccessTokenValidationState(ProcessId processId)
+		{
+			return (AccessTokenValidationProcessState) _processManager.GetProcessState(processId);
+		}
 	}
 }

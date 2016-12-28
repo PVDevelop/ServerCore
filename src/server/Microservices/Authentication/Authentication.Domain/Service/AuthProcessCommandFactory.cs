@@ -47,6 +47,21 @@ namespace PVDevelop.UCoach.Domain.Service
 			return new GenerateToken(@event.ProcessId, @event.UserId);
 		}
 
+		private IProcessCommand DoCreateCommand(TokenValidationRequested @event)
+		{
+			return new ValidateToken(@event.ProcessId, @event.Token);
+		}
+
+		private IProcessCommand DoCreateCommand(UserSignOutRequested @event)
+		{
+			return new SignOut(@event.ProcessId, @event.UserId);
+		}
+
+		private IProcessCommand DoCreateCommand(UserSignedOut @event)
+		{
+			return new DeactivateSession(@event.ProcessId, @event.UserId);
+		}
+
 		private IProcessCommand DoCreateCommand(object @event)
 		{
 			throw new InvalidOperationException($"Unknown event '{@event}'.");

@@ -89,6 +89,27 @@ namespace PVDevelop.UCoach.Domain.Service
 			_userSessionRepository.SaveSession(session);
 		}
 
+		private void DoExecute(ValidateToken command)
+		{
+			var session = _userSessionRepository.GetSessions(command.Token.UserId).Single();
+			session.ValidateToken(command.ProcessId, command.Token);
+			_userSessionRepository.SaveSession(session);
+		}
+
+		private void DoExecute(SignOut command)
+		{
+			var user = _userRepository.GetUserById(command.UserId);
+			user.SignOut(command.ProcessId);
+			_userRepository.SaveUser(user);
+		}
+
+		private void DoExecute(DeactivateSession command)
+		{
+			var session = _userSessionRepository.GetSessions(command.UserId).Single();
+			session.Deactivate(command.ProcessId);
+			_userSessionRepository.SaveSession(session);
+		}
+
 		private void DoExecute(object command)
 		{
 			throw new InvalidOperationException($"Unknown command '{command}'.");
